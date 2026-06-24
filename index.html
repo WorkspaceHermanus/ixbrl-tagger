@@ -59,14 +59,11 @@ body{
 }
 
 /* ── VIEW CONTAINERS ───────────────────────────── */
-#homeView{
-  position:fixed;inset:0;overflow-y:auto;
-  background:#fff;z-index:200;
-}
+#homeView{position:fixed;inset:0;overflow-y:auto;background:#fff;z-index:200;}
 #homeView.hid{display:none;}
-#appView{
-  position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;
-}
+#dashView{position:fixed;inset:0;background:#030B19;overflow-y:auto;z-index:200;}
+#dashView.hid{display:none;}
+#appView{position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;}
 #appView.hid{display:none;}
 
 /* ── SHELL BAR ─────────────────────────────────── */
@@ -943,9 +940,159 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 .hf-links{display:flex;gap:28px;}
 .hf-link{font-size:12px;color:rgba(255,255,255,.22);text-decoration:none;transition:color .2s;}
 .hf-link:hover{color:rgba(255,255,255,.5);}
+
+/* ═══ SIGN MODAL ════════════════════════════════ */
+.sign-ov{position:fixed;inset:0;z-index:9000;background:rgba(3,11,25,.85);backdrop-filter:blur(22px);display:flex;align-items:center;justify-content:center;}
+.sign-ov.hid{display:none;}
+.sign-panel{background:#07101F;border:1px solid rgba(255,255,255,.08);border-radius:20px;width:420px;padding:44px 48px 48px;box-shadow:0 40px 80px rgba(0,0,0,.6);position:relative;}
+.sign-logo-wrap{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.sign-co{font-size:12px;font-weight:800;color:rgba(255,255,255,.5);letter-spacing:.6px;}
+.sign-h{font-size:26px;font-weight:900;color:#E8ECF4;margin-bottom:8px;letter-spacing:-.5px;}
+.sign-sub{font-size:13px;color:rgba(255,255,255,.35);margin-bottom:26px;line-height:1.55;}
+.sign-tabs{display:flex;gap:0;margin-bottom:22px;background:rgba(255,255,255,.04);border-radius:8px;padding:3px;}
+.sign-tab{flex:1;padding:8px;border:none;background:none;color:rgba(255,255,255,.35);font-size:13px;font-weight:600;border-radius:6px;cursor:pointer;transition:all .2s;font-family:inherit;}
+.sign-tab.act{background:rgba(255,255,255,.09);color:#E8ECF4;}
+.sign-field{width:100%;padding:12px 14px;margin-bottom:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:8px;color:#E8ECF4;font-size:14px;outline:none;transition:border-color .2s;box-sizing:border-box;font-family:inherit;}
+.sign-field:focus{border-color:rgba(24,168,200,.5);}
+.sign-field::placeholder{color:rgba(255,255,255,.22);}
+.sign-btn{width:100%;padding:13px;margin-top:6px;background:linear-gradient(135deg,#18A8C8,#3B78C4);border:none;border-radius:8px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;transition:opacity .2s;letter-spacing:.2px;font-family:inherit;}
+.sign-btn:hover{opacity:.86;}
+.sign-note{font-size:11px;color:rgba(255,255,255,.2);text-align:center;margin-top:16px;line-height:1.6;}
+.sign-close{position:absolute;top:16px;right:18px;background:none;border:none;color:rgba(255,255,255,.28);font-size:22px;cursor:pointer;line-height:1;padding:4px 6px;}
+.sign-close:hover{color:rgba(255,255,255,.7);}
+
+/* ═══ NEW COMPANY MODAL ═════════════════════════ */
+.nc-ov{position:fixed;inset:0;z-index:9100;background:rgba(3,11,25,.85);backdrop-filter:blur(22px);display:flex;align-items:center;justify-content:center;}
+.nc-ov.hid{display:none;}
+.nc-panel{background:#07101F;border:1px solid rgba(255,255,255,.08);border-radius:20px;width:500px;padding:40px 44px 44px;box-shadow:0 40px 80px rgba(0,0,0,.6);position:relative;}
+.nc-h{font-size:22px;font-weight:900;color:#E8ECF4;margin-bottom:6px;letter-spacing:-.3px;}
+.nc-sub{font-size:13px;color:rgba(255,255,255,.32);margin-bottom:28px;line-height:1.5;}
+.nc-label{display:block;font-size:10px;font-weight:800;color:rgba(255,255,255,.38);letter-spacing:.6px;margin-bottom:6px;text-transform:uppercase;}
+.nc-row{margin-bottom:16px;}
+.nc-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.nc-seg{display:flex;gap:0;background:rgba(255,255,255,.04);border-radius:8px;padding:3px;}
+.nc-seg-btn{flex:1;padding:8px 4px;border:none;background:none;color:rgba(255,255,255,.32);font-size:11px;font-weight:700;border-radius:6px;cursor:pointer;transition:all .2s;font-family:inherit;letter-spacing:.2px;}
+.nc-seg-btn.act{background:rgba(255,255,255,.09);color:#E8ECF4;}
+.nc-foot{display:flex;gap:10px;margin-top:24px;}
+.nc-cancel{flex:1;padding:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:8px;color:rgba(255,255,255,.4);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit;}
+.nc-cancel:hover{background:rgba(255,255,255,.08);color:#E8ECF4;}
+.nc-create{flex:2;padding:12px;background:linear-gradient(135deg,#18A8C8,#3B78C4);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;font-family:inherit;}
+.nc-create:hover{opacity:.86;}
+.nc-close{position:absolute;top:16px;right:18px;background:none;border:none;color:rgba(255,255,255,.28);font-size:22px;cursor:pointer;line-height:1;padding:4px 6px;}
+.nc-close:hover{color:rgba(255,255,255,.7);}
+
+/* ═══ DASHBOARD VIEW ════════════════════════════ */
+.dh{position:sticky;top:0;z-index:50;background:rgba(3,11,25,.92);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.055);display:flex;align-items:center;padding:0 44px;height:60px;gap:16px;}
+.dh-brand{display:flex;align-items:center;gap:10px;flex:1;}
+.dh-co{font-size:12px;font-weight:800;color:#E8ECF4;letter-spacing:.2px;}
+.dh-div{width:1px;height:14px;background:rgba(255,255,255,.1);margin:0 2px;}
+.dh-prod{font-size:12px;color:rgba(255,255,255,.32);}
+.dh-user{display:flex;align-items:center;gap:20px;}
+.dh-name{font-size:13px;color:rgba(255,255,255,.45);}
+.dh-name strong{color:#E8ECF4;font-weight:700;}
+.dh-logout{font-size:12px;color:rgba(255,255,255,.28);background:none;border:1px solid rgba(255,255,255,.1);border-radius:6px;cursor:pointer;padding:5px 12px;transition:all .2s;font-family:inherit;}
+.dh-logout:hover{color:#E8ECF4;border-color:rgba(255,255,255,.3);}
+.dash-main{max-width:1200px;margin:0 auto;padding:44px 44px 80px;}
+.dash-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
+.dash-title{font-size:28px;font-weight:900;color:#E8ECF4;letter-spacing:-.5px;}
+.dash-new-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,#18A8C8,#3B78C4);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;letter-spacing:.1px;font-family:inherit;}
+.dash-new-btn:hover{opacity:.86;}
+.dash-stats{display:flex;gap:1px;background:rgba(255,255,255,.04);border-radius:14px;margin-bottom:28px;overflow:hidden;}
+.dstat{flex:1;padding:20px 24px;background:#07101F;}
+.dstat-n{font-size:28px;font-weight:900;color:#E8ECF4;letter-spacing:-1px;}
+.dstat-l{font-size:10px;color:rgba(255,255,255,.3);margin-top:3px;letter-spacing:.5px;text-transform:uppercase;}
+.dash-tbl-wrap{background:#07101F;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.05);}
+.dash-tbl{width:100%;border-collapse:collapse;}
+.dash-tbl th{padding:11px 20px;text-align:left;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.6px;text-transform:uppercase;background:#040D1A;border-bottom:1px solid rgba(255,255,255,.05);}
+.dash-tbl td{padding:14px 20px;font-size:13px;color:rgba(255,255,255,.65);border-bottom:1px solid rgba(255,255,255,.03);}
+.dash-tbl tr:last-child td{border-bottom:none;}
+.dash-tbl tbody tr:hover td{background:rgba(255,255,255,.025);cursor:pointer;}
+.dt-name{font-weight:700;color:#E8ECF4;font-size:14px;}
+.dt-reg{font-size:11px;color:rgba(255,255,255,.28);margin-top:2px;}
+.dt-badge{display:inline-block;padding:3px 10px;border-radius:100px;font-size:10px;font-weight:800;letter-spacing:.4px;}
+.dt-badge.ifrs{background:rgba(24,168,200,.14);color:#18A8C8;}
+.dt-badge.usgaap{background:rgba(59,120,196,.14);color:#3B78C4;}
+.dt-badge.ukfrs{background:rgba(61,184,122,.14);color:#3DB87A;}
+.dt-status{display:flex;align-items:center;gap:7px;font-size:12px;}
+.ds-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ds-dot.draft{background:#3A4464;}
+.ds-dot.in_progress{background:#F5A623;}
+.ds-dot.completed{background:#3DB87A;}
+.dt-acts{display:flex;gap:8px;}
+.dt-act{padding:5px 12px;border-radius:6px;border:none;cursor:pointer;font-size:11px;font-weight:700;transition:all .2s;font-family:inherit;}
+.dt-act.open{background:rgba(24,168,200,.1);color:#18A8C8;}
+.dt-act.open:hover{background:rgba(24,168,200,.2);}
+.dt-act.del{background:rgba(255,80,80,.07);color:rgba(255,110,110,.5);}
+.dt-act.del:hover{background:rgba(255,80,80,.16);color:#ff7070;}
+.dash-empty{text-align:center;padding:80px 20px;color:rgba(255,255,255,.22);font-size:14px;line-height:1.8;}
+.dash-empty.hid{display:none;}
 </style>
 </head>
 <body>
+
+<!-- ═══ SIGN MODAL ════════════════════════════════ -->
+<div class="sign-ov hid" id="signOv" onclick="signOvClick(event)">
+  <div class="sign-panel">
+    <button class="sign-close" onclick="closeSign()">×</button>
+    <div class="sign-logo-wrap">
+      <svg viewBox="0 0 560 340" width="40" height="24" xmlns="http://www.w3.org/2000/svg">
+        <g stroke="white" stroke-width="8" stroke-linejoin="miter">
+          <polygon points="115,225 5,335 225,335" fill="#4BBF6F"/>
+          <polygon points="335,225 225,335 445,335" fill="#4BBF6F"/>
+          <polygon points="225,115 335,225 225,335 115,225" fill="#1A2D52"/>
+          <polygon points="335,5 445,115 335,225 225,115" fill="#3A90C0"/>
+          <polygon points="445,115 555,225 445,335 335,225" fill="#44BEE2"/>
+        </g>
+      </svg>
+      <span class="sign-co">MY CLOUD GLOBAL</span>
+    </div>
+    <h2 class="sign-h" id="signH">Welcome back</h2>
+    <p class="sign-sub" id="signSub">Sign in to manage your companies and iXBRL filings.</p>
+    <div class="sign-tabs">
+      <button class="sign-tab act" id="stab0" onclick="switchSignTab(0)">Sign In</button>
+      <button class="sign-tab" id="stab1" onclick="switchSignTab(1)">New Account</button>
+    </div>
+    <input class="sign-field" id="siName" placeholder="Full name" type="text" autocomplete="name"/>
+    <input class="sign-field" id="siEmail" placeholder="Work email address" type="email" autocomplete="email"/>
+    <button class="sign-btn" onclick="handleSignIn()">Continue →</button>
+    <p class="sign-note">Your filing data is stored locally on this device. No password required.<br>Your data never leaves your browser.</p>
+  </div>
+</div>
+
+<!-- ═══ NEW COMPANY MODAL ═════════════════════════ -->
+<div class="nc-ov hid" id="ncOv" onclick="ncOvClick(event)">
+  <div class="nc-panel">
+    <button class="nc-close" onclick="closeNc()">×</button>
+    <h2 class="nc-h">Add Company</h2>
+    <p class="nc-sub">Create a new company filing to begin tagging its financial statements.</p>
+    <div class="nc-row">
+      <label class="nc-label">Company Name</label>
+      <input class="sign-field" id="ncName" placeholder="e.g. African Chrome (Pty) Ltd" type="text"/>
+    </div>
+    <div class="nc-grid">
+      <div class="nc-row">
+        <label class="nc-label">Registration Number</label>
+        <input class="sign-field" id="ncReg" placeholder="e.g. 1991/000330/07" type="text"/>
+      </div>
+      <div class="nc-row">
+        <label class="nc-label">Year End Date</label>
+        <input class="sign-field" id="ncYear" type="date"/>
+      </div>
+    </div>
+    <div class="nc-row">
+      <label class="nc-label">Reporting Framework</label>
+      <div class="nc-seg">
+        <button class="nc-seg-btn act" id="ncfw0" onclick="setNcFw('ifrs',0)">IFRS 2024</button>
+        <button class="nc-seg-btn" id="ncfw1" onclick="setNcFw('usgaap',1)">US-GAAP 2024</button>
+        <button class="nc-seg-btn" id="ncfw2" onclick="setNcFw('ukfrs',2)">UK FRS 102</button>
+      </div>
+    </div>
+    <div class="nc-foot">
+      <button class="nc-cancel" onclick="closeNc()">Cancel</button>
+      <button class="nc-create" onclick="createCompany()">Create &amp; Start Tagging →</button>
+    </div>
+  </div>
+</div>
 
 <!-- ═══ HOME VIEW ══════════════════════════════════ -->
 <div id="homeView">
@@ -973,8 +1120,8 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     <a class="hn-link" href="#taxonomies">Taxonomies</a>
   </div>
   <div class="hn-sp"></div>
-  <button class="hn-cta" onclick="gotoApp()">
-    Launch Tagger
+  <button class="hn-cta" onclick="openSignOrDash()">
+    Sign In
     <span class="hn-cta-arrow">›</span>
   </button>
 </nav>
@@ -1000,8 +1147,8 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
       </h1>
       <p class="hero-sub">Tag IFRS, US-GAAP and UK FRS 102 financial statements in minutes — not days. No plugins. No servers. Your data never leaves the browser.</p>
       <div class="hero-acts">
-        <button class="btn-hero-pri" onclick="gotoApp()">
-          Start Tagging
+        <button class="btn-hero-pri" onclick="openSignOrDash()">
+          Get Started
           <span class="btn-pill">→</span>
         </button>
         <button class="btn-hero-sec" onclick="gotoApp('sample')">
@@ -1264,10 +1411,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 <section class="cta-section">
   <div class="cta-orb"></div>
   <h2>Ready to file?</h2>
-  <p>Free to use. No sign-up. No data ever leaves your browser.</p>
+  <p>Free to use. Your data never leaves your browser.</p>
   <div class="cta-acts">
-    <button class="btn-hero-pri" onclick="gotoApp()">
-      Start Tagging
+    <button class="btn-hero-pri" onclick="openSignOrDash()">
+      Create Account
       <span class="btn-pill">→</span>
     </button>
     <button class="btn-hero-sec" onclick="gotoApp('sample')">
@@ -1297,6 +1444,65 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 </footer>
 
 </div><!-- /homeView -->
+
+<!-- ═══ DASHBOARD VIEW ══════════════════════════════ -->
+<div id="dashView" class="hid">
+  <header class="dh">
+    <div class="dh-brand">
+      <svg viewBox="0 0 560 340" width="40" height="24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g stroke="white" stroke-width="8" stroke-linejoin="miter">
+          <polygon points="115,225 5,335 225,335" fill="#4BBF6F"/>
+          <polygon points="335,225 225,335 445,335" fill="#4BBF6F"/>
+          <polygon points="225,115 335,225 225,335 115,225" fill="#1A2D52"/>
+          <polygon points="335,5 445,115 335,225 225,115" fill="#3A90C0"/>
+          <polygon points="445,115 555,225 445,335 335,225" fill="#44BEE2"/>
+        </g>
+      </svg>
+      <span class="dh-co">MY CLOUD GLOBAL</span>
+      <span class="dh-div"></span>
+      <span class="dh-prod">iXBRL Tagger</span>
+    </div>
+    <div class="dh-user">
+      <span class="dh-name">Signed in as <strong id="dashUserName">—</strong></span>
+      <button class="dh-logout" onclick="handleLogout()">Sign out</button>
+    </div>
+  </header>
+  <main class="dash-main">
+    <div class="dash-top">
+      <h1 class="dash-title">My Companies</h1>
+      <button class="dash-new-btn" onclick="openNc()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Company
+      </button>
+    </div>
+    <div class="dash-stats">
+      <div class="dstat"><div class="dstat-n" id="dstatTotal">0</div><div class="dstat-l">Total Companies</div></div>
+      <div class="dstat"><div class="dstat-n" id="dstatProg">0</div><div class="dstat-l">In Progress</div></div>
+      <div class="dstat"><div class="dstat-n" id="dstatDone">0</div><div class="dstat-l">Completed</div></div>
+      <div class="dstat"><div class="dstat-n" id="dstatTags">0</div><div class="dstat-l">Total Tags</div></div>
+    </div>
+    <div class="dash-tbl-wrap">
+      <table class="dash-tbl">
+        <thead>
+          <tr>
+            <th>Company</th>
+            <th>Framework</th>
+            <th>Year End</th>
+            <th>Status</th>
+            <th>Tags</th>
+            <th>Last Updated</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="dashTbody"></tbody>
+      </table>
+      <div class="dash-empty hid" id="dashEmpty">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" style="opacity:.25;margin-bottom:14px;display:block;margin-left:auto;margin-right:auto;"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+        No companies yet.<br>Click <strong style="color:#18A8C8;font-weight:700;">New Company</strong> to create your first filing.
+      </div>
+    </div>
+  </main>
+</div>
 
 <!-- ═══ APP VIEW ════════════════════════════════════ -->
 <div id="appView" class="hid">
@@ -1355,8 +1561,8 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   <div class="shell-sp"></div>
 
   <div class="shell-end">
-    <button class="btn-sh-sec" onclick="gotoHome()" title="Return to home page" style="opacity:.8;">
-      ← Home
+    <button class="btn-sh-sec" onclick="gotoBack()" title="Return to dashboard" style="opacity:.8;">
+      ← Dashboard
     </button>
     <button class="btn-sh-sec" onclick="saveSession()" title="Save session to browser storage">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -2406,18 +2612,186 @@ function dlOut(){
 }
 
 // ═══════════════════════════════════════════════════
-// NAVIGATION — HOME ↔ APP
 // ═══════════════════════════════════════════════════
-function gotoApp(mode){
-  document.getElementById('homeView').classList.add('hid');
-  document.getElementById('appView').classList.remove('hid');
-  if(mode==='sample'){
-    // pre-load income statement sample
-    loadSample('inc');
-  }
+// AUTH — USER MANAGEMENT
+// ═══════════════════════════════════════════════════
+function getUser(){try{return JSON.parse(localStorage.getItem('mcg_user')||'null');}catch(e){return null;}}
+function setUser(name,email){localStorage.setItem('mcg_user',JSON.stringify({name,email,createdAt:new Date().toISOString()}));}
+function clearUser(){localStorage.removeItem('mcg_user');}
+
+function openSignOrDash(){
+  if(getUser()) gotoDash();
+  else openSign();
+}
+function openSign(){
+  document.getElementById('signOv').classList.remove('hid');
+  setTimeout(()=>document.getElementById('siName').focus(),120);
+}
+function closeSign(){document.getElementById('signOv').classList.add('hid');}
+function signOvClick(e){if(e.target===document.getElementById('signOv'))closeSign();}
+function switchSignTab(idx){
+  [0,1].forEach(i=>document.getElementById('stab'+i).classList.toggle('act',i===idx));
+  const msgs=[['Welcome back','Sign in to manage your companies and iXBRL filings.'],['Create account','Set up your MCG iXBRL Tagger workspace.']];
+  document.getElementById('signH').textContent=msgs[idx][0];
+  document.getElementById('signSub').textContent=msgs[idx][1];
+}
+function handleSignIn(){
+  const name=document.getElementById('siName').value.trim();
+  if(!name){document.getElementById('siName').focus();return;}
+  const email=document.getElementById('siEmail').value.trim();
+  setUser(name,email);
+  closeSign();
+  gotoDash();
+}
+function handleLogout(){
+  clearUser();
+  hideAllViews();
+  document.getElementById('homeView').classList.remove('hid');
+  window.scrollTo(0,0);
 }
 
+// ═══════════════════════════════════════════════════
+// COMPANIES — MANAGEMENT
+// ═══════════════════════════════════════════════════
+function getCompanies(){try{return JSON.parse(localStorage.getItem('mcg_companies')||'[]');}catch(e){return[];}}
+function saveCompanies(arr){localStorage.setItem('mcg_companies',JSON.stringify(arr));}
+
+var _ncFw='ifrs';
+function openNc(){
+  document.getElementById('ncOv').classList.remove('hid');
+  document.getElementById('ncName').value='';
+  document.getElementById('ncReg').value='';
+  document.getElementById('ncYear').value='';
+  _ncFw='ifrs';
+  [0,1,2].forEach(i=>document.getElementById('ncfw'+i).classList.toggle('act',i===0));
+  setTimeout(()=>document.getElementById('ncName').focus(),120);
+}
+function closeNc(){document.getElementById('ncOv').classList.add('hid');}
+function ncOvClick(e){if(e.target===document.getElementById('ncOv'))closeNc();}
+function setNcFw(fw,idx){
+  _ncFw=fw;
+  [0,1,2].forEach(i=>document.getElementById('ncfw'+i).classList.toggle('act',i===idx));
+}
+function createCompany(){
+  const name=document.getElementById('ncName').value.trim();
+  if(!name){document.getElementById('ncName').focus();return;}
+  const id='co_'+Date.now();
+  const cos=getCompanies();
+  cos.unshift({
+    id,name,
+    regNumber:document.getElementById('ncReg').value.trim(),
+    yearEnd:document.getElementById('ncYear').value,
+    framework:_ncFw,
+    status:'draft',
+    tagCount:0,
+    createdAt:new Date().toLocaleDateString(),
+    updatedAt:new Date().toLocaleDateString(),
+    session:null
+  });
+  saveCompanies(cos);
+  closeNc();
+  openCompany(id);
+}
+function openCompany(id){
+  const cos=getCompanies();
+  const co=cos.find(c=>c.id===id);
+  if(!co) return;
+  window._activeCompanyId=id;
+  hideAllViews();
+  document.getElementById('appView').classList.remove('hid');
+  if(co.session){
+    const d=co.session;
+    try{
+      if(d.entity) document.getElementById('ent').value=d.entity;
+      if(d.ps) document.getElementById('ps').value=d.ps;
+      if(d.pe) document.getElementById('pe').value=d.pe;
+      if(d.ccy) document.getElementById('ccy').value=d.ccy;
+      if(d.dec) document.getElementById('dec').value=d.dec;
+      if(d.tags&&d.tags.length){S.tags=d.tags;renderTags();updateStatus();}
+      if(d.taxKey){document.getElementById('taxSel').value=d.taxKey;loadBuiltin(d.taxKey);}
+    }catch(e){}
+  } else {
+    document.getElementById('ent').value=co.name;
+    if(co.framework){document.getElementById('taxSel').value=co.framework;loadBuiltin(co.framework);}
+  }
+}
+function deleteCompanyById(id){
+  if(!confirm('Delete this company and all its tagging data?')) return;
+  saveCompanies(getCompanies().filter(c=>c.id!==id));
+  renderDash();
+}
+function syncCompanyFromSession(data){
+  if(!window._activeCompanyId) return;
+  const cos=getCompanies();
+  const idx=cos.findIndex(c=>c.id===window._activeCompanyId);
+  if(idx<0) return;
+  cos[idx].tagCount=data.tagCount||0;
+  cos[idx].status=data.tagCount>0?'in_progress':'draft';
+  cos[idx].updatedAt=new Date().toLocaleDateString();
+  cos[idx].session={entity:data.entity,taxKey:data.taxKey,ps:data.ps,pe:data.pe,ccy:data.ccy,dec:data.dec,tags:data.tags};
+  saveCompanies(cos);
+}
+
+// ═══════════════════════════════════════════════════
+// NAVIGATION — VIEWS
+// ═══════════════════════════════════════════════════
+function hideAllViews(){
+  ['homeView','dashView','appView'].forEach(id=>document.getElementById(id).classList.add('hid'));
+}
+function gotoDash(){
+  hideAllViews();
+  document.getElementById('dashView').classList.remove('hid');
+  const u=getUser();
+  if(u) document.getElementById('dashUserName').textContent=u.name;
+  renderDash();
+}
+function renderDash(){
+  const cos=getCompanies();
+  const tbody=document.getElementById('dashTbody');
+  const empty=document.getElementById('dashEmpty');
+  const total=cos.length;
+  const prog=cos.filter(c=>c.status==='in_progress').length;
+  const done=cos.filter(c=>c.status==='completed').length;
+  const tags=cos.reduce((s,c)=>s+(c.tagCount||0),0);
+  document.getElementById('dstatTotal').textContent=total;
+  document.getElementById('dstatProg').textContent=prog;
+  document.getElementById('dstatDone').textContent=done;
+  document.getElementById('dstatTags').textContent=tags;
+  if(!cos.length){tbody.innerHTML='';empty.classList.remove('hid');return;}
+  empty.classList.add('hid');
+  const fwL={ifrs:'IFRS 2024',usgaap:'US-GAAP',ukfrs:'UK FRS 102'};
+  const stL={draft:'Not started',in_progress:'In progress',completed:'Completed'};
+  tbody.innerHTML=cos.map(co=>`
+    <tr onclick="openCompany('${esc(co.id)}')">
+      <td><div class="dt-name">${esc(co.name)}</div>${co.regNumber?`<div class="dt-reg">${esc(co.regNumber)}</div>`:''}</td>
+      <td><span class="dt-badge ${esc(co.framework||'ifrs')}">${esc(fwL[co.framework]||co.framework||'IFRS 2024')}</span></td>
+      <td style="font-size:12px">${esc(co.yearEnd||'—')}</td>
+      <td><div class="dt-status"><div class="ds-dot ${esc(co.status||'draft')}"></div>${esc(stL[co.status]||'Not started')}</div></td>
+      <td>${co.tagCount||0}</td>
+      <td style="font-size:12px">${esc(co.updatedAt||co.createdAt||'—')}</td>
+      <td onclick="event.stopPropagation()"><div class="dt-acts">
+        <button class="dt-act open" onclick="openCompany('${esc(co.id)}')">Open</button>
+        <button class="dt-act del" onclick="deleteCompanyById('${esc(co.id)}')">Delete</button>
+      </div></td>
+    </tr>`).join('');
+}
+function gotoApp(mode){
+  window._activeCompanyId=null;
+  hideAllViews();
+  document.getElementById('appView').classList.remove('hid');
+  if(mode==='sample') loadSample('inc');
+}
+function gotoBack(){
+  document.getElementById('appView').classList.add('hid');
+  if(getUser()){gotoDash();}
+  else{
+    document.getElementById('homeView').classList.remove('hid');
+    renderRecentSessions();
+    window.scrollTo(0,0);
+  }
+}
 function gotoHome(){
+  if(getUser()){gotoDash();return;}
   document.getElementById('appView').classList.add('hid');
   document.getElementById('homeView').classList.remove('hid');
   renderRecentSessions();
@@ -2476,6 +2850,7 @@ function saveSession(){
     sessions.unshift(data);
     if(sessions.length>5) sessions=sessions.slice(0,5);
     localStorage.setItem('mcg_ixbrl_sessions',JSON.stringify(sessions));
+    syncCompanyFromSession(data);
     toast('Session saved','ok');
   }catch(e){toast('Could not save: '+e.message,'err');}
 }
@@ -2575,6 +2950,24 @@ renderRecentSessions();
     });
   },{threshold:.1});
   document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+})();
+
+// ═══════════════════════════════════════════════════
+// PAGE LOAD — route to dashboard if signed in
+// ═══════════════════════════════════════════════════
+(function(){
+  if(getUser()){
+    document.getElementById('homeView').classList.add('hid');
+    gotoDash();
+  }
+  // sign modal: submit on Enter
+  ['siName','siEmail'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter') handleSignIn();});
+  });
+  // new company modal: submit on Enter in name field
+  const ncn=document.getElementById('ncName');
+  if(ncn) ncn.addEventListener('keydown',e=>{if(e.key==='Enter') createCompany();});
 })();
 </script>
 </body>
