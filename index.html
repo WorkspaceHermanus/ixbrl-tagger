@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>iXBRL Tagger</title>
+<style>
+:root{--blue:#0070f2;--blue-dk:#0057b8;--blue-lt:#e8f0fe;--bg:#f0f2f5;--panel:#fff;--border:#d9d9d9;--text:#1a1a2e;--tag-bg:#e8f5e9;--tag-border:#43a047;--arm-bg:#fff3e0;--arm-border:#fb8c00;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px;}
+/* HEADER */
+.hdr{height:52px;background:var(--blue);color:#fff;display:flex;align-items:center;padding:0 12px;gap:10px;flex-shrink:0;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+.logo{font-size:15px;font-weight:700;white-space:nowrap;margin-right:4px;}
+.logo span{opacity:.6;font-weight:400;}
+.hsep{width:1px;height:28px;background:rgba(255,255,255,.3);}
+.ubtn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:5px 10px;border-radius:4px;cursor:pointer;font-size:12px;white-space:nowrap;}
+.ubtn:hover{background:rgba(255,255,255,.25);}
+.ubtn.ok{border-color:#90caf9;}
+.hsel{padding:5px 8px;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.15);color:#fff;border-radius:4px;font-size:12px;cursor:pointer;}
+.hsel option{background:#1565c0;}
+.ctx{display:flex;align-items:center;gap:4px;font-size:12px;}
+.ctx label{color:rgba(255,255,255,.7);white-space:nowrap;}
+.ctx input,.ctx select{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);color:#fff;padding:4px 7px;border-radius:4px;font-size:12px;}
+.ctx input::placeholder{color:rgba(255,255,255,.45);}
+.ctx input:focus,.ctx select:focus{outline:none;border-color:#90caf9;background:rgba(255,255,255,.25);}
+.ctx select option{background:#1565c0;}
+.sp{flex:1;}
+.genbtn{background:#f57c00;border:none;color:#fff;padding:7px 14px;border-radius:4px;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+.genbtn:hover{background:#e65100;}
+/* WORKSPACE */
+.ws{flex:1;display:flex;overflow:hidden;}
+/* LEFT: TAXONOMY */
+.tax-panel{width:270px;flex-shrink:0;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.ph{padding:8px 10px;border-bottom:1px solid var(--border);background:#fafafa;}
+.ptitle{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.sbox{width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:4px;font-size:12px;outline:none;}
+.sbox:focus{border-color:var(--blue);}
+.tree{flex:1;overflow-y:auto;padding:2px 0;}
+.tgh{display:flex;align-items:center;gap:4px;padding:6px 10px;font-size:12px;font-weight:700;color:var(--blue);cursor:pointer;user-select:none;background:#f8f9ff;border-bottom:1px solid #e8ecff;}
+.tgh:hover{background:#eef1ff;}
+.tgh .arr{font-size:9px;transition:transform .15s;}
+.tgh.col .arr{transform:rotate(-90deg);}
+.tsh{display:flex;align-items:center;gap:4px;padding:5px 10px 5px 22px;font-size:12px;font-weight:600;color:#444;cursor:pointer;user-select:none;}
+.tsh:hover{background:#f5f5f5;}
+.tsh .arr{font-size:9px;transition:transform .15s;}
+.tsh.col .arr{transform:rotate(-90deg);}
+.tsb.hid{display:none;}
+.tgb.hid{display:none;}
+.ci{display:flex;align-items:center;padding:5px 10px 5px 34px;font-size:12px;cursor:pointer;border-left:3px solid transparent;line-height:1.3;}
+.ci:hover{background:#f0f4ff;border-left-color:#90caf9;}
+.ci.armed{background:var(--arm-bg);border-left-color:var(--arm-border);color:#e65100;}
+.ci.used .dot{display:inline-block;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--tag-border);margin-right:4px;flex-shrink:0;display:none;}
+.cname{flex:1;}
+.cid{font-size:10px;color:#aaa;font-family:monospace;display:block;}
+.cbadge{font-size:9px;padding:1px 4px;border-radius:3px;background:#e3f2fd;color:#1565c0;margin-left:4px;flex-shrink:0;}
+/* CENTER: DOCUMENT */
+.doc-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.dtb{padding:6px 14px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.stab{padding:3px 10px;border:1px solid var(--border);border-radius:4px 4px 0 0;font-size:12px;cursor:pointer;background:#f5f5f5;}
+.stab.act{background:#fff;color:var(--blue);font-weight:700;border-bottom-color:#fff;}
+.dc{flex:1;overflow:auto;padding:14px;}
+.dz{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;border:2px dashed var(--border);border-radius:8px;background:#fff;color:#aaa;text-align:center;padding:32px;}
+.dz .ico{font-size:44px;margin-bottom:12px;opacity:.4;}
+.dz h3{font-size:15px;color:#888;margin-bottom:6px;}
+.dz p{font-size:12px;}
+.dz.dov{border-color:var(--blue);background:var(--blue-lt);}
+/* TABLE */
+.ftw{background:#fff;border-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.1);overflow:auto;}
+.ft{border-collapse:collapse;width:100%;font-size:13px;}
+.ft th{background:#37474f;color:#fff;padding:7px 10px;font-weight:600;text-align:left;font-size:12px;white-space:nowrap;}
+.ft td{padding:5px 10px;border-bottom:1px solid #f0f0f0;vertical-align:middle;}
+.ft tr.hrow td{background:#eceff1;font-weight:700;color:#37474f;font-size:11px;text-transform:uppercase;letter-spacing:.3px;}
+.ft tr.bold td{font-weight:700;}
+.ft tr:hover td{background:#fafafa;}
+.ft .num{text-align:right;font-family:'Courier New',monospace;}
+td.tag-ok{background:var(--tag-bg)!important;cursor:pointer;}
+td.tag-ok:hover{background:#c8e6c9!important;}
+td.clickable{cursor:pointer;}
+td.clickable:hover:not(.tag-ok){background:#fffde7!important;outline:2px dashed #ffc107;outline-offset:-2px;}
+td.sel-cell{outline:2px solid var(--blue)!important;outline-offset:-2px;}
+.tbadge{display:inline-flex;align-items:center;gap:2px;font-size:10px;background:var(--tag-border);color:#fff;border-radius:3px;padding:1px 5px;margin-left:5px;vertical-align:middle;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.tbadge .rx{cursor:pointer;opacity:.7;margin-left:2px;}
+.tbadge .rx:hover{opacity:1;}
+/* RIGHT: PROPS */
+.pp{width:230px;flex-shrink:0;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.ps{padding:9px 10px;border-bottom:1px solid var(--border);}
+.pst{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.armbox{background:var(--arm-bg);border:1px solid var(--arm-border);border-radius:4px;padding:7px;}
+.armbox .al{font-weight:700;color:#e65100;font-size:12px;}
+.armbox .an{font-size:10px;color:#aaa;font-family:monospace;margin-top:2px;}
+.armbox .clr{font-size:11px;color:#aaa;cursor:pointer;text-decoration:underline;margin-top:4px;}
+.noarm{color:#ccc;font-size:12px;font-style:italic;}
+.pf{margin-bottom:7px;}
+.pf label{display:block;font-size:11px;color:#888;margin-bottom:2px;}
+.pf select,.pf input{width:100%;padding:4px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;outline:none;}
+.pf select:focus,.pf input:focus{border-color:var(--blue);}
+.tlist{flex:1;overflow-y:auto;padding:8px 10px;}
+.tlt{font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.tli{padding:5px 7px;border:1px solid #e0e0e0;border-radius:4px;margin-bottom:3px;font-size:11px;cursor:pointer;}
+.tli:hover{border-color:var(--blue);background:var(--blue-lt);}
+.tli .tlc{font-weight:600;color:var(--blue);}
+.tli .tlv{color:#555;}
+.tli .tlr{float:right;color:#f44336;cursor:pointer;}
+/* STATUS */
+.sb{height:28px;background:#37474f;color:#fff;display:flex;align-items:center;padding:0 14px;gap:14px;font-size:11px;flex-shrink:0;}
+.si{display:flex;align-items:center;gap:4px;opacity:.85;}
+.sdot{width:6px;height:6px;border-radius:50%;background:#888;}
+.sdot.g{background:#4caf50;}
+/* MODAL */
+.mo{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;align-items:center;justify-content:center;}
+.mo.open{display:flex;}
+.md{background:#fff;border-radius:8px;width:82vw;max-height:86vh;display:flex;flex-direction:column;box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.mh{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.mh h2{font-size:15px;}
+.mx{cursor:pointer;font-size:18px;color:#888;}
+.mb{flex:1;overflow:auto;padding:14px 18px;}
+.mf{padding:10px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
+.opre{background:#1e1e1e;color:#d4d4d4;padding:14px;border-radius:4px;font-family:'Courier New',monospace;font-size:11px;overflow:auto;white-space:pre;max-height:48vh;}
+.vw{margin-bottom:8px;}
+.wi{padding:5px 9px;background:#fff8e1;border-left:3px solid #ffc107;margin-bottom:3px;font-size:12px;border-radius:0 4px 4px 0;}
+.ei{padding:5px 9px;background:#ffebee;border-left:3px solid #f44336;margin-bottom:3px;font-size:12px;border-radius:0 4px 4px 0;}
+.abtn{padding:7px 14px;border:none;border-radius:4px;font-size:12px;cursor:pointer;font-weight:500;}
+.abtn.p{background:var(--blue);color:#fff;}
+.abtn.p:hover{background:var(--blue-dk);}
+.abtn.s{background:#f5f5f5;color:var(--text);border:1px solid var(--border);}
+.abtn.s:hover{background:#eee;}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:#f1f1f1;}
+::-webkit-scrollbar-thumb{background:#bbb;border-radius:3px;}
+</style>
+</head>
+<body>
+<header class="hdr">
+  <div class="logo">iXBRL <span>Tagger</span></div>
+  <div class="hsep"></div>
+  <button class="ubtn" id="taxBtn" onclick="document.getElementById('taxIn').click()">📐 Load Taxonomy</button>
+  <input type="file" id="taxIn" accept=".xsd,.zip" style="display:none" onchange="loadTaxFile(this)">
+  <select class="hsel" id="taxSel" onchange="loadBuiltin(this.value)">
+    <option value="">— Built-in taxonomy —</option>
+    <option value="ifrs">IFRS 2024</option>
+    <option value="usgaap">US-GAAP 2024</option>
+    <option value="ukfrs">UK FRS 102</option>
+  </select>
+  <div class="hsep"></div>
+  <button class="ubtn" id="docBtn" onclick="document.getElementById('docIn').click()">📄 Load Document</button>
+  <input type="file" id="docIn" accept=".xlsx,.xls,.csv" style="display:none" onchange="loadDoc(this)">
+  <div class="hsep"></div>
+  <div class="ctx"><label>Entity:</label><input type="text" id="ent" placeholder="Company name" style="width:140px"></div>
+  <div class="ctx"><label>Period:</label><input type="date" id="ps" style="width:128px"> <span style="color:rgba(255,255,255,.4)">→</span> <input type="date" id="pe" style="width:128px"></div>
+  <div class="ctx"><label>CCY:</label><select id="ccy" style="width:64px"><option>ZAR</option><option>USD</option><option>EUR</option><option>GBP</option><option>AUD</option></select></div>
+  <div class="ctx"><label>Scale:</label><select id="dec" style="width:82px"><option value="0">Units</option><option value="-3" selected>Thousands</option><option value="-6">Millions</option></select></div>
+  <div class="sp"></div>
+  <button class="genbtn" onclick="generate()">⬇ Generate iXBRL</button>
+</header>
+
+<div class="ws">
+  <!-- TAXONOMY -->
+  <aside class="tax-panel">
+    <div class="ph">
+      <div class="ptitle">Taxonomy Concepts</div>
+      <input type="text" class="sbox" id="csrch" placeholder="🔍  Search concepts…" oninput="filterTree(this.value)">
+    </div>
+    <div class="tree" id="tree">
+      <div style="padding:20px;text-align:center;color:#ccc;font-size:12px;">Select a taxonomy above</div>
+    </div>
+  </aside>
+
+  <!-- DOCUMENT -->
+  <main class="doc-panel">
+    <div class="dtb" id="dtb" style="display:none"><span style="font-size:12px;color:#888">Sheet:</span><div id="stabs"></div></div>
+    <div class="dc" id="dc">
+      <div class="dz" id="dz">
+        <div class="ico">📊</div>
+        <h3>Load your financial document</h3>
+        <p>Click "Load Document" above or drag & drop an .xlsx / .csv file here</p>
+        <p style="margin-top:10px;font-size:11px;color:#bbb">Or try a sample:</p>
+        <div style="margin-top:10px;display:flex;gap:8px;">
+          <button class="abtn s" onclick="loadSample('inc')">Income Statement</button>
+          <button class="abtn s" onclick="loadSample('bs')">Balance Sheet</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- PROPERTIES -->
+  <aside class="pp">
+    <div class="ps">
+      <div class="pst">Armed Concept</div>
+      <div id="armDisp"><div class="noarm">Click a concept in the tree to arm it, then click a value in the document to tag it</div></div>
+    </div>
+    <div class="ps" id="selSec" style="display:none">
+      <div class="pst">Selected Cell</div>
+      <div id="selDisp"></div>
+    </div>
+    <div class="ps">
+      <div class="pst">Tag Properties</div>
+      <div class="pf"><label>Sign</label><select id="tsign"><option value="1">Positive</option><option value="-1">Negative (negate)</option></select></div>
+      <div class="pf"><label>Format</label><select id="tfmt"><option value="ixt:num-dot-decimal">num-dot-decimal</option><option value="ixt:num-comma-decimal">num-comma-decimal</option></select></div>
+    </div>
+    <div class="tlist">
+      <div class="tlt">Tagged (<span id="tcnt">0</span>)</div>
+      <div id="tlb"><div style="color:#ccc;font-size:12px;font-style:italic">No tags yet</div></div>
+    </div>
+  </aside>
+</div>
+
+<div class="sb">
+  <div class="si"><div class="sdot" id="tdot"></div><span id="tstat">No taxonomy</span></div>
+  <div class="si"><div class="sdot" id="ddot"></div><span id="dstat">No document</span></div>
+  <div class="si" style="margin-left:auto"><span id="armstat">No concept armed</span></div>
+  <div class="si">Tagged: <strong id="stcnt">0</strong></div>
+</div>
+
+<!-- OUTPUT MODAL -->
+<div class="mo" id="omod">
+  <div class="md">
+    <div class="mh"><h2>Generated iXBRL</h2><span class="mx" onclick="closeModal()">✕</span></div>
+    <div class="mb">
+      <div class="vw" id="vres"></div>
+      <pre class="opre" id="opre"></pre>
+    </div>
+    <div class="mf">
+      <button class="abtn s" onclick="copyOut()">Copy</button>
+      <button class="abtn p" onclick="dlOut()">Download .xhtml</button>
+      <button class="abtn s" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+// ── STATE ──────────────────────────────────────────────
+const S = {
+  tax: null,       // loaded taxonomy
+  wb: null,        // SheetJS workbook
+  sheet: 0,        // active sheet index
+  rows: [],        // [{cells:[{val,raw,isNum,bold}], meta:{isHead,isBold}}]
+  tags: [],        // [{r,c,concept,val,isNum}]
+  armed: null,     // armed concept object
+  selCell: null,   // {r,c}
+  out: ''
+};
+
+// ── BUILT-IN TAXONOMIES ────────────────────────────────
+const TAX = {
+  ifrs:{
+    name:'IFRS 2024', prefix:'ifrs-full',
+    ns:'http://xbrl.ifrs.org/taxonomy/2024-01-01/ifrs-full',
+    tree:[
+      {label:'Statement of Financial Position',icon:'📊',ch:[
+        {label:'Assets',ch:[
+          {label:'Current Assets',ch:[
+            {id:'CashAndCashEquivalents',label:'Cash and cash equivalents',t:'monetary'},
+            {id:'TradeAndOtherCurrentReceivables',label:'Trade and other receivables',t:'monetary'},
+            {id:'Inventories',label:'Inventories',t:'monetary'},
+            {id:'CurrentTaxAssets',label:'Current tax assets',t:'monetary'},
+            {id:'OtherCurrentFinancialAssets',label:'Other current financial assets',t:'monetary'},
+            {id:'CurrentAssets',label:'Total current assets',t:'monetary'},
+          ]},
+          {label:'Non-current Assets',ch:[
+            {id:'PropertyPlantAndEquipment',label:'Property, plant and equipment',t:'monetary'},
+            {id:'RightofuseAssets',label:'Right-of-use assets',t:'monetary'},
+            {id:'Goodwill',label:'Goodwill',t:'monetary'},
+            {id:'IntangibleAssetsOtherThanGoodwill',label:'Intangible assets',t:'monetary'},
+            {id:'InvestmentsInAssociates',label:'Investments in associates',t:'monetary'},
+            {id:'DeferredTaxAssets',label:'Deferred tax assets',t:'monetary'},
+            {id:'NoncurrentAssets',label:'Total non-current assets',t:'monetary'},
+          ]},
+          {id:'Assets',label:'Total assets',t:'monetary'},
+        ]},
+        {label:'Equity',ch:[
+          {id:'IssuedCapital',label:'Issued capital',t:'monetary'},
+          {id:'SharePremium',label:'Share premium',t:'monetary'},
+          {id:'RetainedEarnings',label:'Retained earnings',t:'monetary'},
+          {id:'OtherReserves',label:'Other reserves',t:'monetary'},
+          {id:'NoncontrollingInterests',label:'Non-controlling interests',t:'monetary'},
+          {id:'Equity',label:'Total equity',t:'monetary'},
+        ]},
+        {label:'Liabilities',ch:[
+          {label:'Current Liabilities',ch:[
+            {id:'TradeAndOtherCurrentPayables',label:'Trade and other payables',t:'monetary'},
+            {id:'CurrentBorrowings',label:'Current borrowings',t:'monetary'},
+            {id:'CurrentLeaseLiabilities',label:'Current lease liabilities',t:'monetary'},
+            {id:'CurrentTaxLiabilitiesCurrent',label:'Current tax liabilities',t:'monetary'},
+            {id:'CurrentProvisions',label:'Current provisions',t:'monetary'},
+            {id:'CurrentLiabilities',label:'Total current liabilities',t:'monetary'},
+          ]},
+          {label:'Non-current Liabilities',ch:[
+            {id:'NoncurrentBorrowings',label:'Non-current borrowings',t:'monetary'},
+            {id:'NoncurrentLeaseLiabilities',label:'Non-current lease liabilities',t:'monetary'},
+            {id:'DeferredTaxLiabilities',label:'Deferred tax liabilities',t:'monetary'},
+            {id:'NoncurrentProvisions',label:'Non-current provisions',t:'monetary'},
+            {id:'NoncurrentLiabilities',label:'Total non-current liabilities',t:'monetary'},
+          ]},
+          {id:'Liabilities',label:'Total liabilities',t:'monetary'},
+        ]},
+        {id:'EquityAndLiabilities',label:'Total equity and liabilities',t:'monetary'},
+      ]},
+      {label:'Statement of Profit or Loss',icon:'📈',ch:[
+        {id:'Revenue',label:'Revenue',t:'monetary'},
+        {id:'CostOfSales',label:'Cost of sales',t:'monetary'},
+        {id:'GrossProfit',label:'Gross profit',t:'monetary'},
+        {id:'DistributionCosts',label:'Distribution costs',t:'monetary'},
+        {id:'AdministrativeExpense',label:'Administrative expenses',t:'monetary'},
+        {id:'OtherOperatingIncome',label:'Other operating income',t:'monetary'},
+        {id:'OtherOperatingExpense',label:'Other operating expense',t:'monetary'},
+        {id:'ProfitLossFromOperatingActivities',label:'Operating profit',t:'monetary'},
+        {id:'FinanceIncome',label:'Finance income',t:'monetary'},
+        {id:'FinanceCosts',label:'Finance costs',t:'monetary'},
+        {id:'ShareOfProfitLossOfAssociates',label:'Share of profit of associates',t:'monetary'},
+        {id:'ProfitLossBeforeTax',label:'Profit before tax',t:'monetary'},
+        {id:'IncomeTaxExpense',label:'Income tax expense',t:'monetary'},
+        {id:'ProfitLoss',label:'Profit for the period',t:'monetary'},
+        {id:'BasicEarningsLossPerShare',label:'EPS — basic (cents)',t:'decimal'},
+        {id:'DilutedEarningsLossPerShare',label:'EPS — diluted (cents)',t:'decimal'},
+      ]},
+      {label:'Cash Flow Statement',icon:'💰',ch:[
+        {id:'CashFlowsFromUsedInOperatingActivities',label:'Cash from operating activities',t:'monetary'},
+        {id:'CashFlowsFromUsedInInvestingActivities',label:'Cash from investing activities',t:'monetary'},
+        {id:'CashFlowsFromUsedInFinancingActivities',label:'Cash from financing activities',t:'monetary'},
+        {id:'IncreaseDecreaseInCashAndCashEquivalents',label:'Net increase/(decrease) in cash',t:'monetary'},
+      ]},
+      {label:'Entity Information',icon:'🏢',ch:[
+        {id:'NameOfReportingEntityOrOtherMeansOfIdentification',label:'Entity name',t:'string'},
+        {id:'DateOfEndOfReportingPeriod2013',label:'Reporting period end date',t:'date'},
+        {id:'CountryOfIncorporation',label:'Country of incorporation',t:'string'},
+        {id:'NumberOfEmployees',label:'Number of employees',t:'decimal'},
+      ]},
+    ]
+  },
+  usgaap:{
+    name:'US-GAAP 2024', prefix:'us-gaap',
+    ns:'http://fasb.org/us-gaap/2024',
+    tree:[
+      {label:'Balance Sheet',icon:'📊',ch:[
+        {id:'CashAndCashEquivalentsAtCarryingValue',label:'Cash and cash equivalents',t:'monetary'},
+        {id:'AccountsReceivableNetCurrent',label:'Accounts receivable, net',t:'monetary'},
+        {id:'InventoryNet',label:'Inventories',t:'monetary'},
+        {id:'AssetsCurrent',label:'Total current assets',t:'monetary'},
+        {id:'PropertyPlantAndEquipmentNet',label:'Property, plant and equipment, net',t:'monetary'},
+        {id:'Goodwill',label:'Goodwill',t:'monetary'},
+        {id:'IntangibleAssetsNetExcludingGoodwill',label:'Intangible assets, net',t:'monetary'},
+        {id:'Assets',label:'Total assets',t:'monetary'},
+        {id:'AccountsPayableCurrent',label:'Accounts payable',t:'monetary'},
+        {id:'LiabilitiesCurrent',label:'Total current liabilities',t:'monetary'},
+        {id:'LongTermDebtNoncurrent',label:'Long-term debt',t:'monetary'},
+        {id:'Liabilities',label:'Total liabilities',t:'monetary'},
+        {id:'CommonStockValue',label:'Common stock',t:'monetary'},
+        {id:'RetainedEarningsAccumulatedDeficit',label:'Retained earnings',t:'monetary'},
+        {id:'StockholdersEquity',label:'Total stockholders equity',t:'monetary'},
+      ]},
+      {label:'Income Statement',icon:'📈',ch:[
+        {id:'Revenues',label:'Revenues',t:'monetary'},
+        {id:'CostOfGoodsSold',label:'Cost of goods sold',t:'monetary'},
+        {id:'GrossProfit',label:'Gross profit',t:'monetary'},
+        {id:'SellingGeneralAndAdministrativeExpense',label:'SG&A expense',t:'monetary'},
+        {id:'ResearchAndDevelopmentExpense',label:'R&D expense',t:'monetary'},
+        {id:'OperatingIncomeLoss',label:'Operating income (loss)',t:'monetary'},
+        {id:'InterestExpense',label:'Interest expense',t:'monetary'},
+        {id:'IncomeLossFromContinuingOperationsBeforeIncomeTaxes',label:'Income before tax',t:'monetary'},
+        {id:'IncomeTaxExpenseBenefit',label:'Income tax expense',t:'monetary'},
+        {id:'NetIncomeLoss',label:'Net income',t:'monetary'},
+        {id:'EarningsPerShareBasic',label:'EPS — basic',t:'decimal'},
+        {id:'EarningsPerShareDiluted',label:'EPS — diluted',t:'decimal'},
+      ]},
+    ]
+  },
+  ukfrs:{
+    name:'UK FRS 102', prefix:'uk-bus',
+    ns:'http://xbrl.frc.org.uk/FRS-102/2023-01-01',
+    tree:[
+      {label:'Balance Sheet',icon:'📊',ch:[
+        {id:'FixedAssets',label:'Fixed assets',t:'monetary'},
+        {id:'TangibleAssets',label:'Tangible assets',t:'monetary'},
+        {id:'IntangibleAssets',label:'Intangible assets',t:'monetary'},
+        {id:'CurrentAssets',label:'Current assets',t:'monetary'},
+        {id:'Debtors',label:'Debtors',t:'monetary'},
+        {id:'CashAtBankAndInHand',label:'Cash at bank and in hand',t:'monetary'},
+        {id:'CreditorsWithinOneYear',label:'Creditors: due within one year',t:'monetary'},
+        {id:'NetCurrentAssetsLiabilities',label:'Net current assets',t:'monetary'},
+        {id:'TotalAssetsLessCurrentLiabilities',label:'Total assets less current liabilities',t:'monetary'},
+        {id:'CreditorsAfterOneYear',label:'Creditors: due after one year',t:'monetary'},
+        {id:'NetAssets',label:'Net assets',t:'monetary'},
+        {id:'CalledUpShareCapital',label:'Called up share capital',t:'monetary'},
+        {id:'ProfitLossAccount',label:'Profit and loss account',t:'monetary'},
+        {id:'Equity',label:'Total equity',t:'monetary'},
+      ]},
+      {label:'Profit and Loss',icon:'📈',ch:[
+        {id:'Turnover',label:'Turnover',t:'monetary'},
+        {id:'CostOfSales',label:'Cost of sales',t:'monetary'},
+        {id:'GrossProfitLoss',label:'Gross profit',t:'monetary'},
+        {id:'DistributionCosts',label:'Distribution costs',t:'monetary'},
+        {id:'AdministrativeCosts',label:'Administrative expenses',t:'monetary'},
+        {id:'OperatingProfitLoss',label:'Operating profit',t:'monetary'},
+        {id:'InterestReceivableAndSimilarIncome',label:'Interest receivable',t:'monetary'},
+        {id:'InterestPayableAndSimilarCharges',label:'Interest payable',t:'monetary'},
+        {id:'ProfitLossOnOrdinaryActivitiesBeforeTax',label:'Profit before taxation',t:'monetary'},
+        {id:'TaxOnProfitOrLossOnOrdinaryActivities',label:'Tax on profit',t:'monetary'},
+        {id:'ProfitLossForPeriod',label:'Profit for the year',t:'monetary'},
+      ]},
+    ]
+  }
+};
+
+// ── SAMPLE DATA ────────────────────────────────────────
+const SAMPLES = {
+  inc:{
+    rows:[
+      {r:0,cells:[{v:'Description'},{v:'Note'},{v:"2024 (R'000)"},{v:"2023 (R'000)"}],meta:{isHead:true}},
+      {r:1,cells:[{v:'Revenue'},{v:'3'},{v:'760,575',n:true},{v:'698,142',n:true}],meta:{}},
+      {r:2,cells:[{v:'Cost of sales'},{v:'4'},{v:'(524,301)',n:true},{v:'(485,226)',n:true}],meta:{}},
+      {r:3,cells:[{v:'Gross profit'},{v:''},{v:'236,274',n:true},{v:'212,916',n:true}],meta:{isBold:true}},
+      {r:4,cells:[{v:'Other income'},{v:'5'},{v:'12,450',n:true},{v:'9,831',n:true}],meta:{}},
+      {r:5,cells:[{v:'Distribution costs'},{v:'6'},{v:'(38,120)',n:true},{v:'(34,560)',n:true}],meta:{}},
+      {r:6,cells:[{v:'Administrative expenses'},{v:'7'},{v:'(89,340)',n:true},{v:'(82,100)',n:true}],meta:{}},
+      {r:7,cells:[{v:'Other expenses'},{v:'8'},{v:'(5,200)',n:true},{v:'(4,800)',n:true}],meta:{}},
+      {r:8,cells:[{v:'Operating profit'},{v:''},{v:'116,064',n:true},{v:'101,287',n:true}],meta:{isBold:true}},
+      {r:9,cells:[{v:'Finance income'},{v:'9'},{v:'8,720',n:true},{v:'6,450',n:true}],meta:{}},
+      {r:10,cells:[{v:'Finance costs'},{v:'9'},{v:'(22,340)',n:true},{v:'(19,870)',n:true}],meta:{}},
+      {r:11,cells:[{v:'Share of profit of associates'},{v:'10'},{v:'3,200',n:true},{v:'2,100',n:true}],meta:{}},
+      {r:12,cells:[{v:'Profit before tax'},{v:''},{v:'105,644',n:true},{v:'89,967',n:true}],meta:{isBold:true}},
+      {r:13,cells:[{v:'Income tax expense'},{v:'11'},{v:'(29,580)',n:true},{v:'(25,191)',n:true}],meta:{}},
+      {r:14,cells:[{v:'Profit for the year'},{v:''},{v:'76,064',n:true},{v:'64,776',n:true}],meta:{isBold:true}},
+      {r:15,cells:[{v:''},{v:''},{v:''},{v:''}],meta:{}},
+      {r:16,cells:[{v:'Earnings per share (cents)'},{v:''},{v:''},{v:''}],meta:{isHead:true}},
+      {r:17,cells:[{v:'Basic'},{v:'12'},{v:'152.1',n:true},{v:'129.6',n:true}],meta:{}},
+      {r:18,cells:[{v:'Diluted'},{v:'12'},{v:'149.8',n:true},{v:'127.3',n:true}],meta:{}},
+    ]
+  },
+  bs:{
+    rows:[
+      {r:0,cells:[{v:'Description'},{v:'Note'},{v:"2024 (R'000)"},{v:"2023 (R'000)"}],meta:{isHead:true}},
+      {r:1,cells:[{v:'ASSETS'},{v:''},{v:''},{v:''}],meta:{isHead:true}},
+      {r:2,cells:[{v:'Non-current assets'},{v:''},{v:''},{v:''}],meta:{isBold:true}},
+      {r:3,cells:[{v:'Property, plant and equipment'},{v:'13'},{v:'285,420',n:true},{v:'268,300',n:true}],meta:{}},
+      {r:4,cells:[{v:'Right-of-use assets'},{v:'14'},{v:'45,200',n:true},{v:'52,100',n:true}],meta:{}},
+      {r:5,cells:[{v:'Intangible assets'},{v:'15'},{v:'38,600',n:true},{v:'41,200',n:true}],meta:{}},
+      {r:6,cells:[{v:'Goodwill'},{v:'16'},{v:'125,000',n:true},{v:'125,000',n:true}],meta:{}},
+      {r:7,cells:[{v:'Investments in associates'},{v:'17'},{v:'28,400',n:true},{v:'25,200',n:true}],meta:{}},
+      {r:8,cells:[{v:'Deferred tax assets'},{v:'18'},{v:'12,300',n:true},{v:'10,800',n:true}],meta:{}},
+      {r:9,cells:[{v:'Total non-current assets'},{v:''},{v:'534,920',n:true},{v:'522,600',n:true}],meta:{isBold:true}},
+      {r:10,cells:[{v:'Current assets'},{v:''},{v:''},{v:''}],meta:{isBold:true}},
+      {r:11,cells:[{v:'Inventories'},{v:'19'},{v:'98,400',n:true},{v:'87,600',n:true}],meta:{}},
+      {r:12,cells:[{v:'Trade and other receivables'},{v:'20'},{v:'112,300',n:true},{v:'98,700',n:true}],meta:{}},
+      {r:13,cells:[{v:'Cash and cash equivalents'},{v:'21'},{v:'85,640',n:true},{v:'72,450',n:true}],meta:{}},
+      {r:14,cells:[{v:'Total current assets'},{v:''},{v:'296,340',n:true},{v:'258,750',n:true}],meta:{isBold:true}},
+      {r:15,cells:[{v:'Total assets'},{v:''},{v:'831,260',n:true},{v:'781,350',n:true}],meta:{isBold:true}},
+      {r:16,cells:[{v:''},{v:''},{v:''},{v:''}],meta:{}},
+      {r:17,cells:[{v:'EQUITY AND LIABILITIES'},{v:''},{v:''},{v:''}],meta:{isHead:true}},
+      {r:18,cells:[{v:'Equity'},{v:''},{v:''},{v:''}],meta:{isBold:true}},
+      {r:19,cells:[{v:'Issued capital'},{v:'22'},{v:'50,000',n:true},{v:'50,000',n:true}],meta:{}},
+      {r:20,cells:[{v:'Share premium'},{v:'22'},{v:'45,200',n:true},{v:'45,200',n:true}],meta:{}},
+      {r:21,cells:[{v:'Retained earnings'},{v:''},{v:'298,640',n:true},{v:'252,576',n:true}],meta:{}},
+      {r:22,cells:[{v:'Other reserves'},{v:''},{v:'18,200',n:true},{v:'16,400',n:true}],meta:{}},
+      {r:23,cells:[{v:'Total equity'},{v:''},{v:'412,040',n:true},{v:'364,176',n:true}],meta:{isBold:true}},
+      {r:24,cells:[{v:'Non-current liabilities'},{v:''},{v:''},{v:''}],meta:{isBold:true}},
+      {r:25,cells:[{v:'Borrowings'},{v:'23'},{v:'185,400',n:true},{v:'208,600',n:true}],meta:{}},
+      {r:26,cells:[{v:'Lease liabilities'},{v:'24'},{v:'38,200',n:true},{v:'44,800',n:true}],meta:{}},
+      {r:27,cells:[{v:'Deferred tax liabilities'},{v:'18'},{v:'24,600',n:true},{v:'21,400',n:true}],meta:{}},
+      {r:28,cells:[{v:'Total non-current liabilities'},{v:''},{v:'248,200',n:true},{v:'274,800',n:true}],meta:{isBold:true}},
+      {r:29,cells:[{v:'Current liabilities'},{v:''},{v:''},{v:''}],meta:{isBold:true}},
+      {r:30,cells:[{v:'Trade and other payables'},{v:'25'},{v:'98,400',n:true},{v:'88,200',n:true}],meta:{}},
+      {r:31,cells:[{v:'Current borrowings'},{v:'23'},{v:'42,600',n:true},{v:'35,400',n:true}],meta:{}},
+      {r:32,cells:[{v:'Current lease liabilities'},{v:'24'},{v:'12,800',n:true},{v:'11,600',n:true}],meta:{}},
+      {r:33,cells:[{v:'Current tax liabilities'},{v:''},{v:'17,220',n:true},{v:'6,974',n:true}],meta:{}},
+      {r:34,cells:[{v:'Total current liabilities'},{v:''},{v:'171,020',n:true},{v:'142,174',n:true}],meta:{isBold:true}},
+      {r:35,cells:[{v:'Total liabilities'},{v:''},{v:'419,220',n:true},{v:'416,974',n:true}],meta:{isBold:true}},
+      {r:36,cells:[{v:'Total equity and liabilities'},{v:''},{v:'831,260',n:true},{v:'781,350',n:true}],meta:{isBold:true}},
+    ]
+  }
+};
+
+// ── TAXONOMY ───────────────────────────────────────────
+function loadBuiltin(key){
+  if(!key) return;
+  S.tax = TAX[key];
+  renderTree(S.tax.tree, '');
+  document.getElementById('tdot').className='sdot g';
+  document.getElementById('tstat').textContent = S.tax.name+' loaded';
+}
+
+function loadTaxFile(inp){
+  alert('Custom taxonomy upload requires the Arelle/Python backend (next development step).\nUse the built-in taxonomies for now.');
+  inp.value='';
+}
+
+function renderTree(tree, filter){
+  const el=document.getElementById('tree');
+  el.innerHTML='';
+  const fl=filter.toLowerCase();
+  tree.forEach(group=>{
+    const gDiv=document.createElement('div');
+    const hEl=document.createElement('div');
+    hEl.className='tgh';
+    hEl.innerHTML=`<span class="arr">▼</span> ${group.icon||'📁'} ${group.label}`;
+    const bEl=document.createElement('div');
+    hEl.onclick=()=>toggle(hEl,bEl,'col');
+    buildChildren(group.ch||[], bEl, 1, fl);
+    if(fl && !bEl.querySelector('.ci')) return;
+    gDiv.appendChild(hEl);
+    gDiv.appendChild(bEl);
+    el.appendChild(gDiv);
+  });
+}
+
+function buildChildren(nodes, container, depth, fl){
+  nodes.forEach(node=>{
+    if(node.ch){
+      const sec=document.createElement('div');
+      const sh=document.createElement('div');
+      sh.className='tsh';
+      sh.style.paddingLeft=(10+depth*14)+'px';
+      sh.innerHTML=`<span class="arr">▼</span> ${node.label}`;
+      const sb=document.createElement('div');
+      sh.onclick=()=>toggle(sh,sb,'col');
+      buildChildren(node.ch, sb, depth+1, fl);
+      if(fl && !sb.querySelector('.ci')) return;
+      sec.appendChild(sh);
+      sec.appendChild(sb);
+      container.appendChild(sec);
+    } else if(node.id){
+      if(fl && !node.label.toLowerCase().includes(fl) && !node.id.toLowerCase().includes(fl)) return;
+      const c=buildConceptEl(node, depth);
+      container.appendChild(c);
+    }
+  });
+}
+
+function buildConceptEl(node, depth){
+  const c={id:node.id,label:node.label,type:node.t||'monetary',prefix:S.tax.prefix,ns:S.tax.ns};
+  const el=document.createElement('div');
+  el.className='ci'+(S.armed&&S.armed.id===node.id?' armed':'')+(S.tags.some(t=>t.concept.id===node.id)?' used':'');
+  el.dataset.cid=node.id;
+  el.style.paddingLeft=(34+depth*14)+'px';
+  el.innerHTML=`<span class="dot"></span><span class="cname">${node.label}<span class="cid">${S.tax.prefix}:${node.id}</span></span><span class="cbadge">${node.t||'monetary'}</span>`;
+  el.onclick=()=>armConcept(c, el);
+  return el;
+}
+
+function toggle(hdr, body, cls){ body.classList.toggle('hid'); hdr.classList.toggle(cls); }
+function filterTree(q){ if(S.tax) renderTree(S.tax.tree, q); }
+
+// ── ARM ────────────────────────────────────────────────
+function armConcept(c, el){
+  document.querySelectorAll('.ci.armed').forEach(e=>e.classList.remove('armed'));
+  if(S.armed && S.armed.id===c.id){ S.armed=null; updateArm(); return; }
+  S.armed=c;
+  el.classList.add('armed');
+  updateArm();
+  if(S.selCell) applyTag(S.selCell.r, S.selCell.c);
+}
+
+function clearArmed(){ S.armed=null; document.querySelectorAll('.ci.armed').forEach(e=>e.classList.remove('armed')); updateArm(); }
+
+function updateArm(){
+  const d=document.getElementById('armDisp');
+  const s=document.getElementById('armstat');
+  if(S.armed){
+    d.innerHTML=`<div class="armbox"><div class="al">${S.armed.label}</div><div class="an">${S.armed.prefix}:${S.armed.id}</div><div class="clr" onclick="clearArmed()">✕ Clear</div></div>`;
+    s.textContent='Armed: '+S.armed.prefix+':'+S.armed.id;
+  } else {
+    d.innerHTML='<div class="noarm">Click a concept in the tree to arm it, then click a value in the document to tag it</div>';
+    s.textContent='No concept armed';
+  }
+}
+
+// ── DOCUMENT LOADING ───────────────────────────────────
+async function loadDoc(inp){
+  const file=inp.files[0];
+  if(!file) return;
+  try {
+    const buf=await file.arrayBuffer();
+    const wb=XLSX.read(new Uint8Array(buf),{type:'array',cellText:false,cellDates:true});
+    S.wb=wb; S.sheet=0; S.tags=[];
+    buildSheetTabs();
+    loadSheet(0);
+    document.getElementById('ddot').className='sdot g';
+    document.getElementById('dstat').textContent=file.name;
+  } catch(e){ alert('Could not read file: '+e.message); }
+}
+
+function buildSheetTabs(){
+  const tabs=document.getElementById('stabs');
+  tabs.innerHTML='';
+  S.wb.SheetNames.forEach((n,i)=>{
+    const t=document.createElement('div');
+    t.className='stab'+(i===S.sheet?' act':'');
+    t.textContent=n;
+    t.onclick=()=>{ S.sheet=i; loadSheet(i); buildSheetTabs(); };
+    tabs.appendChild(t);
+  });
+  document.getElementById('dtb').style.display='flex';
+}
+
+function loadSheet(idx){
+  const ws=S.wb.Sheets[S.wb.SheetNames[idx]];
+  const raw=XLSX.utils.sheet_to_json(ws,{header:1,raw:true,defval:''});
+  const fmt=XLSX.utils.sheet_to_json(ws,{header:1,raw:false,defval:''});
+  const maxC=Math.max(...raw.map(r=>r.length),1);
+
+  S.rows=raw.map((row,ri)=>{
+    const frow=fmt[ri]||[];
+    const cells=[];
+    for(let ci=0;ci<maxC;ci++){
+      const addr=XLSX.utils.encode_cell({r:ri,c:ci});
+      const wc=ws[addr];
+      const fv=frow[ci]!==undefined?String(frow[ci]):'';
+      cells.push({v:fv, raw:row[ci], isNum:wc&&wc.t==='n'});
+    }
+    // detect section header: only first cell has value, all others empty
+    const nonEmpty=cells.filter(c=>c.v.trim());
+    const isHead=nonEmpty.length<=1 && cells[0]&&cells[0].v.trim() && cells[0].v===cells[0].v.toUpperCase() && cells[0].v.trim().length>2;
+    return {cells, meta:{isHead, isBold:false}};
+  });
+  renderTable();
+}
+
+// ── SAMPLE DATA ────────────────────────────────────────
+function loadSample(key){
+  const s=SAMPLES[key];
+  if(!s) return;
+  S.tags=[];
+  S.rows=s.rows.map(r=>({cells:r.cells.map(c=>({v:c.v,raw:c.v,isNum:!!c.n})),meta:r.meta}));
+  if(!document.getElementById('ent').value) document.getElementById('ent').value='Example Company Ltd';
+  document.getElementById('ps').value='2024-01-01';
+  document.getElementById('pe').value='2024-12-31';
+  document.getElementById('ddot').className='sdot g';
+  document.getElementById('dstat').textContent=(key==='inc'?'Income Statement':'Balance Sheet')+' (sample)';
+  renderTable();
+  updateTagList();
+}
+
+// ── TABLE RENDER ───────────────────────────────────────
+function isNumStr(s){
+  if(!s||!s.trim()) return false;
+  const c=s.replace(/[,\s]/g,'').replace(/^\((.+)\)$/,'-$1');
+  return !isNaN(parseFloat(c))&&isFinite(c);
+}
+
+function renderTable(){
+  const dc=document.getElementById('dc');
+  if(!S.rows.length){ dc.innerHTML='<div class="dz"><div class="ico">📊</div><h3>Empty</h3></div>'; return; }
+  const maxC=Math.max(...S.rows.map(r=>r.cells.length),1);
+  let h='<div class="ftw"><table class="ft"><tbody>';
+  S.rows.forEach((row,ri)=>{
+    if(row.cells.every(c=>!c.v||!c.v.trim())){
+      h+=`<tr><td colspan="${maxC}" style="height:6px;border:none"></td></tr>`;return;
+    }
+    const cls=row.meta.isHead?'hrow':row.meta.isBold?'bold':'';
+    h+=`<tr class="${cls}">`;
+    row.cells.forEach((cell,ci)=>{
+      const v=cell.v||'';
+      const isNum=cell.isNum||isNumStr(v);
+      const tag=S.tags.find(t=>t.r===ri&&t.c===ci);
+      let tdCls=(isNum&&v?'num ':'')+(tag?'tag-ok':(isNum&&v)||(!row.meta.isHead&&ci>0&&v)?'clickable':'');
+      const click=(isNum&&v)||(!row.meta.isHead&&ci>0&&v)?`onclick="cellClick(this,${ri},${ci})"`:'';
+      let content=esc(v);
+      if(tag){
+        const lbl=tag.concept.label.length>18?tag.concept.label.slice(0,16)+'…':tag.concept.label;
+        content+=`<span class="tbadge" title="${tag.concept.prefix}:${tag.concept.id}">${lbl}<span class="rx" onclick="event.stopPropagation();removeTag(${ri},${ci})">✕</span></span>`;
+      }
+      h+=`<td class="${tdCls}" data-r="${ri}" data-c="${ci}" ${click}>${content}</td>`;
+    });
+    h+='</tr>';
+  });
+  h+='</tbody></table></div>';
+  dc.innerHTML=h;
+}
+
+// ── CELL INTERACTION ───────────────────────────────────
+function cellClick(el,r,c){
+  document.querySelectorAll('.sel-cell').forEach(e=>e.classList.remove('sel-cell'));
+  el.classList.add('sel-cell');
+  S.selCell={r,c};
+  const cell=S.rows[r]&&S.rows[r].cells[c];
+  document.getElementById('selSec').style.display='block';
+  document.getElementById('selDisp').innerHTML=`<div style="font-size:12px"><strong>${esc(cell?cell.v:'')}</strong></div><div style="font-size:11px;color:#aaa;margin-top:2px">Row ${r+1}, Col ${c+1} · ${cell&&(cell.isNum||isNumStr(cell.v))?'numeric':'text'}</div>`;
+  if(S.armed) applyTag(r,c);
+}
+
+function applyTag(r,c){
+  if(!S.armed) return;
+  const cell=S.rows[r]&&S.rows[r].cells[c];
+  if(!cell||!cell.v.trim()) return;
+  S.tags=S.tags.filter(t=>!(t.r===r&&t.c===c));
+  S.tags.push({r,c,concept:S.armed,val:cell.v,isNum:cell.isNum||isNumStr(cell.v)});
+  renderTable();
+  updateTagList();
+  filterTree(document.getElementById('csrch').value);
+}
+
+function removeTag(r,c){
+  S.tags=S.tags.filter(t=>!(t.r===r&&t.c===c));
+  renderTable(); updateTagList();
+  filterTree(document.getElementById('csrch').value);
+}
+
+function updateTagList(){
+  const n=S.tags.length;
+  document.getElementById('tcnt').textContent=n;
+  document.getElementById('stcnt').textContent=n;
+  const b=document.getElementById('tlb');
+  if(!n){ b.innerHTML='<div style="color:#ccc;font-size:12px;font-style:italic">No tags yet</div>'; return; }
+  b.innerHTML=S.tags.map(t=>`<div class="tli" onclick="hlCell(${t.r},${t.c})">
+    <span class="tlr" onclick="event.stopPropagation();removeTag(${t.r},${t.c})">✕</span>
+    <div class="tlc">${t.concept.prefix}:${t.concept.id}</div>
+    <div class="tlv">${esc(t.val)}</div>
+  </div>`).join('');
+}
+
+function hlCell(r,c){
+  const el=document.querySelector(`td[data-r="${r}"][data-c="${c}"]`);
+  if(el){ el.scrollIntoView({behavior:'smooth',block:'center'}); el.style.outline='3px solid #0070f2'; setTimeout(()=>el.style.outline='',1500); }
+}
+
+// ── iXBRL GENERATION ───────────────────────────────────
+function generate(){
+  const entity=document.getElementById('ent').value.trim();
+  const ps=document.getElementById('ps').value;
+  const pe=document.getElementById('pe').value;
+  const ccy=document.getElementById('ccy').value;
+  const dec=document.getElementById('dec').value;
+  const pfx=S.tax?S.tax.prefix:'ifrs-full';
+  const ns=S.tax?S.tax.ns:'http://xbrl.ifrs.org/taxonomy/2024-01-01/ifrs-full';
+
+  const errs=[],warns=[];
+  if(!entity) warns.push('Entity name is empty');
+  if(!ps||!pe) warns.push('Period dates not set');
+  if(!S.tags.length){ alert('No tags applied — tag at least one value first.'); return; }
+
+  let totalNum=0;
+  S.rows.forEach(row=>row.cells.forEach(c=>{ if((c.isNum||isNumStr(c.v))&&c.v.trim()) totalNum++; }));
+  const untagged=totalNum-S.tags.filter(t=>t.isNum).length;
+  if(untagged>0) warns.push(`${untagged} numeric value(s) not tagged`);
+
+  // Build table with ix: tags
+  const maxC=Math.max(...S.rows.map(r=>r.cells.length),1);
+  let tbl='<table style="border-collapse:collapse;width:100%;font-family:Arial,sans-serif;font-size:13px;">\n';
+  S.rows.forEach((row,ri)=>{
+    if(row.cells.every(c=>!c.v||!c.v.trim())){tbl+=`  <tr><td colspan="${maxC}" style="height:8px"></td></tr>\n`;return;}
+    const rs=row.meta.isHead?'background:#eceff1;font-weight:700;':row.meta.isBold?'font-weight:700;':'';
+    tbl+='  <tr>\n';
+    row.cells.forEach((cell,ci)=>{
+      const v=cell.v||'';
+      const tag=S.tags.find(t=>t.r===ri&&t.c===ci);
+      let cont;
+      if(tag){
+        // Determine context ref: heuristic — col 2 = current, col 3 = prior
+        const ctx=ci<=2?'ctx_cur':'ctx_pri';
+        const num=v.replace(/[,\s]/g,'').replace(/^\((.+)\)$/,'-$1');
+        const neg=/^\(.*\)$/.test(v.trim());
+        if(tag.isNum){
+          const sign=neg?' sign="-"':'';
+          cont=`<ix:nonFraction name="${tag.concept.prefix}:${tag.concept.id}" contextRef="${ctx}" unitRef="u_${ccy}" decimals="${dec}"${sign} format="ixt:num-dot-decimal">${exXml(v)}</ix:nonFraction>`;
+        } else {
+          cont=`<ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur">${exXml(v)}</ix:nonNumeric>`;
+        }
+      } else { cont=exXml(v); }
+      const align=ci>1&&(cell.isNum||isNumStr(v))?'text-align:right;font-family:monospace;':'';
+      tbl+=`    <td style="padding:5px 10px;border-bottom:1px solid #eee;${rs}${align}">${cont}</td>\n`;
+    });
+    tbl+='  </tr>\n';
+  });
+  tbl+='</table>';
+
+  const adj=(d,y)=>{ if(!d) return ''; const dt=new Date(d); dt.setFullYear(dt.getFullYear()+y); return dt.toISOString().split('T')[0]; };
+  const eid=entity.replace(/\s+/g,'-').toUpperCase();
+
+  S.out=`<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
+      xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2022-02-16"
+      xmlns:xbrli="http://www.xbrl.org/2003/instance"
+      xmlns:${pfx}="${ns}"
+      xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
+      xml:lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <title>${exXml(entity||'Financial Report')}</title>
+  <ix:header>
+    <ix:hidden></ix:hidden>
+    <ix:references></ix:references>
+    <ix:resources>
+      <xbrli:context id="ctx_cur">
+        <xbrli:entity><xbrli:identifier scheme="http://www.lei.org">${exXml(eid)}</xbrli:identifier></xbrli:entity>
+        <xbrli:period><xbrli:startDate>${ps||'2024-01-01'}</xbrli:startDate><xbrli:endDate>${pe||'2024-12-31'}</xbrli:endDate></xbrli:period>
+      </xbrli:context>
+      <xbrli:context id="ctx_pri">
+        <xbrli:entity><xbrli:identifier scheme="http://www.lei.org">${exXml(eid)}</xbrli:identifier></xbrli:entity>
+        <xbrli:period><xbrli:startDate>${adj(ps,-1)}</xbrli:startDate><xbrli:endDate>${adj(pe,-1)}</xbrli:endDate></xbrli:period>
+      </xbrli:context>
+      <xbrli:unit id="u_${ccy}"><xbrli:measure>iso4217:${ccy}</xbrli:measure></xbrli:unit>
+    </ix:resources>
+  </ix:header>
+</head>
+<body>
+  <div style="max-width:920px;margin:0 auto;padding:40px 20px;font-family:Arial,sans-serif;">
+    <h1 style="font-size:20px;color:#1a1a2e;margin-bottom:4px;">${exXml(entity||'Financial Report')}</h1>
+    <p style="color:#888;font-size:12px;margin-bottom:28px;">Period ended ${pe||'2024-12-31'} · Currency: ${ccy} · Scale: ${dec==='0'?'Units':dec==='-3'?'Thousands':'Millions'}</p>
+    ${tbl}
+    <p style="margin-top:36px;font-size:11px;color:#aaa;">Generated by iXBRL Tagger · ${new Date().toISOString().split('T')[0]} · ${S.tags.length} fact(s) tagged</p>
+  </div>
+</body>
+</html>`;
+
+  document.getElementById('opre').textContent=S.out;
+  let vh='';
+  errs.forEach(e=>vh+=`<div class="ei">❌ ${esc(e)}</div>`);
+  warns.forEach(w=>vh+=`<div class="wi">⚠️ ${esc(w)}</div>`);
+  if(!vh) vh='<div style="color:#4caf50;font-size:12px;padding:4px 0 8px">✅ No validation issues</div>';
+  document.getElementById('vres').innerHTML=vh;
+  document.getElementById('omod').classList.add('open');
+}
+
+// ── MODAL ──────────────────────────────────────────────
+function closeModal(){ document.getElementById('omod').classList.remove('open'); }
+function copyOut(){ navigator.clipboard.writeText(S.out).then(()=>{ const b=event.target; b.textContent='Copied!'; setTimeout(()=>b.textContent='Copy',2000); }); }
+function dlOut(){
+  const name=(document.getElementById('ent').value.trim()||'report').replace(/\s+/g,'_')+'_'+(document.getElementById('pe').value||'2024')+'_iXBRL.xhtml';
+  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([S.out],{type:'application/xhtml+xml'})),download:name});
+  a.click();
+}
+
+// ── UTILS ──────────────────────────────────────────────
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function exXml(s){ return esc(s).replace(/'/g,'&apos;'); }
+
+// ── DRAG & DROP ────────────────────────────────────────
+document.getElementById('dc').addEventListener('dragover',e=>{e.preventDefault();document.getElementById('dz')&&document.getElementById('dz').classList.add('dov');});
+document.getElementById('dc').addEventListener('dragleave',()=>document.getElementById('dz')&&document.getElementById('dz').classList.remove('dov'));
+document.getElementById('dc').addEventListener('drop',async e=>{
+  e.preventDefault();
+  document.getElementById('dz')&&document.getElementById('dz').classList.remove('dov');
+  const f=e.dataTransfer.files[0];
+  if(!f) return;
+  if(/\.(xlsx|xls|csv)$/i.test(f.name)){ await loadDoc({files:[f]}); }
+  else alert('Drop an Excel (.xlsx) or CSV file');
+});
+
+// ── INIT ───────────────────────────────────────────────
+document.getElementById('taxSel').value='ifrs';
+loadBuiltin('ifrs');
+document.getElementById('ps').value='2024-01-01';
+document.getElementById('pe').value='2024-12-31';
+</script>
+</body>
+</html>
