@@ -55,8 +55,19 @@ body{
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
   background:var(--sap-page-bg);color:var(--sap-text);
   font-size:14px;line-height:1.4;
-  height:100vh;display:flex;flex-direction:column;overflow:hidden;
+  overflow:hidden;
 }
+
+/* ── VIEW CONTAINERS ───────────────────────────── */
+#homeView{
+  position:fixed;inset:0;overflow-y:auto;
+  background:#fff;z-index:200;
+}
+#homeView.hid{display:none;}
+#appView{
+  position:fixed;inset:0;display:flex;flex-direction:column;overflow:hidden;
+}
+#appView.hid{display:none;}
 
 /* ── SHELL BAR ─────────────────────────────────── */
 .sap-shell{
@@ -552,9 +563,439 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:#C0C4CC;border-radius:3px;}
 ::-webkit-scrollbar-thumb:hover{background:#989EA8;}
+
+/* ═══════════════════════════════════════════════════
+   HOME / LANDING PAGE
+═══════════════════════════════════════════════════ */
+
+/* Nav */
+.hn{
+  position:sticky;top:0;z-index:50;
+  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--sap-border);
+  display:flex;align-items:center;padding:0 40px;height:60px;gap:32px;
+}
+.hn-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.hn-company{font-size:13px;font-weight:800;color:var(--mcg-navy);letter-spacing:.4px;}
+.hn-product{font-size:13px;font-weight:400;color:var(--sap-text2);}
+.hn-links{display:flex;align-items:center;gap:4px;flex:1;}
+.hn-link{
+  font-size:13px;color:var(--sap-text2);text-decoration:none;
+  padding:6px 12px;border-radius:var(--r);transition:all .15s;
+}
+.hn-link:hover{background:var(--sap-hover);color:var(--mcg-navy);}
+.hn-sp{flex:1;}
+.hn-cta{
+  background:var(--mcg-navy);color:#fff;border:none;
+  padding:8px 20px;border-radius:var(--r);font-size:13px;font-weight:600;
+  cursor:pointer;font-family:inherit;transition:background .15s;
+  display:flex;align-items:center;gap:7px;
+}
+.hn-cta:hover{background:var(--mcg-navy-dk);}
+
+/* Hero */
+.h-hero{
+  background:linear-gradient(135deg,var(--mcg-navy) 0%,#0D2550 60%,#0A1E40 100%);
+  padding:80px 40px 90px;display:flex;gap:64px;align-items:center;
+  min-height:480px;
+}
+.h-hero-l{flex:1;max-width:520px;}
+.h-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  border-radius:100px;padding:5px 14px;margin-bottom:24px;
+}
+.h-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--mcg-teal);}
+.h-badge-txt{font-size:12px;color:rgba(255,255,255,.7);font-weight:500;letter-spacing:.3px;}
+.h-h1{font-size:40px;font-weight:800;color:#fff;line-height:1.18;margin-bottom:18px;letter-spacing:-.5px;}
+.h-h1 em{font-style:normal;color:var(--mcg-teal);}
+.h-sub{font-size:16px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:36px;max-width:440px;}
+.h-acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
+.h-btn-pri{
+  background:var(--mcg-teal);border:none;color:#fff;
+  padding:12px 28px;border-radius:var(--r);font-size:15px;font-weight:700;
+  cursor:pointer;font-family:inherit;transition:all .15s;
+  display:flex;align-items:center;gap:8px;
+}
+.h-btn-pri:hover{background:#14909E;transform:translateY(-1px);box-shadow:0 4px 16px rgba(24,168,200,.35);}
+.h-btn-sec{
+  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;
+  padding:12px 24px;border-radius:var(--r);font-size:15px;font-weight:500;
+  cursor:pointer;font-family:inherit;transition:all .15s;
+  display:flex;align-items:center;gap:8px;
+}
+.h-btn-sec:hover{background:rgba(255,255,255,.18);}
+.h-trust{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.h-trust-item{
+  display:flex;align-items:center;gap:6px;
+  font-size:12px;color:rgba(255,255,255,.45);
+}
+.h-trust-item::before{content:'';width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.25);}
+.h-trust-item:first-child::before{display:none;}
+
+/* App preview mockup */
+.h-hero-r{flex-shrink:0;width:480px;}
+.h-mock{
+  background:#fff;border-radius:10px;overflow:hidden;
+  box-shadow:0 24px 80px rgba(0,0,0,.5);
+  border:1px solid rgba(255,255,255,.1);
+}
+.mock-bar{
+  height:32px;background:var(--mcg-navy);display:flex;align-items:center;
+  padding:0 12px;gap:6px;
+}
+.mock-dot{width:8px;height:8px;border-radius:50%;}
+.mock-ttl{flex:1;text-align:center;font-size:10px;color:rgba(255,255,255,.5);font-weight:500;}
+.mock-body{background:#F5F6F7;padding:8px;}
+.mock-row{
+  display:flex;align-items:center;gap:6px;
+  background:#fff;border-radius:3px;margin-bottom:4px;padding:6px 8px;
+  border-left:3px solid transparent;font-size:10px;
+}
+.mock-row.tagged{border-left-color:var(--sap-pos);background:var(--sap-pos-bg);}
+.mock-row.armed{border-left-color:var(--sap-brand);background:#EDF4FE;}
+.mock-lbl{flex:1;color:var(--sap-text);font-size:10px;}
+.mock-val{font-size:10px;font-weight:600;color:var(--sap-text);font-family:'Courier New',monospace;}
+.mock-tag{font-size:9px;background:var(--sap-pos-bg);color:var(--sap-pos);padding:1px 5px;border-radius:3px;font-weight:600;}
+
+/* Section wrapper */
+.h-sec{padding:80px 40px;max-width:1200px;margin:0 auto;}
+.h-sec-ttl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mcg-teal);margin-bottom:12px;}
+.h-sec-h2{font-size:30px;font-weight:800;color:var(--mcg-navy);line-height:1.2;margin-bottom:12px;}
+.h-sec-sub{font-size:16px;color:var(--sap-text2);max-width:520px;line-height:1.6;}
+
+/* Feature cards */
+.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px;}
+.feat-card{
+  background:#fff;border-radius:var(--r-lg);padding:28px 24px;
+  border:1px solid var(--sap-border);transition:all .2s;
+}
+.feat-card:hover{border-color:var(--mcg-teal);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
+.feat-ico{
+  width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
+  font-size:22px;margin-bottom:16px;
+}
+.feat-ico.navy{background:#EEF2FF;}
+.feat-ico.teal{background:#E6FAF8;}
+.feat-ico.blue{background:#EBF4FF;}
+.feat-ico.green{background:#F1FDF6;}
+.feat-card h3{font-size:15px;font-weight:700;color:var(--mcg-navy);margin-bottom:8px;}
+.feat-card p{font-size:13px;color:var(--sap-text2);line-height:1.5;}
+
+/* Steps */
+.steps-wrap{
+  background:linear-gradient(135deg,#F8F9FE 0%,#EEF5FF 100%);
+  padding:80px 0;
+}
+.steps-inner{max-width:1200px;margin:0 auto;padding:0 40px;}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative;}
+.steps-grid::before{
+  content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:2px;
+  background:linear-gradient(90deg,var(--mcg-teal),var(--mcg-blue));
+}
+.step-item{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px;position:relative;}
+.step-num{
+  width:56px;height:56px;border-radius:50%;
+  background:linear-gradient(135deg,var(--mcg-teal),var(--mcg-blue));
+  color:#fff;font-size:20px;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;box-shadow:0 4px 16px rgba(24,168,200,.3);
+  position:relative;z-index:1;
+}
+.step-h{font-size:15px;font-weight:700;color:var(--mcg-navy);margin-bottom:8px;}
+.step-p{font-size:13px;color:var(--sap-text2);line-height:1.5;}
+
+/* Taxonomy cards */
+.tax-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+.tax-card{
+  background:#fff;border-radius:var(--r-lg);padding:28px;border:1px solid var(--sap-border);
+  display:flex;flex-direction:column;gap:12px;
+}
+.tc-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.3px;
+}
+.tc-badge.ifrs{background:#E6FAF8;color:var(--mcg-teal);}
+.tc-badge.gaap{background:#EBF4FF;color:var(--sap-brand);}
+.tc-badge.frs{background:#F1FDF6;color:var(--sap-pos);}
+.tax-card h3{font-size:17px;font-weight:700;color:var(--mcg-navy);}
+.tax-card p{font-size:13px;color:var(--sap-text2);line-height:1.5;flex:1;}
+.tc-use{font-size:12px;color:var(--sap-text3);}
+
+/* Recent sessions */
+.rec-sec{padding:60px 40px;background:#FAFBFD;border-top:1px solid var(--sap-border);}
+.rec-inner{max-width:1200px;margin:0 auto;}
+.rec-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:28px;}
+.rec-card{
+  background:#fff;border:1px solid var(--sap-border);border-radius:var(--r-lg);
+  padding:18px 20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px;
+}
+.rec-card:hover{border-color:var(--mcg-teal);box-shadow:0 4px 16px rgba(0,0,0,.08);}
+.rec-entity{font-size:15px;font-weight:700;color:var(--mcg-navy);}
+.rec-meta{font-size:12px;color:var(--sap-text2);}
+.rec-tags{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:11px;font-weight:600;color:var(--sap-pos);
+  background:var(--sap-pos-bg);padding:2px 8px;border-radius:100px;width:fit-content;
+}
+.rec-empty{font-size:14px;color:var(--sap-text3);padding:20px 0;text-align:center;}
+
+/* CTA banner */
+.cta-ban{
+  background:linear-gradient(135deg,var(--mcg-navy) 0%,#0D2550 100%);
+  padding:72px 40px;text-align:center;
+}
+.cta-ban h2{font-size:32px;font-weight:800;color:#fff;margin-bottom:14px;}
+.cta-ban p{font-size:16px;color:rgba(255,255,255,.6);margin-bottom:36px;}
+.cta-ban-acts{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
+
+/* Footer */
+.h-foot{
+  background:#0A1525;padding:40px;
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;
+}
+.h-foot-brand{display:flex;align-items:center;gap:10px;}
+.h-foot-copy{font-size:12px;color:rgba(255,255,255,.35);}
+.h-foot-links{display:flex;gap:24px;}
+.h-foot-link{font-size:12px;color:rgba(255,255,255,.35);text-decoration:none;}
+.h-foot-link:hover{color:rgba(255,255,255,.6);}
 </style>
 </head>
 <body>
+
+<!-- ═══ HOME VIEW ══════════════════════════════════ -->
+<div id="homeView">
+
+  <!-- NAV -->
+  <nav class="hn">
+    <a class="hn-brand" href="#" onclick="return false;">
+      <svg viewBox="0 0 40 36" width="30" height="27" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="10,0 20,9 10,18 0,9"   fill="#3B78C4"/>
+        <polygon points="30,0 40,9 30,18 20,9"  fill="#1C3568"/>
+        <polygon points="10,18 20,27 10,36 0,27"  fill="#18A8C8"/>
+        <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A"/>
+      </svg>
+      <span class="hn-company">MY CLOUD GLOBAL</span>
+      <span style="color:var(--sap-border);margin:0 2px;">|</span>
+      <span class="hn-product">iXBRL Tagger</span>
+    </a>
+    <div class="hn-links">
+      <a class="hn-link" href="#features">Features</a>
+      <a class="hn-link" href="#how-it-works">How it Works</a>
+      <a class="hn-link" href="#taxonomies">Taxonomies</a>
+    </div>
+    <div class="hn-sp"></div>
+    <button class="hn-cta" onclick="gotoApp()">
+      Launch Tagger
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l7 7-7 7M2 8h13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="h-hero">
+    <div class="h-hero-l">
+      <div class="h-badge">
+        <div class="h-badge-dot"></div>
+        <span class="h-badge-txt">SAP Silver Partner · Enterprise iXBRL Solution</span>
+      </div>
+      <h1 class="h-h1">From financial statement<br>to <em>iXBRL</em> — in minutes.</h1>
+      <p class="h-sub">Tag your IFRS, US-GAAP or UK FRS 102 financial statements with precision. No plugins, no servers, no setup — just upload and tag.</p>
+      <div class="h-acts">
+        <button class="h-btn-pri" onclick="gotoApp()">
+          ▶ Start New Session
+        </button>
+        <button class="h-btn-sec" onclick="gotoApp('sample')">
+          Try Sample Data
+        </button>
+      </div>
+      <div class="h-trust">
+        <span class="h-trust-item">IFRS 2024</span>
+        <span class="h-trust-item">US-GAAP 2024</span>
+        <span class="h-trust-item">UK FRS 102</span>
+        <span class="h-trust-item">Works offline</span>
+        <span class="h-trust-item">No data leaves your browser</span>
+      </div>
+    </div>
+    <div class="h-hero-r">
+      <div class="h-mock">
+        <div class="mock-bar">
+          <div class="mock-dot" style="background:#FF5F56"></div>
+          <div class="mock-dot" style="background:#FFBD2E"></div>
+          <div class="mock-dot" style="background:#27C93F"></div>
+          <span class="mock-ttl">MCG iXBRL Tagger — Income Statement 2024</span>
+        </div>
+        <div class="mock-body">
+          <div class="mock-row tagged">
+            <span class="mock-lbl">Revenue</span>
+            <span class="mock-val">142,500</span>
+            <span class="mock-tag">ifrs-full:Revenue ✓</span>
+          </div>
+          <div class="mock-row tagged">
+            <span class="mock-lbl">Cost of sales</span>
+            <span class="mock-val">(89,200)</span>
+            <span class="mock-tag">ifrs-full:CostOfSales ✓</span>
+          </div>
+          <div class="mock-row tagged">
+            <span class="mock-lbl">Gross profit</span>
+            <span class="mock-val">53,300</span>
+            <span class="mock-tag">ifrs-full:GrossProfit ✓</span>
+          </div>
+          <div class="mock-row armed">
+            <span class="mock-lbl">Administrative expenses</span>
+            <span class="mock-val">(18,450)</span>
+            <span style="font-size:9px;color:var(--sap-brand);font-weight:600;">← click to tag</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-lbl">Operating profit</span>
+            <span class="mock-val">34,850</span>
+          </div>
+          <div class="mock-row">
+            <span class="mock-lbl">Finance costs</span>
+            <span class="mock-val">(2,100)</span>
+          </div>
+          <div class="mock-row tagged">
+            <span class="mock-lbl">Profit before tax</span>
+            <span class="mock-val">32,750</span>
+            <span class="mock-tag">ifrs-full:ProfitBeforeTax ✓</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features">
+    <div class="h-sec">
+      <div class="h-sec-ttl">Why MCG iXBRL Tagger</div>
+      <h2 class="h-sec-h2">Everything you need for compliant iXBRL filings</h2>
+      <p class="h-sec-sub">Built on SAP Fiori design principles — powerful enough for enterprise, simple enough for anyone.</p>
+      <div class="feat-grid">
+        <div class="feat-card">
+          <div class="feat-ico navy">🔖</div>
+          <h3>3 Built-in Taxonomies</h3>
+          <p>IFRS 2024, US-GAAP 2024 and UK FRS 102 pre-loaded with hundreds of concepts — no taxonomy files to install.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico teal">📊</div>
+          <h3>Excel &amp; CSV Native</h3>
+          <p>Upload any .xlsx or .csv financial statement. Multi-sheet workbooks supported with instant tab switching.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico blue">✨</div>
+          <h3>Smart Auto-Suggest</h3>
+          <p>Fuzzy concept matching reads your row labels and suggests the correct taxonomy concept — review and accept in one click.</p>
+        </div>
+        <div class="feat-card">
+          <div class="feat-ico green">⬇</div>
+          <h3>One-Click iXBRL Export</h3>
+          <p>Generates a fully validated inline XBRL .xhtml document ready to submit to EDGAR, Companies House or your regulatory portal.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <div id="how-it-works" class="steps-wrap">
+    <div class="steps-inner">
+      <div style="text-align:center;margin-bottom:0;">
+        <div class="h-sec-ttl" style="justify-content:center;display:flex;">How it works</div>
+        <h2 class="h-sec-h2" style="text-align:center;">Four steps to a compliant filing</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-h">Select Taxonomy</div>
+          <p class="step-p">Choose IFRS 2024, US-GAAP 2024 or UK FRS 102 from the dropdown — the full concept tree loads instantly.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-h">Upload Document</div>
+          <p class="step-p">Drop in your Excel or CSV financial statement. Values are parsed client-side — no data ever leaves your browser.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-h">Tag Concepts</div>
+          <p class="step-p">Select a concept in the tree, then click any cell value to apply the tag. Use Auto-Suggest to map all rows at once.</p>
+        </div>
+        <div class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-h">Export iXBRL</div>
+          <p class="step-p">Hit Generate iXBRL to produce a standards-compliant .xhtml file ready for regulatory submission.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAXONOMIES -->
+  <section id="taxonomies">
+    <div class="h-sec">
+      <div class="h-sec-ttl">Taxonomy Support</div>
+      <h2 class="h-sec-h2">Reporting frameworks, built right in</h2>
+      <p class="h-sec-sub">No packages to download. All three major reporting frameworks are embedded and ready to use.</p>
+      <div class="tax-cards">
+        <div class="tax-card">
+          <span class="tc-badge ifrs">IFRS 2024</span>
+          <h3>International Financial Reporting Standards</h3>
+          <p>Full IFRS taxonomy for Statement of Financial Position, Profit or Loss, Cash Flows and comprehensive income.</p>
+          <span class="tc-use">Used in 140+ countries · IESB-maintained</span>
+        </div>
+        <div class="tax-card">
+          <span class="tc-badge gaap">US-GAAP 2024</span>
+          <h3>US Generally Accepted Accounting Principles</h3>
+          <p>SEC/EDGAR compliant taxonomy covering Balance Sheet, Income Statement and Cash Flow Statement concepts.</p>
+          <span class="tc-use">SEC EDGAR filings · FASB-maintained</span>
+        </div>
+        <div class="tax-card">
+          <span class="tc-badge frs">UK FRS 102</span>
+          <h3>UK Financial Reporting Standard 102</h3>
+          <p>Companies House and HMRC iXBRL taxonomy for UK entities reporting under FRS 102 / small company regimes.</p>
+          <span class="tc-use">Companies House · HMRC iXBRL</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- RECENT SESSIONS -->
+  <div class="rec-sec" id="recSec">
+    <div class="rec-inner">
+      <div class="h-sec-ttl">Recent Sessions</div>
+      <h2 class="h-sec-h2" style="margin-bottom:4px;">Pick up where you left off</h2>
+      <div class="rec-list" id="recList">
+        <div class="rec-empty">No saved sessions yet. Start a new session to begin tagging.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA BANNER -->
+  <div class="cta-ban">
+    <h2>Ready to generate your iXBRL filing?</h2>
+    <p>Free to use. No sign-up required. Your data never leaves your browser.</p>
+    <div class="cta-ban-acts">
+      <button class="h-btn-pri" onclick="gotoApp()">▶ Start New Session</button>
+      <button class="h-btn-sec" onclick="gotoApp('sample')">Try Sample Data</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="h-foot">
+    <div class="h-foot-brand">
+      <svg viewBox="0 0 40 36" width="24" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="10,0 20,9 10,18 0,9"   fill="#3B78C4"/>
+        <polygon points="30,0 40,9 30,18 20,9"  fill="#3B78C4" opacity=".5"/>
+        <polygon points="10,18 20,27 10,36 0,27"  fill="#18A8C8"/>
+        <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A"/>
+      </svg>
+      <span style="font-size:12px;color:rgba(255,255,255,.35);">My Cloud Global © 2024 · SAP Silver Partner</span>
+    </div>
+    <div class="h-foot-links">
+      <a class="h-foot-link" href="https://mycloudglobal.com" target="_blank" rel="noopener">mycloudglobal.com</a>
+    </div>
+  </footer>
+
+</div><!-- /homeView -->
+
+<!-- ═══ APP VIEW ════════════════════════════════════ -->
+<div id="appView" class="hid">
 
 <!-- BUSY OVERLAY -->
 <div class="busy-ov" id="busyOv">
@@ -607,6 +1048,9 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   <div class="shell-sp"></div>
 
   <div class="shell-end">
+    <button class="btn-sh-sec" onclick="gotoHome()" title="Return to home page" style="opacity:.8;">
+      ← Home
+    </button>
     <button class="btn-sh-sec" onclick="saveSession()" title="Save session to browser storage">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
         <path d="M13.5 1h-10A2.5 2.5 0 001 3.5v9A2.5 2.5 0 003.5 15h9a2.5 2.5 0 002.5-2.5v-10L13.5 1zM8 13a2 2 0 110-4 2 2 0 010 4zm2-8.5v2a.5.5 0 01-.5.5h-4a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h4a.5.5 0 01.5.5z"/>
@@ -811,6 +1255,8 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     </div>
   </div>
 </div>
+
+</div><!-- /appView -->
 
 <script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
@@ -1653,21 +2099,77 @@ function dlOut(){
 }
 
 // ═══════════════════════════════════════════════════
+// NAVIGATION — HOME ↔ APP
+// ═══════════════════════════════════════════════════
+function gotoApp(mode){
+  document.getElementById('homeView').classList.add('hid');
+  document.getElementById('appView').classList.remove('hid');
+  if(mode==='sample'){
+    // pre-load income statement sample
+    loadSample('inc');
+  }
+}
+
+function gotoHome(){
+  document.getElementById('appView').classList.add('hid');
+  document.getElementById('homeView').classList.remove('hid');
+  renderRecentSessions();
+  window.scrollTo(0,0);
+}
+
+function renderRecentSessions(){
+  const list=document.getElementById('recList');
+  if(!list) return;
+  try{
+    const raw=localStorage.getItem('mcg_ixbrl_sessions');
+    const sessions=raw?JSON.parse(raw):[];
+    if(!sessions.length){
+      list.innerHTML='<div class="rec-empty">No saved sessions yet. Start a new session to begin tagging.</div>';
+      return;
+    }
+    list.innerHTML=sessions.map((s,i)=>`
+      <div class="rec-card" onclick="restoreSessionById(${i})">
+        <div class="rec-entity">${esc(s.entity||'Untitled Entity')}</div>
+        <div class="rec-meta">${esc(s.taxName||'')} · ${esc(s.ccy||'')} · ${esc(s.ps||'')} – ${esc(s.pe||'')}</div>
+        ${s.tagCount?`<div class="rec-tags">✓ ${s.tagCount} tags</div>`:''}
+        <div class="rec-meta" style="color:var(--sap-text3);font-size:11px;">Saved ${esc(s.savedAt||'')}</div>
+      </div>
+    `).join('');
+  }catch(e){
+    list.innerHTML='<div class="rec-empty">No saved sessions yet.</div>';
+  }
+}
+
+// ═══════════════════════════════════════════════════
 // SESSION SAVE / RESTORE
 // ═══════════════════════════════════════════════════
 function saveSession(){
   try{
+    const taxKey=document.getElementById('taxSel').value;
+    const taxNames={ifrs:'IFRS 2024',usgaap:'US-GAAP 2024',ukfrs:'UK FRS 102'};
     const data={
-      tags:S.tags,
-      tax:document.getElementById('taxSel').value,
-      ent:document.getElementById('ent').value,
+      id: Date.now(),
+      entity:document.getElementById('ent').value,
+      taxKey,
+      taxName:taxNames[taxKey]||taxKey,
       ps:document.getElementById('ps').value,
       pe:document.getElementById('pe').value,
       ccy:document.getElementById('ccy').value,
-      dec:document.getElementById('dec').value
+      dec:document.getElementById('dec').value,
+      tagCount:S.tags.length,
+      savedAt:new Date().toLocaleDateString(),
+      tags:S.tags
     };
+    // persist latest session
     localStorage.setItem('mcg_ixbrl_session',JSON.stringify(data));
-    toast('Session saved to browser storage','ok');
+    // maintain sessions array (up to 5)
+    let sessions=[];
+    try{ sessions=JSON.parse(localStorage.getItem('mcg_ixbrl_sessions')||'[]'); }catch(e){}
+    sessions=sessions.filter(s=>s.entity!==data.entity||s.taxKey!==data.taxKey);
+    sessions.unshift(data);
+    if(sessions.length>5) sessions=sessions.slice(0,5);
+    localStorage.setItem('mcg_ixbrl_sessions',JSON.stringify(sessions));
+    toast('Session saved','ok');
   }catch(e){toast('Could not save: '+e.message,'err');}
 }
 
@@ -1676,12 +2178,29 @@ function restoreSession(){
     const raw=localStorage.getItem('mcg_ixbrl_session');
     if(!raw) return;
     const d=JSON.parse(raw);
-    if(d.ent) document.getElementById('ent').value=d.ent;
+    if(d.entity) document.getElementById('ent').value=d.entity;
     if(d.ps) document.getElementById('ps').value=d.ps;
     if(d.pe) document.getElementById('pe').value=d.pe;
     if(d.ccy) document.getElementById('ccy').value=d.ccy;
     if(d.dec) document.getElementById('dec').value=d.dec;
   }catch(e){}
+}
+
+function restoreSessionById(idx){
+  try{
+    const sessions=JSON.parse(localStorage.getItem('mcg_ixbrl_sessions')||'[]');
+    const d=sessions[idx];
+    if(!d) return;
+    if(d.entity) document.getElementById('ent').value=d.entity;
+    if(d.ps) document.getElementById('ps').value=d.ps;
+    if(d.pe) document.getElementById('pe').value=d.pe;
+    if(d.ccy) document.getElementById('ccy').value=d.ccy;
+    if(d.dec) document.getElementById('dec').value=d.dec;
+    if(d.tags && d.tags.length){ S.tags=d.tags; renderTags(); updateStatus(); }
+    if(d.taxKey){ document.getElementById('taxSel').value=d.taxKey; loadBuiltin(d.taxKey); }
+    gotoApp();
+    toast('Session restored — '+esc(d.entity),'ok');
+  }catch(e){ toast('Could not restore session','err'); }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1704,11 +2223,14 @@ document.getElementById('omod').addEventListener('click',e=>{
 // ═══════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════
+// Pre-load default taxonomy values in app view (hidden)
 restoreSession();
 document.getElementById('taxSel').value='ifrs';
 loadBuiltin('ifrs');
 document.getElementById('ps').value='2024-01-01';
 document.getElementById('pe').value='2024-12-31';
+// Render home view recent sessions
+renderRecentSessions();
 </script>
 </body>
 </html>
