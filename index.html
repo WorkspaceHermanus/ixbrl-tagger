@@ -2863,9 +2863,9 @@ function generate(){
           if(tag.isNum){
             const neg=/^\(.*\)$/.test(v.trim());
             const sign=neg?' sign="-"':'';
-            cont=`<ix:nonFraction name="${tag.concept.prefix}:${tag.concept.id}" contextRef="${ctx}" unitRef="u_${ccy}" decimals="${dec}"${sign} format="ixt:num-dot-decimal" data-concept="${exXml(tag.concept.label)}">${exXml(v)}</ix:nonFraction>`;
+            cont=`<ix:nonFraction name="${tag.concept.prefix}:${tag.concept.id}" contextRef="${ctx}" unitRef="u_${ccy}" decimals="${dec}"${sign} format="ixt:num-dot-decimal" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'monetary'}">${exXml(v)}</ix:nonFraction>`;
           } else {
-            cont=`<ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" data-concept="${exXml(tag.concept.label)}">${exXml(v)}</ix:nonNumeric>`;
+            cont=`<ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'string'}">${exXml(v)}</ix:nonNumeric>`;
           }
         } else {cont=exXml(v);}
         bodyContent+=`    <td style="padding:7px 14px;border-bottom:1px solid #F0F2F5;${secBg}${totBdr}${align}${bld}">${cont}</td>\n`;
@@ -2882,7 +2882,7 @@ function generate(){
       const tag=S.tags.find(t=>t.r===ri&&t.c===0);
       const v=row.cells[0]?.v||'';
       if(tag){
-        bodyContent+=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;margin:16px 0;"><ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" data-concept="${exXml(tag.concept.label)}">${exXml(v)}</ix:nonNumeric></p>\n`;
+        bodyContent+=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;margin:16px 0;"><ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'string'}">${exXml(v)}</ix:nonNumeric></p>\n`;
       } else {
         bodyContent+=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;margin:16px 0;color:#444;">${exXml(v)}</p>\n`;
       }
@@ -2892,40 +2892,151 @@ function generate(){
   });
   flushTbl();
 
-  // Inline iXBRL viewer script — makes tagged facts clickable
+  // Context data embedded in viewer for period/entity lookups
+  const ctxData={
+    ctx_cur:{type:'duration',start:ps||'2024-01-01',end:pe||'2024-12-31',entity:eid},
+    ctx_pri:{type:'duration',start:adj(ps,-1)||'2023-01-01',end:adj(pe,-1)||'2023-12-31',entity:eid}
+  };
+
+  // Inline iXBRL viewer script — right-panel fact inspector
   const viewerScript=`
 <style>
-  .ixv-fact{background:rgba(24,168,200,.18);border-bottom:2px solid #18A8C8;cursor:pointer;border-radius:2px;}
-  .ixv-fact:hover{background:rgba(24,168,200,.32);}
-  .ixv-tt{position:fixed;z-index:9999;background:#1B3568;color:#fff;padding:10px 14px;border-radius:8px;
-    font-size:12px;max-width:320px;box-shadow:0 6px 24px rgba(0,0,0,.35);pointer-events:none;line-height:1.6;}
-  .ixv-tt strong{display:block;font-size:13px;margin-bottom:4px;color:#18A8C8;}
-  .ixv-tt em{color:rgba(255,255,255,.6);font-style:normal;font-size:11px;}
+  .ixv-fact{cursor:pointer;border-radius:2px;transition:background .12s,outline .12s;}
+  .ixv-fact:hover{background:rgba(24,168,200,.18)!important;outline:1px solid rgba(24,168,200,.5);}
+  .ixv-fact-active{background:rgba(24,168,200,.35)!important;outline:2px solid #18A8C8!important;border-radius:2px;}
+  .ixv-fact-related{background:rgba(59,120,196,.18)!important;outline:1px dashed #3B78C4;border-radius:2px;}
+  #ixv-panel{position:fixed;right:-360px;top:0;bottom:0;width:340px;background:#0D1A2E;color:#E8ECF4;overflow-y:auto;transition:right .25s cubic-bezier(.4,0,.2,1);z-index:9999;box-shadow:-6px 0 40px rgba(0,0,0,.45);font-family:Arial,Helvetica,sans-serif;font-size:13px;}
+  #ixv-panel.ixv-open{right:0;}
+  .ixv-ph{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#1B3568;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:1;}
+  .ixv-ph-title{font-size:9.5px;font-weight:700;letter-spacing:1.8px;color:#18A8C8;text-transform:uppercase;}
+  .ixv-close{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:22px;line-height:1;padding:0;transition:color .15s;}
+  .ixv-close:hover{color:#fff;}
+  .ixv-pb{padding:20px 18px;}
+  .ixv-concept-label{font-size:15px;font-weight:600;color:#fff;margin-bottom:5px;line-height:1.4;}
+  .ixv-concept-name{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:20px;word-break:break-all;font-family:monospace;}
+  .ixv-val-box{background:rgba(24,168,200,.1);border:1px solid rgba(24,168,200,.22);border-radius:10px;padding:16px;margin-bottom:20px;text-align:center;}
+  .ixv-val-label{font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:#18A8C8;text-transform:uppercase;margin-bottom:8px;}
+  .ixv-val-num{font-size:24px;font-weight:700;color:#fff;word-break:break-all;line-height:1.2;}
+  .ixv-val-sub{font-size:10.5px;color:rgba(255,255,255,.4);margin-top:6px;}
+  .ixv-sec{font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.25);text-transform:uppercase;margin:18px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06);}
+  .ixv-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+  .ixv-row:last-child{border-bottom:none;}
+  .ixv-rk{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;padding-right:12px;padding-top:1px;}
+  .ixv-rv{font-size:11.5px;color:rgba(255,255,255,.8);text-align:right;word-break:break-all;line-height:1.5;}
+  .ixv-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+  .ixv-bm{background:rgba(61,184,122,.18);color:#3DB87A;}
+  .ixv-bt{background:rgba(59,120,196,.18);color:#7BA8E5;}
+  .ixv-bd{background:rgba(255,149,0,.15);color:#FF9500;}
+  .ixv-nav{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);}
+  .ixv-nb{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.65);border-radius:6px;padding:5px 14px;cursor:pointer;font-size:12px;transition:background .15s;}
+  .ixv-nb:hover:not(:disabled){background:rgba(255,255,255,.14);}
+  .ixv-nb:disabled{opacity:.25;cursor:not-allowed;}
+  .ixv-ni{font-size:11px;color:rgba(255,255,255,.35);}
+  .ixv-hint{font-size:12px;color:rgba(255,255,255,.25);text-align:center;padding:48px 24px;line-height:1.7;}
 </style>
+<div id="ixv-panel">
+  <div class="ixv-ph">
+    <span class="ixv-ph-title">Fact Inspector</span>
+    <button class="ixv-close" onclick="ixvClose()">&#215;</button>
+  </div>
+  <div class="ixv-pb" id="ixv-pb">
+    <div class="ixv-hint">Click any highlighted element in the document to inspect the tagged XBRL fact.</div>
+  </div>
+</div>
 <script>
 (function(){
-  var tt=null;
-  function removeTt(){if(tt){tt.remove();tt=null;}}
-  function tag(el,ns){
-    el.classList.add('ixv-fact');
-    el.addEventListener('click',function(e){
-      e.stopPropagation();removeTt();
-      var name=el.getAttribute('name')||'';
-      var label=el.getAttribute('data-concept')||name;
-      var ctx=el.getAttribute('contextRef')||'';
-      var unit=el.getAttribute('unitRef')||'';
-      var val=el.textContent.trim();
-      tt=document.createElement('div');tt.className='ixv-tt';
-      tt.innerHTML='<strong>'+label+'</strong><em>'+name+'</em><br>Value: <b>'+val+'</b>'+(unit?'<br>Unit: '+unit:'')+'<br>Context: '+ctx+'<br><em style="font-size:10px;opacity:.6">Click elsewhere to dismiss</em>';
-      tt.style.left=(Math.min(e.clientX+10,window.innerWidth-340))+'px';
-      tt.style.top=(Math.max(e.clientY-60,10))+'px';
-      document.body.appendChild(tt);
-    });
+  var CTX=${JSON.stringify(ctxData)};
+  var META={entity:${JSON.stringify(entity||'')},ccy:${JSON.stringify(ccy)},dec:${JSON.stringify(dec)},scale:${JSON.stringify(scaleLabel)}};
+  var allFacts=[],activeFact=null,curIdx=0;
+
+  function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+  function scaleOf(d){return d==='-6'?'Millions':d==='-3'?'Thousands':d==='0'?'Units':'Dec '+d;}
+
+  function renderPanel(el){
+    var name=el.getAttribute('name')||'';
+    var label=el.getAttribute('data-concept')||name.split(':').pop()||name;
+    var ctx=el.getAttribute('contextRef')||'';
+    var unit=el.getAttribute('unitRef')||'';
+    var dec2=el.getAttribute('decimals')||META.dec;
+    var sign=el.getAttribute('sign')||'';
+    var type=el.getAttribute('data-type')||'string';
+    var raw=el.textContent.trim();
+    var val=(sign==='-'?'-':'')+raw;
+
+    var ci=CTX[ctx]||{};
+    var period=ci.start&&ci.end?ci.start+' – '+ci.end:(ci.instant||ctx);
+    var entity2=META.entity||ci.entity||'';
+    var unitDisp=unit?unit.replace(/^u_/,''):'';
+    var scaleDisp=dec2?scaleOf(dec2):'';
+    var isNum=type==='monetary'||type==='decimal';
+    var badgeClass=isNum?'ixv-bm':type==='date'?'ixv-bd':'ixv-bt';
+    var typeLabel=isNum?'Monetary':type==='date'?'Date':type==='string'?'String':'Text Block';
+
+    var same=allFacts.filter(function(f){return f.getAttribute('name')===name;});
+    curIdx=same.indexOf(el);
+
+    var nav='';
+    if(same.length>1){
+      nav='<div class="ixv-nav">'
+        +'<button class="ixv-nb" onclick="ixvNav(-1)"'+(curIdx<=0?' disabled':'')+'>&#8249; Prev</button>'
+        +'<span class="ixv-ni">'+(curIdx+1)+' / '+same.length+'</span>'
+        +'<button class="ixv-nb" onclick="ixvNav(1)"'+(curIdx>=same.length-1?' disabled':'')+'>Next &#8250;</button>'
+        +'</div>';
+    }
+
+    var rows=''
+      +'<div class="ixv-row"><span class="ixv-rk">Period</span><span class="ixv-rv">'+esc(period)+'</span></div>'
+      +(entity2?'<div class="ixv-row"><span class="ixv-rk">Entity</span><span class="ixv-rv">'+esc(entity2)+'</span></div>':'')
+      +'<div class="ixv-row"><span class="ixv-rk">Context</span><span class="ixv-rv" style="font-family:monospace;font-size:11px;">'+esc(ctx)+'</span></div>'
+      +(unitDisp?'<div class="ixv-row"><span class="ixv-rk">Currency</span><span class="ixv-rv">'+esc(unitDisp)+'</span></div>':'')
+      +(scaleDisp?'<div class="ixv-row"><span class="ixv-rk">Scale</span><span class="ixv-rv">'+esc(scaleDisp)+'</span></div>':'')
+      +'<div class="ixv-row"><span class="ixv-rk">Type</span><span class="ixv-rv"><span class="ixv-badge '+badgeClass+'">'+typeLabel+'</span></span></div>'
+      +'<div class="ixv-row"><span class="ixv-rk">Concept</span><span class="ixv-rv" style="font-family:monospace;font-size:10px;">'+esc(name)+'</span></div>';
+
+    document.getElementById('ixv-pb').innerHTML=
+      '<div class="ixv-concept-label">'+esc(label)+'</div>'
+      +'<div class="ixv-concept-name">'+esc(name)+'</div>'
+      +'<div class="ixv-val-box">'
+        +'<div class="ixv-val-label">Tagged Value</div>'
+        +'<div class="ixv-val-num">'+esc(val)+'</div>'
+        +((unitDisp||scaleDisp)?'<div class="ixv-val-sub">'+esc(unitDisp||'')+(unitDisp&&scaleDisp?' · ':'')+esc(scaleDisp||'')+'</div>':'')
+      +'</div>'
+      +'<div class="ixv-sec">Context</div><div>'+rows+'</div>'
+      +nav;
+
+    allFacts.forEach(function(f){f.classList.remove('ixv-fact-active','ixv-fact-related');});
+    same.forEach(function(f){f.classList.add('ixv-fact-related');});
+    el.classList.remove('ixv-fact-related');
+    el.classList.add('ixv-fact-active');
+    activeFact=el;
+    document.getElementById('ixv-panel').classList.add('ixv-open');
   }
+
+  window.ixvClose=function(){
+    document.getElementById('ixv-panel').classList.remove('ixv-open');
+    allFacts.forEach(function(f){f.classList.remove('ixv-fact-active','ixv-fact-related');});
+    activeFact=null;
+  };
+
+  window.ixvNav=function(dir){
+    if(!activeFact) return;
+    var name=activeFact.getAttribute('name');
+    var same=allFacts.filter(function(f){return f.getAttribute('name')===name;});
+    var next=same[curIdx+dir];
+    if(next){next.scrollIntoView({behavior:'smooth',block:'center'});renderPanel(next);}
+  };
+
   document.addEventListener('DOMContentLoaded',function(){
-    document.querySelectorAll('ix\\\\:nonFraction,ix\\\\:nonNumeric').forEach(function(el){tag(el);});
+    document.querySelectorAll('.ixv-fact').forEach(function(el){
+      allFacts.push(el);
+      el.addEventListener('click',function(e){e.stopPropagation();renderPanel(el);});
+    });
+    document.addEventListener('click',function(e){
+      var p=document.getElementById('ixv-panel');
+      if(p&&!p.contains(e.target)&&activeFact&&!activeFact.contains(e.target)) ixvClose();
+    });
   });
-  document.addEventListener('click',removeTt);
 })();
 <\/script>`;
 
