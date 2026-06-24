@@ -565,432 +565,684 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 ::-webkit-scrollbar-thumb:hover{background:#989EA8;}
 
 /* ═══════════════════════════════════════════════════
-   HOME / LANDING PAGE
+   HOME / LANDING PAGE — AWARD EDITION
 ═══════════════════════════════════════════════════ */
 
-/* Nav */
+/* Cursor glow */
+#cursor-glow{
+  position:fixed;width:520px;height:520px;
+  background:radial-gradient(circle,rgba(24,168,200,.055) 0%,transparent 65%);
+  border-radius:50%;pointer-events:none;z-index:1;
+  transform:translate(-50%,-50%);
+  transition:left .16s ease,top .16s ease;will-change:left,top;
+}
+
+/* ── NAV ──────────────────────────────────────── */
 .hn{
-  position:sticky;top:0;z-index:50;
-  background:rgba(255,255,255,.95);backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--sap-border);
-  display:flex;align-items:center;padding:0 40px;height:60px;gap:32px;
+  position:sticky;top:0;z-index:500;
+  background:rgba(3,11,25,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(255,255,255,.055);
+  display:flex;align-items:center;padding:0 56px;height:64px;
 }
-.hn-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
-.hn-company{font-size:13px;font-weight:800;color:var(--mcg-navy);letter-spacing:.4px;}
-.hn-product{font-size:13px;font-weight:400;color:var(--sap-text2);}
-.hn-links{display:flex;align-items:center;gap:4px;flex:1;}
-.hn-link{
-  font-size:13px;color:var(--sap-text2);text-decoration:none;
-  padding:6px 12px;border-radius:var(--r);transition:all .15s;
-}
-.hn-link:hover{background:var(--sap-hover);color:var(--mcg-navy);}
+.hn-brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0;margin-right:44px;}
+.hn-company{font-size:13px;font-weight:800;color:#E8ECF4;letter-spacing:.2px;}
+.hn-divider{width:1px;height:16px;background:rgba(255,255,255,.1);margin:0 2px;}
+.hn-product{font-size:13px;color:rgba(255,255,255,.36);font-weight:400;}
+.hn-links{display:flex;align-items:center;gap:2px;}
+.hn-link{font-size:13px;color:rgba(255,255,255,.46);text-decoration:none;padding:6px 14px;border-radius:8px;transition:all .18s;}
+.hn-link:hover{color:#E8ECF4;background:rgba(255,255,255,.055);}
 .hn-sp{flex:1;}
 .hn-cta{
-  background:var(--mcg-navy);color:#fff;border:none;
-  padding:8px 20px;border-radius:var(--r);font-size:13px;font-weight:600;
-  cursor:pointer;font-family:inherit;transition:background .15s;
-  display:flex;align-items:center;gap:7px;
+  background:linear-gradient(135deg,#18A8C8 0%,#2B6CB5 100%);
+  color:#fff;border:none;padding:9px 24px;border-radius:8px;
+  font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:8px;
+  transition:all .22s;box-shadow:0 0 24px rgba(24,168,200,.2);
 }
-.hn-cta:hover{background:var(--mcg-navy-dk);}
+.hn-cta:hover{transform:translateY(-1px);box-shadow:0 4px 32px rgba(24,168,200,.38);}
+.hn-cta-arrow{
+  width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.16);
+  display:flex;align-items:center;justify-content:center;font-size:12px;
+  transition:transform .2s;
+}
+.hn-cta:hover .hn-cta-arrow{transform:translateX(2px);}
 
-/* Hero */
+/* ── HERO ─────────────────────────────────────── */
 .h-hero{
-  background:linear-gradient(135deg,var(--mcg-navy) 0%,#0D2550 60%,#0A1E40 100%);
-  padding:80px 40px 90px;display:flex;gap:64px;align-items:center;
-  min-height:480px;
+  background:#030B19;min-height:100vh;
+  display:flex;flex-direction:column;justify-content:center;
+  position:relative;overflow:hidden;
 }
-.h-hero-l{flex:1;max-width:520px;}
+.hero-inner{
+  display:flex;align-items:center;gap:72px;padding:120px 56px 100px;
+  max-width:1360px;margin:0 auto;width:100%;
+  position:relative;z-index:2;
+}
+
+/* Orb background */
+.hero-bg{position:absolute;inset:0;overflow:hidden;pointer-events:none;}
+.orb{position:absolute;border-radius:50%;filter:blur(90px);}
+.orb-1{
+  width:700px;height:700px;
+  background:radial-gradient(circle,rgba(24,168,200,.26),transparent 62%);
+  top:-220px;left:-180px;
+  animation:orbMove1 22s ease-in-out infinite;
+}
+.orb-2{
+  width:600px;height:600px;
+  background:radial-gradient(circle,rgba(43,108,181,.26),transparent 62%);
+  top:30%;right:-220px;
+  animation:orbMove2 28s ease-in-out infinite;
+}
+.orb-3{
+  width:480px;height:480px;
+  background:radial-gradient(circle,rgba(61,184,122,.16),transparent 62%);
+  bottom:-160px;left:38%;
+  animation:orbMove3 20s ease-in-out infinite;
+}
+.hero-dots{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);
+  background-size:36px 36px;
+  mask-image:radial-gradient(ellipse 70% 70% at 50% 50%,#000 0%,transparent 100%);
+}
+@keyframes orbMove1{0%,100%{transform:translate(0,0);}50%{transform:translate(80px,60px);}}
+@keyframes orbMove2{0%,100%{transform:translate(0,0);}50%{transform:translate(-60px,80px);}}
+@keyframes orbMove3{0%,100%{transform:translate(0,0);}50%{transform:translate(60px,-40px);}}
+
+/* Hero left */
+.hero-l{flex:1;max-width:560px;}
 .h-badge{
-  display:inline-flex;align-items:center;gap:8px;
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
-  border-radius:100px;padding:5px 14px;margin-bottom:24px;
+  display:inline-flex;align-items:center;gap:10px;margin-bottom:36px;
+  background:rgba(24,168,200,.07);border:1px solid rgba(24,168,200,.18);
+  border-radius:100px;padding:7px 18px;
 }
-.h-badge-dot{width:6px;height:6px;border-radius:50%;background:var(--mcg-teal);}
-.h-badge-txt{font-size:12px;color:rgba(255,255,255,.7);font-weight:500;letter-spacing:.3px;}
-.h-h1{font-size:40px;font-weight:800;color:#fff;line-height:1.18;margin-bottom:18px;letter-spacing:-.5px;}
-.h-h1 em{font-style:normal;color:var(--mcg-teal);}
-.h-sub{font-size:16px;color:rgba(255,255,255,.65);line-height:1.6;margin-bottom:36px;max-width:440px;}
-.h-acts{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:32px;}
-.h-btn-pri{
-  background:var(--mcg-teal);border:none;color:#fff;
-  padding:12px 28px;border-radius:var(--r);font-size:15px;font-weight:700;
-  cursor:pointer;font-family:inherit;transition:all .15s;
-  display:flex;align-items:center;gap:8px;
-}
-.h-btn-pri:hover{background:#14909E;transform:translateY(-1px);box-shadow:0 4px 16px rgba(24,168,200,.35);}
-.h-btn-sec{
-  background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;
-  padding:12px 24px;border-radius:var(--r);font-size:15px;font-weight:500;
-  cursor:pointer;font-family:inherit;transition:all .15s;
-  display:flex;align-items:center;gap:8px;
-}
-.h-btn-sec:hover{background:rgba(255,255,255,.18);}
-.h-trust{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-.h-trust-item{
-  display:flex;align-items:center;gap:6px;
-  font-size:12px;color:rgba(255,255,255,.45);
-}
-.h-trust-item::before{content:'';width:4px;height:4px;border-radius:50%;background:rgba(255,255,255,.25);}
-.h-trust-item:first-child::before{display:none;}
+.h-badge-dot{width:7px;height:7px;border-radius:50%;background:#18A8C8;animation:dotPulse 2.2s ease-in-out infinite;}
+@keyframes dotPulse{0%,100%{box-shadow:0 0 0 0 rgba(24,168,200,.5);}50%{box-shadow:0 0 0 7px rgba(24,168,200,0);}}
+.h-badge-txt{font-size:12px;font-weight:600;color:#18A8C8;letter-spacing:.4px;}
 
-/* App preview mockup */
-.h-hero-r{flex-shrink:0;width:480px;}
-.h-mock{
-  background:#fff;border-radius:10px;overflow:hidden;
-  box-shadow:0 24px 80px rgba(0,0,0,.5);
-  border:1px solid rgba(255,255,255,.1);
+.hero-h1{
+  font-size:clamp(52px,6.5vw,88px);font-weight:900;
+  color:#E8ECF4;line-height:1.02;letter-spacing:-3px;margin-bottom:28px;
 }
-.mock-bar{
-  height:32px;background:var(--mcg-navy);display:flex;align-items:center;
-  padding:0 12px;gap:6px;
+.hero-h1 .block{display:block;}
+.hero-h1 .accent{
+  background:linear-gradient(90deg,#18A8C8 0%,#3DB87A 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.mock-dot{width:8px;height:8px;border-radius:50%;}
-.mock-ttl{flex:1;text-align:center;font-size:10px;color:rgba(255,255,255,.5);font-weight:500;}
-.mock-body{background:#F5F6F7;padding:8px;}
-.mock-row{
-  display:flex;align-items:center;gap:6px;
-  background:#fff;border-radius:3px;margin-bottom:4px;padding:6px 8px;
-  border-left:3px solid transparent;font-size:10px;
-}
-.mock-row.tagged{border-left-color:var(--sap-pos);background:var(--sap-pos-bg);}
-.mock-row.armed{border-left-color:var(--sap-brand);background:#EDF4FE;}
-.mock-lbl{flex:1;color:var(--sap-text);font-size:10px;}
-.mock-val{font-size:10px;font-weight:600;color:var(--sap-text);font-family:'Courier New',monospace;}
-.mock-tag{font-size:9px;background:var(--sap-pos-bg);color:var(--sap-pos);padding:1px 5px;border-radius:3px;font-weight:600;}
 
-/* Section wrapper */
-.h-sec{padding:80px 40px;max-width:1200px;margin:0 auto;}
-.h-sec-ttl{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--mcg-teal);margin-bottom:12px;}
-.h-sec-h2{font-size:30px;font-weight:800;color:var(--mcg-navy);line-height:1.2;margin-bottom:12px;}
-.h-sec-sub{font-size:16px;color:var(--sap-text2);max-width:520px;line-height:1.6;}
+.hero-sub{
+  font-size:18px;color:rgba(255,255,255,.44);line-height:1.72;
+  margin-bottom:44px;max-width:440px;
+}
+.hero-acts{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:52px;}
 
-/* Feature cards */
-.feat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-top:48px;}
+.btn-hero-pri{
+  background:linear-gradient(135deg,#18A8C8,#2B6CB5);
+  border:none;color:#fff;padding:15px 32px;border-radius:10px;
+  font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:10px;
+  transition:all .25s;box-shadow:0 4px 28px rgba(24,168,200,.28);
+}
+.btn-hero-pri:hover{transform:translateY(-2px);box-shadow:0 8px 48px rgba(24,168,200,.48);}
+.btn-pill{
+  display:inline-flex;width:28px;height:28px;border-radius:50%;
+  background:rgba(255,255,255,.18);align-items:center;justify-content:center;
+  font-size:14px;transition:transform .2s;
+}
+.btn-hero-pri:hover .btn-pill{transform:translateX(3px);}
+.btn-hero-sec{
+  background:transparent;border:1px solid rgba(255,255,255,.14);
+  color:rgba(255,255,255,.62);padding:15px 28px;border-radius:10px;
+  font-size:15px;font-weight:500;cursor:pointer;font-family:inherit;
+  transition:all .22s;display:flex;align-items:center;gap:8px;
+}
+.btn-hero-sec:hover{background:rgba(255,255,255,.06);color:#E8ECF4;border-color:rgba(255,255,255,.22);}
+.btn-play{width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:9px;}
+
+.hero-trust{display:flex;align-items:center;gap:0;flex-wrap:wrap;}
+.ht-sep{width:1px;height:14px;background:rgba(255,255,255,.1);margin:0 16px;}
+.ht-item{font-size:12px;font-weight:500;color:rgba(255,255,255,.24);}
+
+/* Hero right — 3D mockup */
+.hero-r{flex-shrink:0;position:relative;}
+.mockup-scene{width:540px;}
+.mockup-3d{
+  border-radius:14px;overflow:hidden;
+  transform:perspective(1200px) rotateY(-15deg) rotateX(5deg);
+  transform-origin:center center;
+  transition:transform .6s cubic-bezier(.23,1,.32,1);
+  box-shadow:0 0 0 1px rgba(255,255,255,.05),0 40px 100px rgba(0,0,0,.7),0 0 80px rgba(24,168,200,.06);
+  will-change:transform;
+}
+.mock-shell{background:#0D1626;border-radius:14px;overflow:hidden;}
+.mock-titlebar{
+  height:38px;background:#0A1020;display:flex;align-items:center;
+  padding:0 16px;gap:8px;border-bottom:1px solid rgba(255,255,255,.04);
+}
+.mock-tl{width:11px;height:11px;border-radius:50%;}
+.mock-tb-title{flex:1;text-align:center;font-size:10px;color:rgba(255,255,255,.18);letter-spacing:.3px;}
+.mock-body{display:flex;height:320px;}
+.mock-sidebar{
+  width:140px;background:#09111E;flex-shrink:0;
+  border-right:1px solid rgba(255,255,255,.04);padding:8px 0;overflow:hidden;
+}
+.msi-group{padding:12px 14px 6px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:rgba(255,255,255,.15);}
+.msi{padding:7px 14px;font-size:10px;color:rgba(255,255,255,.28);display:flex;align-items:center;gap:5px;}
+.msi.active{color:#18A8C8;background:rgba(24,168,200,.06);border-left:2px solid #18A8C8;}
+.msi.used{color:rgba(255,255,255,.45);}
+.msi.used::after{content:'·';font-size:16px;color:#3DB87A;line-height:0;margin-left:2px;}
+.mock-main{flex:1;overflow:hidden;background:#0D1626;padding:12px 14px;}
+.mock-tbl-head{display:flex;padding:4px 8px;margin-bottom:4px;}
+.mock-th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:rgba(255,255,255,.2);}
+.mrow{display:flex;align-items:center;padding:7px 8px;border-radius:6px;margin-bottom:3px;border-left:2px solid transparent;}
+.mrow.tagged{background:rgba(61,184,122,.04);border-left-color:#3DB87A;}
+.mrow.active{background:rgba(24,168,200,.06);border-left-color:#18A8C8;}
+.mrow-lbl{flex:1;font-size:10px;color:rgba(255,255,255,.5);}
+.mrow-val{font-size:10px;font-family:'Courier New',monospace;color:rgba(255,255,255,.7);font-weight:600;}
+.mrow-chip{font-size:8.5px;font-weight:700;color:#3DB87A;padding:2px 6px;border-radius:100px;background:rgba(61,184,122,.1);white-space:nowrap;}
+.mrow-chip-blue{font-size:8.5px;font-weight:700;color:#18A8C8;padding:2px 6px;border-radius:100px;background:rgba(24,168,200,.1);white-space:nowrap;animation:chipPulse 1.8s ease-in-out infinite;}
+@keyframes chipPulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* Floating chips around mockup */
+.float-chips{position:absolute;inset:0;pointer-events:none;}
+.fc{
+  position:absolute;background:rgba(5,15,35,.92);
+  border-radius:10px;padding:10px 14px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 12px 32px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.06);
+  animation:fcFloat 5s ease-in-out infinite;
+}
+.fc-1{top:18%;left:-95px;animation-delay:0s;}
+.fc-2{top:60%;right:-75px;animation-delay:1.8s;}
+.fc-3{bottom:14%;left:-55px;animation-delay:3.2s;}
+@keyframes fcFloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+.fc-label{font-size:9px;font-weight:600;color:rgba(255,255,255,.28);margin-bottom:3px;text-transform:uppercase;letter-spacing:.4px;}
+.fc-value{font-size:11px;font-weight:700;color:#18A8C8;}
+.fc-green{color:#3DB87A;}
+
+/* ── MARQUEE ──────────────────────────────────── */
+.marquee-wrap{
+  background:#030B19;overflow:hidden;
+  border-top:1px solid rgba(255,255,255,.04);
+  border-bottom:1px solid rgba(255,255,255,.04);
+}
+.marquee-track{
+  display:flex;padding:18px 0;width:max-content;
+  animation:marqueeScroll 36s linear infinite;
+}
+.marquee-track:hover{animation-play-state:paused;}
+.mi{
+  padding:0 40px;font-size:13px;font-weight:600;letter-spacing:.4px;
+  color:rgba(255,255,255,.17);white-space:nowrap;display:flex;align-items:center;gap:12px;
+}
+.mi-dot{width:3px;height:3px;border-radius:50%;background:rgba(24,168,200,.35);}
+@keyframes marqueeScroll{to{transform:translateX(-50%);}}
+
+/* ── SECTION SHARED ────────────────────────────── */
+.section{padding:100px 56px;}
+.sec-inner{max-width:1200px;margin:0 auto;}
+.eyebrow{
+  font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:2.5px;
+  color:#18A8C8;margin-bottom:18px;display:flex;align-items:center;gap:12px;
+}
+.eyebrow::before{content:'';width:28px;height:2px;background:linear-gradient(90deg,#18A8C8,transparent);border-radius:2px;}
+.sec-h2{
+  font-size:clamp(32px,4vw,52px);font-weight:900;color:#E8ECF4;
+  line-height:1.1;letter-spacing:-1.5px;margin-bottom:16px;
+}
+.sec-sub{font-size:16px;color:rgba(255,255,255,.38);max-width:460px;line-height:1.75;}
+
+/* Scroll reveal */
+.reveal{opacity:0;transform:translateY(36px);transition:opacity .75s ease,transform .75s ease;}
+.reveal.in{opacity:1;transform:none;}
+.rd1{transition-delay:.08s;}.rd2{transition-delay:.17s;}.rd3{transition-delay:.26s;}.rd4{transition-delay:.35s;}
+
+/* ── FEATURES ─────────────────────────────────── */
+.feat-section{background:#030B19;}
+.feat-grid{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:1px;background:rgba(255,255,255,.04);
+  border-radius:20px;overflow:hidden;margin-top:64px;
+}
 .feat-card{
-  background:#fff;border-radius:var(--r-lg);padding:28px 24px;
-  border:1px solid var(--sap-border);transition:all .2s;
+  background:#07101F;padding:48px 44px;
+  position:relative;overflow:hidden;transition:background .3s;
 }
-.feat-card:hover{border-color:var(--mcg-teal);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.08);}
-.feat-ico{
-  width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  font-size:22px;margin-bottom:16px;
+.feat-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 0 0,rgba(24,168,200,.07),transparent 65%);
+  opacity:0;transition:opacity .35s;
 }
-.feat-ico.navy{background:#EEF2FF;}
-.feat-ico.teal{background:#E6FAF8;}
-.feat-ico.blue{background:#EBF4FF;}
-.feat-ico.green{background:#F1FDF6;}
-.feat-card h3{font-size:15px;font-weight:700;color:var(--mcg-navy);margin-bottom:8px;}
-.feat-card p{font-size:13px;color:var(--sap-text2);line-height:1.5;}
+.feat-card:hover{background:#0A1428;}
+.feat-card:hover::before{opacity:1;}
+.fc-num{
+  font-size:80px;font-weight:900;line-height:.9;
+  color:rgba(255,255,255,.025);letter-spacing:-4px;
+  margin-bottom:-12px;font-variant-numeric:tabular-nums;
+}
+.fc-icon{font-size:30px;margin-bottom:18px;display:block;}
+.fc-h{font-size:21px;font-weight:800;color:#E8ECF4;margin-bottom:12px;}
+.fc-p{font-size:14px;color:rgba(255,255,255,.38);line-height:1.75;}
+.feat-card.bt{border-top:1px solid rgba(255,255,255,.04);}
+.feat-card.bl{border-left:1px solid rgba(255,255,255,.04);}
 
-/* Steps */
-.steps-wrap{
-  background:linear-gradient(135deg,#F8F9FE 0%,#EEF5FF 100%);
-  padding:80px 0;
+/* ── HOW IT WORKS ─────────────────────────────── */
+.steps-section{
+  background:#05101F;
+  border-top:1px solid rgba(255,255,255,.035);
+  border-bottom:1px solid rgba(255,255,255,.035);
 }
-.steps-inner{max-width:1200px;margin:0 auto;padding:0 40px;}
-.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:48px;position:relative;}
-.steps-grid::before{
-  content:'';position:absolute;top:28px;left:12.5%;right:12.5%;height:2px;
-  background:linear-gradient(90deg,var(--mcg-teal),var(--mcg-blue));
+.steps-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:0;margin-top:64px;position:relative;
 }
-.step-item{display:flex;flex-direction:column;align-items:center;text-align:center;padding:0 16px;position:relative;}
+.steps-grid::after{
+  content:'';position:absolute;top:27px;left:12%;right:12%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(24,168,200,.25),rgba(59,120,196,.25),transparent);
+}
+.step-card{padding:0 28px;text-align:center;display:flex;flex-direction:column;align-items:center;}
 .step-num{
-  width:56px;height:56px;border-radius:50%;
-  background:linear-gradient(135deg,var(--mcg-teal),var(--mcg-blue));
-  color:#fff;font-size:20px;font-weight:800;
+  width:54px;height:54px;border-radius:50%;
+  background:rgba(24,168,200,.07);border:1px solid rgba(24,168,200,.2);
+  color:#18A8C8;font-size:18px;font-weight:800;
   display:flex;align-items:center;justify-content:center;
-  margin-bottom:20px;box-shadow:0 4px 16px rgba(24,168,200,.3);
-  position:relative;z-index:1;
+  margin-bottom:24px;position:relative;z-index:1;transition:all .3s;
 }
-.step-h{font-size:15px;font-weight:700;color:var(--mcg-navy);margin-bottom:8px;}
-.step-p{font-size:13px;color:var(--sap-text2);line-height:1.5;}
+.step-card:hover .step-num{background:rgba(24,168,200,.14);box-shadow:0 0 32px rgba(24,168,200,.25);}
+.step-h{font-size:16px;font-weight:800;color:#E8ECF4;margin-bottom:10px;}
+.step-p{font-size:13px;color:rgba(255,255,255,.38);line-height:1.7;}
 
-/* Taxonomy cards */
-.tax-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px;}
+/* ── TAXONOMIES ────────────────────────────────── */
+.tax-section{background:#030B19;}
+.tax-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:64px;}
 .tax-card{
-  background:#fff;border-radius:var(--r-lg);padding:28px;border:1px solid var(--sap-border);
-  display:flex;flex-direction:column;gap:12px;
+  background:#070F20;border:1px solid rgba(255,255,255,.055);
+  border-radius:18px;padding:38px 34px;
+  transition:all .3s;display:flex;flex-direction:column;gap:14px;
 }
-.tc-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:4px 12px;border-radius:100px;font-size:11px;font-weight:700;letter-spacing:.3px;
+.tax-card:hover{border-color:rgba(255,255,255,.1);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.4);}
+.tc-icon{font-size:32px;}
+.tc-pill{
+  display:inline-block;padding:4px 14px;border-radius:100px;
+  font-size:11px;font-weight:800;letter-spacing:.5px;
 }
-.tc-badge.ifrs{background:#E6FAF8;color:var(--mcg-teal);}
-.tc-badge.gaap{background:#EBF4FF;color:var(--sap-brand);}
-.tc-badge.frs{background:#F1FDF6;color:var(--sap-pos);}
-.tax-card h3{font-size:17px;font-weight:700;color:var(--mcg-navy);}
-.tax-card p{font-size:13px;color:var(--sap-text2);line-height:1.5;flex:1;}
-.tc-use{font-size:12px;color:var(--sap-text3);}
+.tc-pill.teal{background:rgba(24,168,200,.09);color:#18A8C8;border:1px solid rgba(24,168,200,.18);}
+.tc-pill.blue{background:rgba(59,120,196,.09);color:#3B78C4;border:1px solid rgba(59,120,196,.18);}
+.tc-pill.green{background:rgba(61,184,122,.09);color:#3DB87A;border:1px solid rgba(61,184,122,.18);}
+.tax-card h3{font-size:19px;font-weight:800;color:#E8ECF4;line-height:1.25;}
+.tax-card p{font-size:13px;color:rgba(255,255,255,.38);line-height:1.7;flex:1;}
+.tc-meta{font-size:11px;color:rgba(255,255,255,.18);}
 
-/* Recent sessions */
-.rec-sec{padding:60px 40px;background:#FAFBFD;border-top:1px solid var(--sap-border);}
-.rec-inner{max-width:1200px;margin:0 auto;}
-.rec-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-top:28px;}
+/* ── RECENT SESSIONS ───────────────────────────── */
+.rec-section{background:#05101F;border-top:1px solid rgba(255,255,255,.035);}
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-top:36px;}
 .rec-card{
-  background:#fff;border:1px solid var(--sap-border);border-radius:var(--r-lg);
-  padding:18px 20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;gap:8px;
+  background:#080F1C;border:1px solid rgba(255,255,255,.055);
+  border-radius:14px;padding:22px;cursor:pointer;transition:all .25s;
 }
-.rec-card:hover{border-color:var(--mcg-teal);box-shadow:0 4px 16px rgba(0,0,0,.08);}
-.rec-entity{font-size:15px;font-weight:700;color:var(--mcg-navy);}
-.rec-meta{font-size:12px;color:var(--sap-text2);}
+.rec-card:hover{border-color:rgba(24,168,200,.25);box-shadow:0 0 32px rgba(24,168,200,.06);}
+.rec-entity{font-size:16px;font-weight:800;color:#E8ECF4;}
+.rec-meta{font-size:12px;color:rgba(255,255,255,.28);margin-top:4px;}
 .rec-tags{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:11px;font-weight:600;color:var(--sap-pos);
-  background:var(--sap-pos-bg);padding:2px 8px;border-radius:100px;width:fit-content;
+  display:inline-flex;align-items:center;gap:5px;margin-top:10px;
+  font-size:11px;font-weight:700;color:#3DB87A;
+  background:rgba(61,184,122,.08);padding:3px 10px;border-radius:100px;
 }
-.rec-empty{font-size:14px;color:var(--sap-text3);padding:20px 0;text-align:center;}
+.rec-empty{font-size:14px;color:rgba(255,255,255,.18);padding:48px 0;text-align:center;}
 
-/* CTA banner */
-.cta-ban{
-  background:linear-gradient(135deg,var(--mcg-navy) 0%,#0D2550 100%);
-  padding:72px 40px;text-align:center;
+/* ── CTA ───────────────────────────────────────── */
+.cta-section{
+  background:#030B19;padding:130px 56px;text-align:center;
+  position:relative;overflow:hidden;
 }
-.cta-ban h2{font-size:32px;font-weight:800;color:#fff;margin-bottom:14px;}
-.cta-ban p{font-size:16px;color:rgba(255,255,255,.6);margin-bottom:36px;}
-.cta-ban-acts{display:flex;align-items:center;justify-content:center;gap:16px;flex-wrap:wrap;}
+.cta-orb{
+  position:absolute;width:900px;height:500px;
+  background:radial-gradient(ellipse,rgba(24,168,200,.07) 0%,transparent 70%);
+  left:50%;bottom:-250px;transform:translateX(-50%);pointer-events:none;
+}
+.cta-section h2{
+  font-size:clamp(40px,5.5vw,70px);font-weight:900;color:#E8ECF4;
+  letter-spacing:-2.5px;line-height:1.05;margin-bottom:18px;position:relative;z-index:1;
+}
+.cta-section p{font-size:18px;color:rgba(255,255,255,.38);margin-bottom:44px;position:relative;z-index:1;}
+.cta-acts{display:flex;align-items:center;justify-content:center;gap:14px;position:relative;z-index:1;}
 
-/* Footer */
+/* ── FOOTER ────────────────────────────────────── */
 .h-foot{
-  background:#0A1525;padding:40px;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;
+  background:#020810;padding:40px 56px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-top:1px solid rgba(255,255,255,.04);flex-wrap:wrap;gap:20px;
 }
-.h-foot-brand{display:flex;align-items:center;gap:10px;}
-.h-foot-copy{font-size:12px;color:rgba(255,255,255,.35);}
-.h-foot-links{display:flex;gap:24px;}
-.h-foot-link{font-size:12px;color:rgba(255,255,255,.35);text-decoration:none;}
-.h-foot-link:hover{color:rgba(255,255,255,.6);}
+.hf-left{display:flex;align-items:center;gap:14px;}
+.hf-copy{font-size:12px;color:rgba(255,255,255,.18);}
+.hf-links{display:flex;gap:28px;}
+.hf-link{font-size:12px;color:rgba(255,255,255,.22);text-decoration:none;transition:color .2s;}
+.hf-link:hover{color:rgba(255,255,255,.5);}
 </style>
 </head>
 <body>
 
 <!-- ═══ HOME VIEW ══════════════════════════════════ -->
 <div id="homeView">
+<div id="cursor-glow"></div>
 
-  <!-- NAV -->
-  <nav class="hn">
-    <a class="hn-brand" href="#" onclick="return false;">
-      <svg viewBox="0 0 40 36" width="30" height="27" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <polygon points="10,0 20,9 10,18 0,9"   fill="#3B78C4"/>
-        <polygon points="30,0 40,9 30,18 20,9"  fill="#1C3568"/>
-        <polygon points="10,18 20,27 10,36 0,27"  fill="#18A8C8"/>
-        <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A"/>
-      </svg>
-      <span class="hn-company">MY CLOUD GLOBAL</span>
-      <span style="color:var(--sap-border);margin:0 2px;">|</span>
-      <span class="hn-product">iXBRL Tagger</span>
-    </a>
-    <div class="hn-links">
-      <a class="hn-link" href="#features">Features</a>
-      <a class="hn-link" href="#how-it-works">How it Works</a>
-      <a class="hn-link" href="#taxonomies">Taxonomies</a>
-    </div>
-    <div class="hn-sp"></div>
-    <button class="hn-cta" onclick="gotoApp()">
-      Launch Tagger
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 1l7 7-7 7M2 8h13" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
-    </button>
-  </nav>
+<!-- NAV -->
+<nav class="hn">
+  <a class="hn-brand" href="#" onclick="return false;">
+    <svg viewBox="0 0 40 36" width="28" height="25" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polygon points="10,0 20,9 10,18 0,9"   fill="#3B78C4"/>
+      <polygon points="30,0 40,9 30,18 20,9"  fill="#1C3568"/>
+      <polygon points="10,18 20,27 10,36 0,27"  fill="#18A8C8"/>
+      <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A"/>
+    </svg>
+    <span class="hn-company">MY CLOUD GLOBAL</span>
+    <span class="hn-divider"></span>
+    <span class="hn-product">iXBRL Tagger</span>
+  </a>
+  <div class="hn-links">
+    <a class="hn-link" href="#features">Features</a>
+    <a class="hn-link" href="#how-it-works">How it Works</a>
+    <a class="hn-link" href="#taxonomies">Taxonomies</a>
+  </div>
+  <div class="hn-sp"></div>
+  <button class="hn-cta" onclick="gotoApp()">
+    Launch Tagger
+    <span class="hn-cta-arrow">›</span>
+  </button>
+</nav>
 
-  <!-- HERO -->
-  <section class="h-hero">
-    <div class="h-hero-l">
+<!-- HERO -->
+<section class="h-hero">
+  <div class="hero-bg">
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="hero-dots"></div>
+  </div>
+  <div class="hero-inner">
+    <div class="hero-l">
       <div class="h-badge">
         <div class="h-badge-dot"></div>
-        <span class="h-badge-txt">SAP Silver Partner · Enterprise iXBRL Solution</span>
+        <span class="h-badge-txt">SAP Silver Partner · Enterprise iXBRL</span>
       </div>
-      <h1 class="h-h1">From financial statement<br>to <em>iXBRL</em> — in minutes.</h1>
-      <p class="h-sub">Tag your IFRS, US-GAAP or UK FRS 102 financial statements with precision. No plugins, no servers, no setup — just upload and tag.</p>
-      <div class="h-acts">
-        <button class="h-btn-pri" onclick="gotoApp()">
-          ▶ Start New Session
+      <h1 class="hero-h1">
+        <span class="block">Financial</span>
+        <span class="block">reports,</span>
+        <span class="block accent">iXBRL-ready.</span>
+      </h1>
+      <p class="hero-sub">Tag IFRS, US-GAAP and UK FRS 102 financial statements in minutes — not days. No plugins. No servers. Your data never leaves the browser.</p>
+      <div class="hero-acts">
+        <button class="btn-hero-pri" onclick="gotoApp()">
+          Start Tagging
+          <span class="btn-pill">→</span>
         </button>
-        <button class="h-btn-sec" onclick="gotoApp('sample')">
-          Try Sample Data
+        <button class="btn-hero-sec" onclick="gotoApp('sample')">
+          <span class="btn-play">▶</span>
+          See a live demo
         </button>
       </div>
-      <div class="h-trust">
-        <span class="h-trust-item">IFRS 2024</span>
-        <span class="h-trust-item">US-GAAP 2024</span>
-        <span class="h-trust-item">UK FRS 102</span>
-        <span class="h-trust-item">Works offline</span>
-        <span class="h-trust-item">No data leaves your browser</span>
+      <div class="hero-trust">
+        <span class="ht-item">IFRS 2024</span>
+        <span class="ht-sep"></span>
+        <span class="ht-item">US-GAAP 2024</span>
+        <span class="ht-sep"></span>
+        <span class="ht-item">UK FRS 102</span>
+        <span class="ht-sep"></span>
+        <span class="ht-item">100% client-side</span>
       </div>
     </div>
-    <div class="h-hero-r">
-      <div class="h-mock">
-        <div class="mock-bar">
-          <div class="mock-dot" style="background:#FF5F56"></div>
-          <div class="mock-dot" style="background:#FFBD2E"></div>
-          <div class="mock-dot" style="background:#27C93F"></div>
-          <span class="mock-ttl">MCG iXBRL Tagger — Income Statement 2024</span>
+    <div class="hero-r">
+      <div class="float-chips">
+        <div class="fc fc-1">
+          <div class="fc-label">Concept tagged</div>
+          <div class="fc-value">ifrs-full:Revenue ✓</div>
         </div>
-        <div class="mock-body">
-          <div class="mock-row tagged">
-            <span class="mock-lbl">Revenue</span>
-            <span class="mock-val">142,500</span>
-            <span class="mock-tag">ifrs-full:Revenue ✓</span>
-          </div>
-          <div class="mock-row tagged">
-            <span class="mock-lbl">Cost of sales</span>
-            <span class="mock-val">(89,200)</span>
-            <span class="mock-tag">ifrs-full:CostOfSales ✓</span>
-          </div>
-          <div class="mock-row tagged">
-            <span class="mock-lbl">Gross profit</span>
-            <span class="mock-val">53,300</span>
-            <span class="mock-tag">ifrs-full:GrossProfit ✓</span>
-          </div>
-          <div class="mock-row armed">
-            <span class="mock-lbl">Administrative expenses</span>
-            <span class="mock-val">(18,450)</span>
-            <span style="font-size:9px;color:var(--sap-brand);font-weight:600;">← click to tag</span>
-          </div>
-          <div class="mock-row">
-            <span class="mock-lbl">Operating profit</span>
-            <span class="mock-val">34,850</span>
-          </div>
-          <div class="mock-row">
-            <span class="mock-lbl">Finance costs</span>
-            <span class="mock-val">(2,100)</span>
-          </div>
-          <div class="mock-row tagged">
-            <span class="mock-lbl">Profit before tax</span>
-            <span class="mock-val">32,750</span>
-            <span class="mock-tag">ifrs-full:ProfitBeforeTax ✓</span>
-          </div>
+        <div class="fc fc-2">
+          <div class="fc-label">Auto-suggested</div>
+          <div class="fc-value">12 concepts matched</div>
+        </div>
+        <div class="fc fc-3">
+          <div class="fc-label">Export ready</div>
+          <div class="fc-value fc-green">iXBRL .xhtml ↓</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <!-- FEATURES -->
-  <section id="features">
-    <div class="h-sec">
-      <div class="h-sec-ttl">Why MCG iXBRL Tagger</div>
-      <h2 class="h-sec-h2">Everything you need for compliant iXBRL filings</h2>
-      <p class="h-sec-sub">Built on SAP Fiori design principles — powerful enough for enterprise, simple enough for anyone.</p>
-      <div class="feat-grid">
-        <div class="feat-card">
-          <div class="feat-ico navy">🔖</div>
-          <h3>3 Built-in Taxonomies</h3>
-          <p>IFRS 2024, US-GAAP 2024 and UK FRS 102 pre-loaded with hundreds of concepts — no taxonomy files to install.</p>
-        </div>
-        <div class="feat-card">
-          <div class="feat-ico teal">📊</div>
-          <h3>Excel &amp; CSV Native</h3>
-          <p>Upload any .xlsx or .csv financial statement. Multi-sheet workbooks supported with instant tab switching.</p>
-        </div>
-        <div class="feat-card">
-          <div class="feat-ico blue">✨</div>
-          <h3>Smart Auto-Suggest</h3>
-          <p>Fuzzy concept matching reads your row labels and suggests the correct taxonomy concept — review and accept in one click.</p>
-        </div>
-        <div class="feat-card">
-          <div class="feat-ico green">⬇</div>
-          <h3>One-Click iXBRL Export</h3>
-          <p>Generates a fully validated inline XBRL .xhtml document ready to submit to EDGAR, Companies House or your regulatory portal.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- HOW IT WORKS -->
-  <div id="how-it-works" class="steps-wrap">
-    <div class="steps-inner">
-      <div style="text-align:center;margin-bottom:0;">
-        <div class="h-sec-ttl" style="justify-content:center;display:flex;">How it works</div>
-        <h2 class="h-sec-h2" style="text-align:center;">Four steps to a compliant filing</h2>
-      </div>
-      <div class="steps-grid">
-        <div class="step-item">
-          <div class="step-num">1</div>
-          <div class="step-h">Select Taxonomy</div>
-          <p class="step-p">Choose IFRS 2024, US-GAAP 2024 or UK FRS 102 from the dropdown — the full concept tree loads instantly.</p>
-        </div>
-        <div class="step-item">
-          <div class="step-num">2</div>
-          <div class="step-h">Upload Document</div>
-          <p class="step-p">Drop in your Excel or CSV financial statement. Values are parsed client-side — no data ever leaves your browser.</p>
-        </div>
-        <div class="step-item">
-          <div class="step-num">3</div>
-          <div class="step-h">Tag Concepts</div>
-          <p class="step-p">Select a concept in the tree, then click any cell value to apply the tag. Use Auto-Suggest to map all rows at once.</p>
-        </div>
-        <div class="step-item">
-          <div class="step-num">4</div>
-          <div class="step-h">Export iXBRL</div>
-          <p class="step-p">Hit Generate iXBRL to produce a standards-compliant .xhtml file ready for regulatory submission.</p>
+      <div class="mockup-scene">
+        <div class="mockup-3d" id="mockup3d">
+          <div class="mock-shell">
+            <div class="mock-titlebar">
+              <div class="mock-tl" style="background:#FF5F56"></div>
+              <div class="mock-tl" style="background:#FFBD2E"></div>
+              <div class="mock-tl" style="background:#27C93F"></div>
+              <span class="mock-tb-title">MCG iXBRL Tagger — Acme Corp · Income Statement 2024</span>
+            </div>
+            <div class="mock-body">
+              <div class="mock-sidebar">
+                <div class="msi-group">IFRS 2024</div>
+                <div class="msi active used">Revenue</div>
+                <div class="msi used">Cost of sales</div>
+                <div class="msi used">Gross profit</div>
+                <div class="msi">Admin exp.</div>
+                <div class="msi used">Oper. profit</div>
+                <div class="msi">Finance costs</div>
+                <div class="msi used">Profit b/tax</div>
+              </div>
+              <div class="mock-main">
+                <div class="mock-tbl-head">
+                  <span class="mock-th" style="flex:1">Line item</span>
+                  <span class="mock-th" style="width:80px;text-align:right">2024 (R'000)</span>
+                </div>
+                <div class="mrow tagged">
+                  <span class="mrow-lbl">Revenue</span>
+                  <span class="mrow-chip">● Revenue</span>
+                </div>
+                <div class="mrow tagged">
+                  <span class="mrow-lbl">Cost of sales</span>
+                  <span class="mrow-chip">● CostOfSales</span>
+                </div>
+                <div class="mrow tagged">
+                  <span class="mrow-lbl">Gross profit</span>
+                  <span class="mrow-chip">● GrossProfit</span>
+                </div>
+                <div class="mrow active">
+                  <span class="mrow-lbl">Administrative exp.</span>
+                  <span class="mrow-chip-blue">← tagging…</span>
+                </div>
+                <div class="mrow tagged">
+                  <span class="mrow-lbl">Operating profit</span>
+                  <span class="mrow-chip">● OperatingProfit</span>
+                </div>
+                <div class="mrow">
+                  <span class="mrow-lbl">Finance costs</span>
+                  <span class="mrow-val">(2,100)</span>
+                </div>
+                <div class="mrow tagged">
+                  <span class="mrow-lbl">Profit before tax</span>
+                  <span class="mrow-chip">● ProfitBeforeTax</span>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- TAXONOMIES -->
-  <section id="taxonomies">
-    <div class="h-sec">
-      <div class="h-sec-ttl">Taxonomy Support</div>
-      <h2 class="h-sec-h2">Reporting frameworks, built right in</h2>
-      <p class="h-sec-sub">No packages to download. All three major reporting frameworks are embedded and ready to use.</p>
-      <div class="tax-cards">
-        <div class="tax-card">
-          <span class="tc-badge ifrs">IFRS 2024</span>
-          <h3>International Financial Reporting Standards</h3>
-          <p>Full IFRS taxonomy for Statement of Financial Position, Profit or Loss, Cash Flows and comprehensive income.</p>
-          <span class="tc-use">Used in 140+ countries · IESB-maintained</span>
-        </div>
-        <div class="tax-card">
-          <span class="tc-badge gaap">US-GAAP 2024</span>
-          <h3>US Generally Accepted Accounting Principles</h3>
-          <p>SEC/EDGAR compliant taxonomy covering Balance Sheet, Income Statement and Cash Flow Statement concepts.</p>
-          <span class="tc-use">SEC EDGAR filings · FASB-maintained</span>
-        </div>
-        <div class="tax-card">
-          <span class="tc-badge frs">UK FRS 102</span>
-          <h3>UK Financial Reporting Standard 102</h3>
-          <p>Companies House and HMRC iXBRL taxonomy for UK entities reporting under FRS 102 / small company regimes.</p>
-          <span class="tc-use">Companies House · HMRC iXBRL</span>
-        </div>
-      </div>
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span class="mi"><span class="mi-dot"></span>IFRS 2024 Taxonomy</span>
+    <span class="mi"><span class="mi-dot"></span>US-GAAP 2024</span>
+    <span class="mi"><span class="mi-dot"></span>UK FRS 102</span>
+    <span class="mi"><span class="mi-dot"></span>SAP Silver Partner</span>
+    <span class="mi"><span class="mi-dot"></span>Zero data uploads</span>
+    <span class="mi"><span class="mi-dot"></span>Excel &amp; CSV native</span>
+    <span class="mi"><span class="mi-dot"></span>Smart auto-suggest</span>
+    <span class="mi"><span class="mi-dot"></span>One-click export</span>
+    <span class="mi"><span class="mi-dot"></span>EDGAR compliant</span>
+    <span class="mi"><span class="mi-dot"></span>Companies House</span>
+    <span class="mi"><span class="mi-dot"></span>IFRS 2024 Taxonomy</span>
+    <span class="mi"><span class="mi-dot"></span>US-GAAP 2024</span>
+    <span class="mi"><span class="mi-dot"></span>UK FRS 102</span>
+    <span class="mi"><span class="mi-dot"></span>SAP Silver Partner</span>
+    <span class="mi"><span class="mi-dot"></span>Zero data uploads</span>
+    <span class="mi"><span class="mi-dot"></span>Excel &amp; CSV native</span>
+    <span class="mi"><span class="mi-dot"></span>Smart auto-suggest</span>
+    <span class="mi"><span class="mi-dot"></span>One-click export</span>
+    <span class="mi"><span class="mi-dot"></span>EDGAR compliant</span>
+    <span class="mi"><span class="mi-dot"></span>Companies House</span>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section id="features" class="section feat-section">
+  <div class="sec-inner">
+    <div class="reveal">
+      <div class="eyebrow">Why MCG iXBRL Tagger</div>
+      <h2 class="sec-h2">Built for the people<br>who file the reports.</h2>
+      <p class="sec-sub">Enterprise-grade accuracy, zero setup. Everything you need, nothing you don't.</p>
     </div>
-  </section>
-
-  <!-- RECENT SESSIONS -->
-  <div class="rec-sec" id="recSec">
-    <div class="rec-inner">
-      <div class="h-sec-ttl">Recent Sessions</div>
-      <h2 class="h-sec-h2" style="margin-bottom:4px;">Pick up where you left off</h2>
-      <div class="rec-list" id="recList">
-        <div class="rec-empty">No saved sessions yet. Start a new session to begin tagging.</div>
+    <div class="feat-grid">
+      <div class="feat-card reveal rd1">
+        <div class="fc-num">01</div>
+        <span class="fc-icon">🔖</span>
+        <div class="fc-h">3 Taxonomies, Pre-loaded</div>
+        <p class="fc-p">IFRS 2024, US-GAAP 2024 and UK FRS 102 are embedded and ready — no taxonomy packages to download or install.</p>
+      </div>
+      <div class="feat-card bl reveal rd2">
+        <div class="fc-num">02</div>
+        <span class="fc-icon">📊</span>
+        <div class="fc-h">Excel &amp; CSV Native</div>
+        <p class="fc-p">Upload any .xlsx or .csv financial statement. Multi-sheet workbooks supported. Values are parsed instantly, client-side.</p>
+      </div>
+      <div class="feat-card bt reveal rd3">
+        <div class="fc-num">03</div>
+        <span class="fc-icon">✨</span>
+        <div class="fc-h">Smart Auto-Suggest</div>
+        <p class="fc-p">Fuzzy label matching reads your row descriptions and proposes the correct taxonomy concept — accept all with one click.</p>
+      </div>
+      <div class="feat-card bt bl reveal rd4">
+        <div class="fc-num">04</div>
+        <span class="fc-icon">⬇</span>
+        <div class="fc-h">One-Click iXBRL Export</div>
+        <p class="fc-p">Generates a fully compliant inline XBRL .xhtml document ready for EDGAR, Companies House or your regulatory portal.</p>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- CTA BANNER -->
-  <div class="cta-ban">
-    <h2>Ready to generate your iXBRL filing?</h2>
-    <p>Free to use. No sign-up required. Your data never leaves your browser.</p>
-    <div class="cta-ban-acts">
-      <button class="h-btn-pri" onclick="gotoApp()">▶ Start New Session</button>
-      <button class="h-btn-sec" onclick="gotoApp('sample')">Try Sample Data</button>
+<!-- HOW IT WORKS -->
+<section id="how-it-works" class="section steps-section">
+  <div class="sec-inner">
+    <div class="reveal" style="text-align:center">
+      <div class="eyebrow" style="justify-content:center;display:flex;">How it works</div>
+      <h2 class="sec-h2" style="text-align:center;">Four steps to compliant iXBRL</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal rd1">
+        <div class="step-num">1</div>
+        <div class="step-h">Select Taxonomy</div>
+        <p class="step-p">Choose IFRS 2024, US-GAAP 2024 or UK FRS 102. The full concept tree loads in milliseconds.</p>
+      </div>
+      <div class="step-card reveal rd2">
+        <div class="step-num">2</div>
+        <div class="step-h">Upload Document</div>
+        <p class="step-p">Drop your Excel or CSV financial statement. Parsed entirely in the browser — your numbers stay private.</p>
+      </div>
+      <div class="step-card reveal rd3">
+        <div class="step-num">3</div>
+        <div class="step-h">Tag Concepts</div>
+        <p class="step-p">Select a concept, click a cell to tag it. Or run Auto-Suggest to map the whole document at once.</p>
+      </div>
+      <div class="step-card reveal rd4">
+        <div class="step-num">4</div>
+        <div class="step-h">Export iXBRL</div>
+        <p class="step-p">Hit Generate — download a standards-compliant .xhtml filing ready for regulatory submission.</p>
+      </div>
     </div>
   </div>
+</section>
 
-  <!-- FOOTER -->
-  <footer class="h-foot">
-    <div class="h-foot-brand">
-      <svg viewBox="0 0 40 36" width="24" height="22" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <polygon points="10,0 20,9 10,18 0,9"   fill="#3B78C4"/>
-        <polygon points="30,0 40,9 30,18 20,9"  fill="#3B78C4" opacity=".5"/>
-        <polygon points="10,18 20,27 10,36 0,27"  fill="#18A8C8"/>
-        <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A"/>
-      </svg>
-      <span style="font-size:12px;color:rgba(255,255,255,.35);">My Cloud Global © 2024 · SAP Silver Partner</span>
+<!-- TAXONOMIES -->
+<section id="taxonomies" class="section tax-section">
+  <div class="sec-inner">
+    <div class="reveal">
+      <div class="eyebrow">Reporting Standards</div>
+      <h2 class="sec-h2">Three frameworks.<br>Zero configuration.</h2>
+      <p class="sec-sub">All taxonomy data is built in. Switch between standards in one click.</p>
     </div>
-    <div class="h-foot-links">
-      <a class="h-foot-link" href="https://mycloudglobal.com" target="_blank" rel="noopener">mycloudglobal.com</a>
+    <div class="tax-cards">
+      <div class="tax-card reveal rd1">
+        <span class="tc-icon">🌍</span>
+        <span class="tc-pill teal">IFRS 2024</span>
+        <h3>International Financial Reporting Standards</h3>
+        <p>Full IFRS taxonomy covering Statement of Financial Position, Profit or Loss, Cash Flows and comprehensive income — used in 140+ countries.</p>
+        <div class="tc-meta">Maintained by IASB · iXBRL 1.1</div>
+      </div>
+      <div class="tax-card reveal rd2">
+        <span class="tc-icon">🏛</span>
+        <span class="tc-pill blue">US-GAAP 2024</span>
+        <h3>US Generally Accepted Accounting Principles</h3>
+        <p>SEC/EDGAR compliant taxonomy covering Balance Sheet, Income Statement and Cash Flow concepts for US public filings.</p>
+        <div class="tc-meta">Maintained by FASB · EDGAR-ready</div>
+      </div>
+      <div class="tax-card reveal rd3">
+        <span class="tc-icon">🇬🇧</span>
+        <span class="tc-pill green">UK FRS 102</span>
+        <h3>UK Financial Reporting Standard 102</h3>
+        <p>Companies House and HMRC iXBRL taxonomy for UK entities reporting under FRS 102 and small company regimes.</p>
+        <div class="tc-meta">Companies House · HMRC iXBRL</div>
+      </div>
     </div>
-  </footer>
+  </div>
+</section>
+
+<!-- RECENT SESSIONS -->
+<div class="section rec-section" id="recSec">
+  <div class="sec-inner">
+    <div class="reveal">
+      <div class="eyebrow">Session History</div>
+      <h2 class="sec-h2">Pick up where<br>you left off.</h2>
+    </div>
+    <div class="rec-grid" id="recList">
+      <div class="rec-empty">No saved sessions yet — start a new session to begin tagging.</div>
+    </div>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-orb"></div>
+  <h2>Ready to file?</h2>
+  <p>Free to use. No sign-up. No data ever leaves your browser.</p>
+  <div class="cta-acts">
+    <button class="btn-hero-pri" onclick="gotoApp()">
+      Start Tagging
+      <span class="btn-pill">→</span>
+    </button>
+    <button class="btn-hero-sec" onclick="gotoApp('sample')">
+      <span class="btn-play">▶</span>
+      Try sample data
+    </button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="h-foot">
+  <div class="hf-left">
+    <svg viewBox="0 0 40 36" width="22" height="20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polygon points="10,0 20,9 10,18 0,9"   fill="#3B78C4" opacity=".7"/>
+      <polygon points="30,0 40,9 30,18 20,9"  fill="#1C3568" opacity=".7"/>
+      <polygon points="10,18 20,27 10,36 0,27"  fill="#18A8C8" opacity=".7"/>
+      <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A" opacity=".7"/>
+    </svg>
+    <span class="hf-copy">My Cloud Global © 2024 · SAP Silver Partner</span>
+  </div>
+  <div class="hf-links">
+    <a class="hf-link" href="https://mycloudglobal.com" target="_blank" rel="noopener">mycloudglobal.com</a>
+  </div>
+</footer>
 
 </div><!-- /homeView -->
 
@@ -2231,6 +2483,44 @@ document.getElementById('ps').value='2024-01-01';
 document.getElementById('pe').value='2024-12-31';
 // Render home view recent sessions
 renderRecentSessions();
+
+// ═══════════════════════════════════════════════════
+// HOME PAGE EFFECTS
+// ═══════════════════════════════════════════════════
+(function(){
+  // Cursor glow
+  const glow=document.getElementById('cursor-glow');
+  const hv=document.getElementById('homeView');
+  if(glow&&hv){
+    hv.addEventListener('mousemove',e=>{
+      glow.style.left=e.clientX+'px';
+      glow.style.top=e.clientY+'px';
+    });
+  }
+
+  // 3D mockup tilt on hero mousemove
+  const m3d=document.getElementById('mockup3d');
+  const hero=document.querySelector('.h-hero');
+  if(m3d&&hero){
+    hero.addEventListener('mousemove',e=>{
+      const r=hero.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-0.5;
+      const y=(e.clientY-r.top)/r.height-0.5;
+      m3d.style.transform=`perspective(1200px) rotateY(${-15+x*12}deg) rotateX(${5-y*8}deg)`;
+    });
+    hero.addEventListener('mouseleave',()=>{
+      m3d.style.transform='perspective(1200px) rotateY(-15deg) rotateX(5deg)';
+    });
+  }
+
+  // Scroll reveal with IntersectionObserver
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){e.target.classList.add('in');obs.unobserve(e.target);}
+    });
+  },{threshold:.1});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+})();
 </script>
 </body>
 </html>
