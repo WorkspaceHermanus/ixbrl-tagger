@@ -997,6 +997,8 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 .dash-title{font-size:28px;font-weight:900;color:#E8ECF4;letter-spacing:-.5px;}
 .dash-new-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;background:linear-gradient(135deg,#18A8C8,#3B78C4);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s;letter-spacing:.1px;font-family:inherit;}
 .dash-new-btn:hover{opacity:.86;}
+.dash-demo-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(232,236,244,.7);font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;letter-spacing:.1px;font-family:inherit;margin-right:10px;}
+.dash-demo-btn:hover{background:rgba(255,255,255,.1);color:#E8ECF4;}
 .dash-stats{display:flex;gap:1px;background:rgba(255,255,255,.04);border-radius:14px;margin-bottom:28px;overflow:hidden;}
 .dstat{flex:1;padding:20px 24px;background:#07101F;}
 .dstat-n{font-size:28px;font-weight:900;color:#E8ECF4;letter-spacing:-1px;}
@@ -1344,7 +1346,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
       <div class="step-card reveal rd2">
         <div class="step-num">2</div>
         <div class="step-h">Upload Document</div>
-        <p class="step-p">Drop your Excel or CSV financial statement. Parsed entirely in the browser — your numbers stay private.</p>
+        <p class="step-p">Drop your AFS as Excel, Word (.docx) or PDF. Parsed entirely in the browser — your numbers stay private.</p>
       </div>
       <div class="step-card reveal rd3">
         <div class="step-num">3</div>
@@ -1470,6 +1472,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   <main class="dash-main">
     <div class="dash-top">
       <h1 class="dash-title">My Companies</h1>
+      <button class="dash-demo-btn" onclick="loadDemoCompany()" title="Load a pre-filled IFRS demo company">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        Load Demo
+      </button>
       <button class="dash-new-btn" onclick="openNc()">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         New Company
@@ -1646,7 +1652,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
       <button class="tbtn tbtn-pri" onclick="document.getElementById('docIn').click()">
         ↑ Upload Document
       </button>
-      <input type="file" id="docIn" accept=".xlsx,.xls,.csv" style="display:none" onchange="loadDoc(this)">
+      <input type="file" id="docIn" accept=".xlsx,.xls,.csv,.docx,.pdf" style="display:none" onchange="loadDoc(this)">
       <button class="tbtn tbtn-sug tbtn-ml" id="autoBtn" onclick="autoSuggest()" style="display:none">
         ✨ Auto-suggest
       </button>
@@ -2156,6 +2162,9 @@ function updateArm(){
 // ═══════════════════════════════════════════════════
 async function loadDoc(inp){
   const file=inp.files[0];if(!file) return;
+  const ext=file.name.split('.').pop().toLowerCase();
+  if(ext==='docx'){await loadDocx(file);return;}
+  if(ext==='pdf'){await loadPdf(file);return;}
   busy(true);
   try{
     const buf=await file.arrayBuffer();
@@ -2168,6 +2177,126 @@ async function loadDoc(inp){
     toast('Document loaded: '+file.name,'ok');
   } catch(e){toast('Could not read file: '+e.message,'err');}
   finally{busy(false);}
+}
+
+// ═══════════════════════════════════════════════════
+// WORD (.docx) + PDF SUPPORT
+// ═══════════════════════════════════════════════════
+function lazyScript(src,checkFn){
+  return new Promise((res,rej)=>{
+    if(checkFn&&checkFn()){res();return;}
+    const s=document.createElement('script');
+    s.src=src;
+    s.onload=res;
+    s.onerror=()=>rej(new Error('Could not load '+src.split('/').pop()));
+    document.head.appendChild(s);
+  });
+}
+
+async function loadDocx(file){
+  busy(true);
+  try{
+    await lazyScript('https://unpkg.com/mammoth@1.6.0/mammoth.browser.min.js',()=>!!window.mammoth);
+    const buf=await file.arrayBuffer();
+    const result=await mammoth.convertToHtml({arrayBuffer:buf});
+    const parser=new DOMParser();
+    const doc=parser.parseFromString(result.value,'text/html');
+    const rows=[];
+    doc.body.childNodes.forEach(node=>{
+      const tag=node.nodeName;
+      // Headings → section rows
+      if(/^H[1-6]$/.test(tag)){
+        const text=node.textContent.trim();
+        if(text) rows.push({cells:[{v:text,raw:text,isNum:false}],meta:{isSection:true}});
+      }
+      // Tables → data rows
+      else if(tag==='TABLE'){
+        node.querySelectorAll('tr').forEach(tr=>{
+          const tds=[...tr.querySelectorAll('td,th')];
+          if(!tds.length) return;
+          const cells=tds.map(td=>{
+            const text=td.textContent.trim().replace(/ /g,' ');
+            const num=isNumStr(text);
+            return{v:text,raw:num?numVal(text):text,isNum:num};
+          });
+          if(cells.every(c=>!c.v)) return;
+          // Bold first cell with no numeric siblings = section header
+          const boldFirst=!!tds[0].querySelector('strong,b,h1,h2,h3,h4');
+          const hasNums=cells.slice(1).some(c=>c.isNum);
+          rows.push({cells,meta:{isSection:boldFirst&&!hasNums,isBold:boldFirst&&hasNums}});
+        });
+      }
+    });
+    if(!rows.length) throw new Error('No content extracted — ensure the AFS contains tables.');
+    _applyDocRows(rows,file.name);
+    toast('AFS loaded: '+file.name+' · '+rows.length+' rows','ok');
+  }catch(e){toast('Word error: '+e.message,'err');}
+  finally{busy(false);}
+}
+
+async function loadPdf(file){
+  busy(true);
+  try{
+    await lazyScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js',()=>!!window.pdfjsLib);
+    pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+    const buf=await file.arrayBuffer();
+    const pdf=await pdfjsLib.getDocument({data:buf}).promise;
+    const rows=[];
+    rows.push({cells:[{v:file.name.replace(/\.pdf$/i,''),raw:'',isNum:false}],meta:{isSection:true}});
+    for(let p=1;p<=pdf.numPages;p++){
+      const page=await pdf.getPage(p);
+      const vp=page.getViewport({scale:1});
+      const tc=await page.getTextContent();
+      // Map items to {x,y,text,w}
+      const items=tc.items
+        .filter(i=>i.str&&i.str.trim())
+        .map(i=>({
+          x:Math.round(i.transform[4]),
+          y:Math.round(vp.height-i.transform[5]),
+          text:i.str.trim(),
+          w:Math.round(i.width)||10
+        }))
+        .sort((a,b)=>a.y-b.y||a.x-b.x);
+      if(!items.length) continue;
+      // Group into lines by y proximity (≤6pt = same line)
+      const lines=[];
+      let ln=null;
+      items.forEach(it=>{
+        if(!ln||it.y-ln.y>6){ln={y:it.y,items:[it]};lines.push(ln);}
+        else ln.items.push(it);
+      });
+      // Each line → row; split into cells at gaps >40px
+      lines.forEach(ln=>{
+        const sorted=ln.items.sort((a,b)=>a.x-b.x);
+        const cells=[];
+        let cur=sorted[0].text,endX=sorted[0].x+sorted[0].w;
+        for(let i=1;i<sorted.length;i++){
+          const gap=sorted[i].x-endX;
+          if(gap>40){cells.push(cur.trim());cur=sorted[i].text;}
+          else cur+=(gap>1?' ':'')+sorted[i].text;
+          endX=sorted[i].x+sorted[i].w;
+        }
+        cells.push(cur.trim());
+        if(!cells.length||cells.every(c=>!c)) return;
+        const rowCells=cells.map(t=>({v:t,raw:isNumStr(t)?numVal(t):t,isNum:isNumStr(t)}));
+        const onlyText=cells.length===1&&!isNumStr(cells[0]);
+        const isAllCaps=cells[0]===cells[0].toUpperCase()&&cells[0].length>3&&/[A-Z]/.test(cells[0]);
+        rows.push({cells:rowCells,meta:{isSection:onlyText&&isAllCaps,isBold:onlyText&&!isAllCaps}});
+      });
+    }
+    if(rows.length<=1) throw new Error('No text extracted from PDF.');
+    _applyDocRows(rows,file.name);
+    toast('PDF loaded: '+file.name+' · '+rows.length+' rows','ok');
+  }catch(e){toast('PDF error: '+e.message,'err');}
+  finally{busy(false);}
+}
+
+function _applyDocRows(rows,name){
+  S.rows=rows;S.wb=null;S.sheet=0;S.tags=[];S.history=[];S.suggestions=[];
+  document.getElementById('sheetTabs').innerHTML='';
+  document.getElementById('tabSep').style.display='none';
+  setDot('docDot','ok');setText('docStat',name);setText('docFn',name);
+  updateStep(2,true);showAutoBtn();renderTable();updateProgress();countNumeric();
 }
 
 function buildSheetTabs(){
@@ -2328,7 +2457,7 @@ function renderTable(){
   dc.ondrop=async e=>{
     e.preventDefault();
     const f=e.dataTransfer.files[0];
-    if(f&&/\.(xlsx|xls|csv)$/i.test(f.name)) await loadDoc({files:[f]});
+    if(f&&/\.(xlsx|xls|csv|docx|pdf)$/i.test(f.name)) await loadDoc({files:[f]});
   };
 }
 
@@ -2708,6 +2837,13 @@ function openCompany(id){
       if(d.ccy) document.getElementById('ccy').value=d.ccy;
       if(d.dec) document.getElementById('dec').value=d.dec;
       if(d.tags&&d.tags.length){S.tags=d.tags;renderTags();updateStatus();}
+      if(d.rows&&d.rows.length){
+        S.rows=d.rows;S.wb=null;
+        document.getElementById('sheetTabs').innerHTML='';
+        document.getElementById('tabSep').style.display='none';
+        setDot('docDot','ok');setText('docStat',co.name);setText('docFn',co.name);
+        updateStep(2,true);showAutoBtn();renderTable();updateProgress();countNumeric();
+      }
       if(d.taxKey){document.getElementById('taxSel').value=d.taxKey;loadBuiltin(d.taxKey);}
     }catch(e){}
   } else {
@@ -2728,7 +2864,7 @@ function syncCompanyFromSession(data){
   cos[idx].tagCount=data.tagCount||0;
   cos[idx].status=data.tagCount>0?'in_progress':'draft';
   cos[idx].updatedAt=new Date().toLocaleDateString();
-  cos[idx].session={entity:data.entity,taxKey:data.taxKey,ps:data.ps,pe:data.pe,ccy:data.ccy,dec:data.dec,tags:data.tags};
+  cos[idx].session={entity:data.entity,taxKey:data.taxKey,ps:data.ps,pe:data.pe,ccy:data.ccy,dec:data.dec,tags:data.tags,rows:data.rows||[]};
   saveCompanies(cos);
 }
 
@@ -2745,6 +2881,63 @@ function gotoDash(){
   if(u) document.getElementById('dashUserName').textContent=u.name;
   renderDash();
 }
+function loadDemoCompany(){
+  const id='co_demo_'+Date.now();
+  const demoRows=[
+    {cells:[{v:'STATEMENT OF FINANCIAL POSITION',raw:'',isNum:false}],meta:{isSection:true}},
+    {cells:[{v:'',raw:'',isNum:false},{v:'2024',raw:'2024',isNum:false},{v:'2023',raw:'2023',isNum:false}],meta:{}},
+    {cells:[{v:'ASSETS',raw:'',isNum:false}],meta:{isSection:true}},
+    {cells:[{v:'Non-current assets',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Property, plant and equipment',raw:'',isNum:false},{v:'12 450 000',raw:12450000,isNum:true},{v:'11 320 000',raw:11320000,isNum:true}],meta:{}},
+    {cells:[{v:'Intangible assets',raw:'',isNum:false},{v:'2 100 000',raw:2100000,isNum:true},{v:'1 850 000',raw:1850000,isNum:true}],meta:{}},
+    {cells:[{v:'Investments in associates',raw:'',isNum:false},{v:'3 200 000',raw:3200000,isNum:true},{v:'2 900 000',raw:2900000,isNum:true}],meta:{}},
+    {cells:[{v:'Total non-current assets',raw:'',isNum:false},{v:'17 750 000',raw:17750000,isNum:true},{v:'16 070 000',raw:16070000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Current assets',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Inventories',raw:'',isNum:false},{v:'4 320 000',raw:4320000,isNum:true},{v:'3 980 000',raw:3980000,isNum:true}],meta:{}},
+    {cells:[{v:'Trade and other receivables',raw:'',isNum:false},{v:'6 110 000',raw:6110000,isNum:true},{v:'5 430 000',raw:5430000,isNum:true}],meta:{}},
+    {cells:[{v:'Cash and cash equivalents',raw:'',isNum:false},{v:'3 440 000',raw:3440000,isNum:true},{v:'2 760 000',raw:2760000,isNum:true}],meta:{}},
+    {cells:[{v:'Total current assets',raw:'',isNum:false},{v:'13 870 000',raw:13870000,isNum:true},{v:'12 170 000',raw:12170000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'TOTAL ASSETS',raw:'',isNum:false},{v:'31 620 000',raw:31620000,isNum:true},{v:'28 240 000',raw:28240000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'',raw:'',isNum:false}],meta:{}},
+    {cells:[{v:'EQUITY AND LIABILITIES',raw:'',isNum:false}],meta:{isSection:true}},
+    {cells:[{v:'Equity',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Share capital',raw:'',isNum:false},{v:'5 000 000',raw:5000000,isNum:true},{v:'5 000 000',raw:5000000,isNum:true}],meta:{}},
+    {cells:[{v:'Retained earnings',raw:'',isNum:false},{v:'11 430 000',raw:11430000,isNum:true},{v:'8 950 000',raw:8950000,isNum:true}],meta:{}},
+    {cells:[{v:'Other reserves',raw:'',isNum:false},{v:'1 200 000',raw:1200000,isNum:true},{v:'980 000',raw:980000,isNum:true}],meta:{}},
+    {cells:[{v:'Total equity',raw:'',isNum:false},{v:'17 630 000',raw:17630000,isNum:true},{v:'14 930 000',raw:14930000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Non-current liabilities',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Long-term borrowings',raw:'',isNum:false},{v:'7 800 000',raw:7800000,isNum:true},{v:'8 600 000',raw:8600000,isNum:true}],meta:{}},
+    {cells:[{v:'Deferred tax liability',raw:'',isNum:false},{v:'1 430 000',raw:1430000,isNum:true},{v:'1 110 000',raw:1110000,isNum:true}],meta:{}},
+    {cells:[{v:'Total non-current liabilities',raw:'',isNum:false},{v:'9 230 000',raw:9230000,isNum:true},{v:'9 710 000',raw:9710000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Current liabilities',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Trade and other payables',raw:'',isNum:false},{v:'3 200 000',raw:3200000,isNum:true},{v:'2 680 000',raw:2680000,isNum:true}],meta:{}},
+    {cells:[{v:'Short-term borrowings',raw:'',isNum:false},{v:'1 560 000',raw:1560000,isNum:true},{v:'920 000',raw:920000,isNum:true}],meta:{}},
+    {cells:[{v:'Total current liabilities',raw:'',isNum:false},{v:'4 760 000',raw:4760000,isNum:true},{v:'3 600 000',raw:3600000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'TOTAL EQUITY AND LIABILITIES',raw:'',isNum:false},{v:'31 620 000',raw:31620000,isNum:true},{v:'28 240 000',raw:28240000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'',raw:'',isNum:false}],meta:{}},
+    {cells:[{v:'STATEMENT OF PROFIT OR LOSS',raw:'',isNum:false}],meta:{isSection:true}},
+    {cells:[{v:'',raw:'',isNum:false},{v:'2024',raw:'2024',isNum:false},{v:'2023',raw:'2023',isNum:false}],meta:{}},
+    {cells:[{v:'Revenue',raw:'',isNum:false},{v:'48 300 000',raw:48300000,isNum:true},{v:'41 500 000',raw:41500000,isNum:true}],meta:{}},
+    {cells:[{v:'Cost of sales',raw:'',isNum:false},{v:'(31 400 000)',raw:-31400000,isNum:true},{v:'(27 200 000)',raw:-27200000,isNum:true}],meta:{}},
+    {cells:[{v:'Gross profit',raw:'',isNum:false},{v:'16 900 000',raw:16900000,isNum:true},{v:'14 300 000',raw:14300000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Other income',raw:'',isNum:false},{v:'320 000',raw:320000,isNum:true},{v:'280 000',raw:280000,isNum:true}],meta:{}},
+    {cells:[{v:'Distribution costs',raw:'',isNum:false},{v:'(2 150 000)',raw:-2150000,isNum:true},{v:'(1 940 000)',raw:-1940000,isNum:true}],meta:{}},
+    {cells:[{v:'Administrative expenses',raw:'',isNum:false},{v:'(3 880 000)',raw:-3880000,isNum:true},{v:'(3 420 000)',raw:-3420000,isNum:true}],meta:{}},
+    {cells:[{v:'Profit before tax',raw:'',isNum:false},{v:'11 190 000',raw:11190000,isNum:true},{v:'9 220 000',raw:9220000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Income tax expense',raw:'',isNum:false},{v:'(3 133 200)',raw:-3133200,isNum:true},{v:'(2 581 600)',raw:-2581600,isNum:true}],meta:{}},
+    {cells:[{v:'Profit for the year',raw:'',isNum:false},{v:'8 056 800',raw:8056800,isNum:true},{v:'6 638 400',raw:6638400,isNum:true}],meta:{isTotal:true}}
+  ];
+  const now=new Date().toISOString();
+  const co={id,name:'Demo Company (Pty) Ltd',regNumber:'2021/012345/07',yearEnd:'2024-02-28',framework:'ifrs',status:'draft',tagCount:0,createdAt:now,updatedAt:now,session:{entity:'Demo Company (Pty) Ltd',taxKey:'',ps:'2024-03-01',pe:'2025-02-28',ccy:'ZAR',dec:'-3',tags:[],rows:demoRows}};
+  const cos=getCompanies();
+  cos.unshift(co);
+  saveCompanies(cos);
+  renderDash();
+  // Open it immediately
+  openCompany(id);
+  toast('Demo company loaded — taxonomy still needed','ok');
+}
+
 function renderDash(){
   const cos=getCompanies();
   const tbody=document.getElementById('dashTbody');
@@ -2839,7 +3032,8 @@ function saveSession(){
       dec:document.getElementById('dec').value,
       tagCount:S.tags.length,
       savedAt:new Date().toLocaleDateString(),
-      tags:S.tags
+      tags:S.tags,
+      rows:S.rows
     };
     // persist latest session
     localStorage.setItem('mcg_ixbrl_session',JSON.stringify(data));
