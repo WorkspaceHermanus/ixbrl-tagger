@@ -3,506 +3,811 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MCG iXBRL Tagger</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='5' fill='%230F2358'/%3E%3Ctext x='16' y='13' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='8' fill='%23fff'%3EMCG%3C/text%3E%3Ctext x='16' y='25' text-anchor='middle' font-family='Arial' font-weight='bold' font-size='9' fill='%232563EB'%3EiXBRL%3C/text%3E%3C/svg%3E">
+<title>iXBRL Tagger — My Cloud Global</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 36'%3E%3Cpolygon points='10,0 20,9 10,18 0,9' fill='%233B78C4'/%3E%3Cpolygon points='30,0 40,9 30,18 20,9' fill='%231C3568'/%3E%3Cpolygon points='10,18 20,27 10,36 0,27' fill='%2318A8C8'/%3E%3Cpolygon points='30,18 40,27 30,36 20,27' fill='%233DB87A'/%3E%3C/svg%3E">
 <style>
-:root{
-  --navy:#0F2358;--navy2:#1B3475;--blue:#2563EB;--blue-lt:#EFF6FF;
-  --green:#16a34a;--green-lt:#f0fdf4;--amber:#d97706;--amber-lt:#fffbeb;
-  --red:#dc2626;--border:#e2e8f0;--bg:#f1f5f9;--panel:#fff;
-  --text:#0f172a;--muted:#64748b;--tag:#bbf7d0;--tag-b:#16a34a;
-  --sug:#fef9c3;--sug-b:#ca8a04;
-}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;font-size:13px;}
+/* ═══════════════════════════════════════════════════
+   SAP HORIZON DESIGN SYSTEM — MCG BRAND EDITION
+═══════════════════════════════════════════════════ */
+:root {
+  --mcg-navy:       #1B3568;
+  --mcg-navy-dk:    #142B55;
+  --mcg-blue:       #3B78C4;
+  --mcg-teal:       #18A8C8;
+  --mcg-green-br:   #3DB87A;
 
-/* ── BRAND HEADER ── */
-.brand-hdr{
-  background:var(--navy);color:#fff;
-  display:flex;align-items:center;padding:0 16px;gap:16px;
-  height:52px;flex-shrink:0;
-  box-shadow:0 2px 8px rgba(0,0,0,.3);
-}
-.brand{display:flex;align-items:center;gap:10px;margin-right:8px;}
-.brand-logo{
-  width:34px;height:34px;background:var(--blue);border-radius:6px;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
-  flex-shrink:0;
-}
-.brand-logo .bl-mcg{font-size:8px;font-weight:800;color:#fff;letter-spacing:.5px;}
-.brand-logo .bl-ix{font-size:10px;font-weight:700;color:#93c5fd;letter-spacing:-.3px;}
-.brand-name{font-size:15px;font-weight:700;color:#fff;white-space:nowrap;}
-.brand-name span{color:#93c5fd;font-weight:400;}
-.vsep{width:1px;height:28px;background:rgba(255,255,255,.15);}
+  --sap-brand:      #0057D2;
+  --sap-brand-dk:   #0046AB;
+  --sap-shell:      #1B3568;
+  --sap-page-bg:    #F5F6F7;
+  --sap-base:       #FFFFFF;
+  --sap-border:     #D9DBDD;
+  --sap-border-str: #89919A;
+  --sap-text:       #32363A;
+  --sap-text2:      #6A6D70;
+  --sap-text3:      #A8ABAD;
+  --sap-pos:        #107E3E;
+  --sap-pos-bg:     #F1FDF6;
+  --sap-pos-bdr:    #ABE4C8;
+  --sap-crit:       #DF6E0C;
+  --sap-crit-bg:    #FFF8F5;
+  --sap-crit-bdr:   #FFB78A;
+  --sap-neg:        #BB0000;
+  --sap-neg-bg:     #FFEBEB;
+  --sap-info:       #0064D9;
+  --sap-info-bg:    #EBF4FF;
+  --sap-hover:      #EDF4FE;
+  --sap-sel:        #D1E8FF;
 
-/* Steps */
-.steps{display:flex;align-items:center;gap:2px;}
-.step{
-  display:flex;align-items:center;gap:6px;
-  padding:5px 10px;border-radius:20px;font-size:11px;font-weight:600;
-  color:rgba(255,255,255,.4);cursor:pointer;transition:all .15s;white-space:nowrap;
+  --shell-h:  44px;
+  --ctx-h:    36px;
+  --status-h: 24px;
+  --p-left:   272px;
+  --p-right:  252px;
+  --r:        4px;
+  --r-lg:     8px;
+  --bdr:      1px solid var(--sap-border);
 }
-.step .snum{
-  width:18px;height:18px;border-radius:50%;background:rgba(255,255,255,.15);
-  display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;
-  flex-shrink:0;
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  background:var(--sap-page-bg);color:var(--sap-text);
+  font-size:14px;line-height:1.4;
+  height:100vh;display:flex;flex-direction:column;overflow:hidden;
 }
-.step.done{color:rgba(255,255,255,.6);}
-.step.done .snum{background:var(--green);color:#fff;}
-.step.active{color:#fff;background:rgba(255,255,255,.1);}
-.step.active .snum{background:var(--blue);color:#fff;}
-.step-arr{color:rgba(255,255,255,.2);font-size:10px;margin:0 2px;}
 
-.sp{flex:1;}
+/* ── SHELL BAR ─────────────────────────────────── */
+.sap-shell{
+  height:var(--shell-h);min-height:var(--shell-h);
+  background:var(--sap-shell);
+  display:flex;align-items:center;padding:0 14px 0 0;
+  flex-shrink:0;box-shadow:0 2px 6px rgba(0,0,0,.28);
+  position:relative;z-index:100;
+}
 
-/* Header right controls */
-.hdr-ctx{display:flex;align-items:center;gap:8px;}
-.hfld{display:flex;align-items:center;gap:4px;font-size:11px;}
-.hfld label{color:rgba(255,255,255,.55);white-space:nowrap;}
-.hfld input,.hfld select{
+.shell-brand{
+  display:flex;align-items:center;gap:10px;
+  padding:0 16px;height:100%;
+  border-right:1px solid rgba(255,255,255,.12);
+  margin-right:14px;flex-shrink:0;
+}
+.shell-diamond{display:flex;align-items:center;flex-shrink:0;}
+.shell-text{display:flex;flex-direction:column;gap:2px;}
+.shell-company{
+  font-size:11px;font-weight:700;color:rgba(255,255,255,.92);
+  letter-spacing:.7px;line-height:1;
+}
+.shell-product{font-size:11px;font-weight:400;color:rgba(255,255,255,.55);line-height:1;}
+
+/* Wizard steps */
+.shell-wiz{display:flex;align-items:center;gap:0;flex-shrink:0;}
+.wz-step{
+  display:flex;align-items:center;gap:7px;padding:6px 12px;
+  cursor:pointer;border-radius:var(--r);transition:background .15s;
+  white-space:nowrap;
+}
+.wz-step:hover{background:rgba(255,255,255,.08);}
+.wz-num{
+  width:20px;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;color:rgba(255,255,255,.4);
+  flex-shrink:0;transition:all .2s;
+}
+.wz-label{font-size:12px;font-weight:500;color:rgba(255,255,255,.35);transition:color .2s;}
+.wz-arrow{color:rgba(255,255,255,.18);font-size:13px;margin:0 -4px;}
+.wz-step.active .wz-num{background:var(--sap-brand);color:#fff;}
+.wz-step.active .wz-label{color:#fff;font-weight:600;}
+.wz-step.done .wz-num{background:var(--mcg-teal);color:#fff;}
+.wz-step.done .wz-label{color:rgba(255,255,255,.6);}
+
+.shell-sp{flex:1;}
+.shell-end{display:flex;align-items:center;gap:8px;}
+
+.btn-sh-sec{
   background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);
-  color:#fff;padding:4px 7px;border-radius:4px;font-size:11px;
+  color:#fff;padding:6px 12px;border-radius:var(--r);font-size:12px;
+  cursor:pointer;display:flex;align-items:center;gap:6px;
+  transition:background .15s;white-space:nowrap;font-family:inherit;
 }
-.hfld input::placeholder{color:rgba(255,255,255,.35);}
-.hfld input:focus,.hfld select:focus{outline:none;border-color:#93c5fd;background:rgba(255,255,255,.18);}
-.hfld select option{background:#1e3a8a;}
+.btn-sh-sec:hover{background:rgba(255,255,255,.18);}
+.btn-sh-pri{
+  background:var(--sap-brand);border:1px solid var(--sap-brand-dk);
+  color:#fff;padding:6px 16px;border-radius:var(--r);
+  font-size:13px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;gap:6px;
+  transition:background .15s;white-space:nowrap;font-family:inherit;
+}
+.btn-sh-pri:hover{background:var(--sap-brand-dk);}
+.btn-sh-pri:disabled{
+  background:rgba(255,255,255,.08);border-color:transparent;
+  color:rgba(255,255,255,.25);cursor:not-allowed;
+}
+.shell-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0;
+}
 
-.hdr-btns{display:flex;gap:6px;margin-left:4px;}
-.btn-save{
-  background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);
-  color:#fff;padding:6px 12px;border-radius:5px;font-size:11px;cursor:pointer;
-  display:flex;align-items:center;gap:4px;white-space:nowrap;
+/* ── CONTEXT BAR ───────────────────────────────── */
+.ctx-bar{
+  height:var(--ctx-h);min-height:var(--ctx-h);
+  background:#fff;border-bottom:var(--bdr);
+  display:flex;align-items:center;padding:0 16px;
+  gap:14px;flex-shrink:0;
 }
-.btn-save:hover{background:rgba(255,255,255,.2);}
-.btn-gen{
-  background:var(--blue);border:none;color:#fff;padding:6px 14px;
-  border-radius:5px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;
+.ctx-fld{display:flex;align-items:center;gap:6px;}
+.ctx-lbl{font-size:12px;color:var(--sap-text2);white-space:nowrap;font-weight:500;}
+.ctx-in{
+  height:24px;padding:0 8px;border:var(--bdr);border-radius:var(--r);
+  font-size:13px;color:var(--sap-text);background:#fff;
+  outline:none;font-family:inherit;transition:border-color .15s;
 }
-.btn-gen:hover{background:#1d4ed8;}
-.btn-gen:disabled{opacity:.4;cursor:not-allowed;}
+.ctx-in:focus{border-color:var(--sap-brand);box-shadow:0 0 0 2px rgba(0,87,210,.1);}
+.ctx-in::placeholder{color:var(--sap-text3);}
+.ctx-sel{
+  height:24px;padding:0 6px;border:var(--bdr);border-radius:var(--r);
+  font-size:13px;color:var(--sap-text);background:#fff;
+  outline:none;cursor:pointer;font-family:inherit;
+}
+.ctx-sel:focus{border-color:var(--sap-brand);}
+.ctx-sep{width:1px;height:18px;background:var(--sap-border);}
+.ctx-to{font-size:12px;color:var(--sap-text3);}
 
-/* ── WORKSPACE ── */
+/* ── WORKSPACE ─────────────────────────────────── */
 .workspace{flex:1;display:flex;overflow:hidden;}
 
-/* ── LEFT PANEL: TAXONOMY ── */
-.tax-panel{
-  width:268px;flex-shrink:0;background:var(--panel);
-  border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;
+/* ── LEFT — TAXONOMY ───────────────────────────── */
+.p-tax{
+  width:var(--p-left);flex-shrink:0;background:var(--sap-base);
+  border-right:var(--bdr);display:flex;flex-direction:column;overflow:hidden;
 }
-.panel-top{
-  padding:10px 12px;border-bottom:1px solid var(--border);background:#fafbfd;
+.p-hdr{padding:10px 12px 9px;border-bottom:var(--bdr);background:#FAFAFA;}
+.p-title{
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.65px;color:var(--sap-text2);margin-bottom:8px;
 }
-.panel-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;}
 .tax-sel{
-  width:100%;padding:5px 8px;border:1px solid var(--border);border-radius:5px;
-  font-size:12px;margin-bottom:6px;outline:none;cursor:pointer;
+  width:100%;height:28px;padding:0 8px;border:var(--bdr);border-radius:var(--r);
+  font-size:13px;color:var(--sap-text);background:#fff;outline:none;
+  margin-bottom:7px;cursor:pointer;font-family:inherit;
 }
-.tax-sel:focus{border-color:var(--blue);}
-.srch{
-  position:relative;
+.tax-sel:focus{border-color:var(--sap-brand);}
+.srch-wrap{position:relative;}
+.srch-icon{
+  position:absolute;left:8px;top:50%;transform:translateY(-50%);
+  color:var(--sap-text3);font-size:14px;pointer-events:none;line-height:1;
 }
-.srch input{
-  width:100%;padding:5px 8px 5px 28px;border:1px solid var(--border);
-  border-radius:5px;font-size:12px;outline:none;
+.srch-in{
+  width:100%;height:28px;padding:0 8px 0 28px;border:var(--bdr);border-radius:var(--r);
+  font-size:13px;color:var(--sap-text);background:#fff;outline:none;font-family:inherit;
 }
-.srch input:focus{border-color:var(--blue);}
-.srch::before{
-  content:'⌕';position:absolute;left:8px;top:50%;transform:translateY(-50%);
-  color:var(--muted);font-size:14px;pointer-events:none;
-}
-.tree{flex:1;overflow-y:auto;padding:4px 0;}
+.srch-in:focus{border-color:var(--sap-brand);box-shadow:0 0 0 2px rgba(0,87,210,.1);}
+.srch-in::placeholder{color:var(--sap-text3);}
 
-/* Tree nodes */
-.tgh{
-  display:flex;align-items:center;gap:5px;padding:7px 10px;
-  font-size:11px;font-weight:700;color:var(--navy);cursor:pointer;
-  background:#f8faff;border-bottom:1px solid #e8eef8;user-select:none;
+.tax-tree{flex:1;overflow-y:auto;padding:4px 0;}
+.tg-hdr{
+  display:flex;align-items:center;gap:6px;padding:8px 12px;
+  font-size:12px;font-weight:700;color:var(--mcg-navy);cursor:pointer;
+  background:#F7F8FA;border-bottom:1px solid #ECEEF1;user-select:none;
 }
-.tgh:hover{background:#eef2ff;}
-.tsh{
-  display:flex;align-items:center;gap:4px;padding:5px 10px 5px 22px;
-  font-size:12px;font-weight:600;color:#374151;cursor:pointer;user-select:none;
+.tg-hdr:hover{background:#EEEEF3;}
+.ts-hdr{
+  display:flex;align-items:center;gap:5px;font-size:12px;font-weight:600;
+  color:var(--sap-text);cursor:pointer;user-select:none;background:#FAFBFC;
 }
-.tsh:hover{background:#f5f7ff;}
-.arr{font-size:9px;transition:transform .15s;color:var(--muted);}
-.col .arr{transform:rotate(-90deg);}
-.hid{display:none;}
+.ts-hdr:hover{background:#F0F2F6;}
+.ci-expand{font-size:9px;color:var(--sap-text3);transition:transform .15s;line-height:1;flex-shrink:0;}
+.ci-expand.col{transform:rotate(-90deg);}
+.tb-body.hid{display:none;}
 .ci{
-  display:flex;align-items:flex-start;padding:5px 10px 5px 30px;
-  font-size:12px;cursor:pointer;border-left:3px solid transparent;
-  line-height:1.35;transition:all .1s;
+  display:flex;align-items:flex-start;padding:6px 12px;cursor:pointer;
+  border-left:3px solid transparent;transition:all .12s;gap:6px;
 }
-.ci:hover{background:#f0f4ff;border-left-color:#93c5fd;}
-.ci.armed{background:#eff6ff;border-left-color:var(--blue);}
-.ci.used .cdot{opacity:1;}
-.cdot{width:6px;height:6px;border-radius:50%;background:var(--green);margin-right:5px;margin-top:4px;flex-shrink:0;opacity:0;transition:opacity .2s;}
-.clabel{flex:1;color:var(--text);}
-.cid{font-size:10px;color:#94a3b8;font-family:monospace;display:block;margin-top:1px;}
-.ctype{font-size:9px;padding:1px 5px;border-radius:10px;background:#dbeafe;color:#1e40af;margin-left:4px;flex-shrink:0;margin-top:2px;}
-.ctype.str{background:#f3e8ff;color:#7e22ce;}
-.ctype.dec{background:#dcfce7;color:#15803d;}
+.ci:hover{background:var(--sap-hover);border-left-color:#93C4F4;}
+.ci.armed{background:var(--sap-info-bg);border-left-color:var(--sap-brand);}
+.ci.armed .ci-label{color:var(--sap-brand);font-weight:500;}
+.ci-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--sap-pos);
+  flex-shrink:0;margin-top:4px;opacity:0;transition:opacity .2s;
+}
+.ci.used .ci-dot{opacity:1;}
+.ci-text{flex:1;}
+.ci-label{font-size:12px;color:var(--sap-text);line-height:1.35;}
+.ci-id{font-size:10px;color:var(--sap-text3);font-family:'Courier New',monospace;display:block;margin-top:1px;}
+.ci-type{
+  font-size:9px;padding:1px 5px;border-radius:10px;
+  flex-shrink:0;margin-top:3px;font-weight:600;
+}
+.t-mon{background:#E6F2FF;color:#0057D2;}
+.t-dec{background:#E8F8F0;color:#107E3E;}
+.t-str{background:#F3E8FF;color:#6E2DA5;}
+.t-date{background:#FFF3E0;color:#AD4E00;}
 
-/* ── CENTER: DOCUMENT ── */
-.doc-panel{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+/* ── CENTER — DOCUMENT ─────────────────────────── */
+.p-doc{flex:1;display:flex;flex-direction:column;overflow:hidden;border-right:var(--bdr);}
 
-/* Toolbar strip above doc */
 .doc-bar{
-  padding:7px 14px;background:#fff;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;gap:8px;flex-shrink:0;min-height:38px;
+  padding:6px 12px;background:#fff;border-bottom:var(--bdr);
+  display:flex;align-items:center;gap:6px;
+  flex-shrink:0;min-height:40px;
 }
-.doc-bar-label{font-size:11px;color:var(--muted);}
+.doc-fn{font-size:12px;color:var(--sap-text2);max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .stab{
-  padding:3px 10px;border:1px solid var(--border);border-radius:4px 4px 0 0;
-  font-size:11px;cursor:pointer;background:#f8fafc;
+  padding:3px 10px;border:1px solid var(--sap-border);border-radius:3px 3px 0 0;
+  font-size:12px;cursor:pointer;background:#F5F6F7;color:var(--sap-text2);transition:all .1s;
 }
-.stab.act{background:#fff;color:var(--blue);font-weight:700;border-bottom-color:#fff;}
-.auto-btn{
-  margin-left:auto;display:flex;align-items:center;gap:5px;
-  background:#fef9c3;border:1px solid #fde68a;color:#92400e;
-  padding:4px 10px;border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;
-}
-.auto-btn:hover{background:#fef08a;}
-.auto-btn.done{background:#dcfce7;border-color:#86efac;color:#166534;}
-.undo-btn{
-  display:flex;align-items:center;gap:4px;
-  background:#f1f5f9;border:1px solid var(--border);color:var(--muted);
-  padding:4px 8px;border-radius:5px;font-size:11px;cursor:pointer;
-}
-.undo-btn:hover{background:#e2e8f0;color:var(--text);}
+.stab.act{background:#fff;color:var(--sap-brand);font-weight:600;border-bottom-color:#fff;}
+.stab:hover{background:#ECEEF1;}
+.tsep{width:1px;height:20px;background:var(--sap-border);margin:0 2px;}
 
-.doc-content{flex:1;overflow:auto;padding:14px;}
+/* Toolbar buttons */
+.tbtn{
+  display:flex;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:var(--r);
+  font-size:12px;cursor:pointer;font-family:inherit;
+  transition:all .12s;white-space:nowrap;line-height:1;
+}
+.tbtn-pri{background:var(--sap-brand);color:#fff;border:1px solid var(--sap-brand-dk);font-weight:500;}
+.tbtn-pri:hover{background:var(--sap-brand-dk);}
+.tbtn-std{background:#fff;color:var(--sap-text);border:1px solid var(--sap-border);}
+.tbtn-std:hover{background:#F5F6F7;border-color:var(--sap-border-str);}
+.tbtn-gh{background:transparent;color:var(--sap-text2);border:1px solid transparent;}
+.tbtn-gh:hover{background:#F5F6F7;color:var(--sap-text);border-color:var(--sap-border);}
+.tbtn-sug{background:#FFF3E0;color:#AD4E00;border:1px solid #FFCC80;font-weight:500;}
+.tbtn-sug:hover{background:#FFE0B2;}
+.tbtn-sug.on{background:#E8F5E9;color:#1B5E20;border-color:#A5D6A7;}
+.tbtn-ml{margin-left:auto;}
 
-/* Empty / drop zone */
-.dz{
+/* Suggestion bar */
+.sug-bar{
+  display:none;padding:8px 14px;background:#FFF8F5;
+  border-bottom:1px solid #FFB78A;
+  align-items:center;gap:12px;flex-shrink:0;
+}
+.sug-bar.show{display:flex;}
+.sug-msg{font-size:13px;color:#AD4E00;flex:1;}
+.sug-msg strong{color:#7A3500;}
+.btn-acc{
+  background:var(--sap-pos);color:#fff;border:none;
+  padding:5px 12px;border-radius:var(--r);
+  font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;
+}
+.btn-acc:hover{background:#0A6632;}
+.btn-dis{
+  background:transparent;color:var(--sap-text2);
+  border:1px solid var(--sap-border);
+  padding:5px 10px;border-radius:var(--r);
+  font-size:12px;cursor:pointer;font-family:inherit;
+}
+.btn-dis:hover{background:#F5F6F7;}
+
+/* Doc content */
+.doc-content{flex:1;overflow:auto;padding:12px;}
+
+/* Empty state */
+.empty-st{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  height:100%;border:2px dashed var(--border);border-radius:10px;
-  background:#fff;text-align:center;padding:40px;
+  height:100%;text-align:center;padding:40px;
+  border:2px dashed var(--sap-border);border-radius:var(--r-lg);
+  background:#fff;transition:all .2s;
 }
-.dz.dov{border-color:var(--blue);background:var(--blue-lt);}
-.dz-icon{font-size:48px;margin-bottom:12px;opacity:.3;}
-.dz h3{font-size:16px;color:#475569;margin-bottom:6px;}
-.dz p{font-size:12px;color:var(--muted);}
-.dz-btns{display:flex;gap:8px;margin-top:14px;}
-.sample-btn{
-  padding:7px 16px;border:1px solid var(--border);border-radius:6px;
-  font-size:12px;cursor:pointer;background:#fff;color:var(--text);
-  font-weight:500;transition:all .15s;
+.empty-st.dov{border-color:var(--sap-brand);background:var(--sap-info-bg);}
+.empty-ico{font-size:48px;margin-bottom:16px;opacity:.3;}
+.empty-ttl{font-size:17px;color:var(--sap-text);font-weight:400;margin-bottom:8px;}
+.empty-sub{font-size:13px;color:var(--sap-text2);line-height:1.55;}
+.empty-acts{display:flex;gap:10px;margin-top:20px;}
+.btn-smp{
+  padding:8px 18px;border:1px solid var(--sap-border);border-radius:var(--r);
+  font-size:13px;cursor:pointer;background:#fff;color:var(--sap-text);
+  font-weight:500;transition:all .15s;font-family:inherit;
 }
-.sample-btn:hover{border-color:var(--blue);color:var(--blue);background:#eff6ff;}
+.btn-smp:hover{border-color:var(--sap-brand);color:var(--sap-brand);background:var(--sap-info-bg);}
 
 /* Financial table */
-.fin-wrap{background:#fff;border-radius:6px;box-shadow:0 1px 3px rgba(0,0,0,.08);overflow:auto;}
-.fin-tbl{border-collapse:collapse;width:100%;font-size:13px;}
-.fin-tbl th{
-  background:var(--navy);color:#fff;padding:8px 12px;
-  font-weight:600;font-size:11px;text-align:left;white-space:nowrap;
+.fin-wrap{
+  background:#fff;border-radius:var(--r);border:var(--bdr);
+  overflow:auto;box-shadow:0 1px 4px rgba(0,0,0,.06);
 }
-.fin-tbl th.num{text-align:right;}
-.fin-tbl td{padding:6px 12px;border-bottom:1px solid #f1f5f9;vertical-align:middle;}
-.fin-tbl tr:hover td{background:#fafbff;}
-tr.row-section td{background:#f1f5f9;font-weight:700;color:#374151;font-size:11px;text-transform:uppercase;letter-spacing:.4px;}
-tr.row-bold td{font-weight:700;}
-tr.row-total td{font-weight:700;border-top:2px solid #e2e8f0;}
-.num-cell{text-align:right;font-family:'Courier New',monospace;font-variant-numeric:tabular-nums;}
+.fin-tbl{border-collapse:collapse;width:100%;font-size:13px;}
+.fin-tbl thead th{
+  background:var(--mcg-navy);color:#fff;
+  padding:9px 14px;font-size:12px;font-weight:600;
+  text-align:left;white-space:nowrap;
+  position:sticky;top:0;z-index:2;
+}
+.fin-tbl thead th.num-h{text-align:right;}
+.fin-tbl tbody tr:nth-child(even) td{background:#FAFBFC;}
+.fin-tbl tbody tr:hover td{background:#F0F6FF!important;}
+.fin-tbl td{padding:7px 14px;border-bottom:1px solid #F0F2F5;vertical-align:middle;}
 
-/* Tag states */
+tr.t-sec td{
+  background:#ECEEF2!important;font-weight:700;
+  font-size:11px;text-transform:uppercase;letter-spacing:.45px;
+  color:#5B6475;padding-top:9px;padding-bottom:9px;
+}
+tr.t-bold td{font-weight:600;}
+tr.t-tot td{font-weight:700;border-top:2px solid #D9DBDD;border-bottom:2px solid #D9DBDD;}
+
+.num-cell{
+  text-align:right;font-family:'Courier New','Lucida Console',monospace;
+  font-variant-numeric:tabular-nums;font-size:13px;
+}
+
+/* Cell states */
 td.clickable{cursor:pointer;}
 td.clickable:hover:not(.tagged):not(.suggested){
-  background:#fef9c3!important;outline:2px dashed #fde68a;outline-offset:-2px;
+  background:#FFFDE7!important;
+  outline:2px dashed #FFC107;outline-offset:-2px;
 }
-td.tagged{background:var(--green-lt)!important;cursor:pointer;}
-td.tagged:hover{background:#dcfce7!important;}
-td.suggested{background:var(--amber-lt)!important;cursor:pointer;}
-td.suggested:hover{background:#fef08a!important;}
-td.sel-cell{outline:2px solid var(--blue)!important;outline-offset:-2px;}
+td.tagged{background:var(--sap-pos-bg)!important;cursor:pointer;}
+td.tagged:hover{background:#D8F5E8!important;}
+td.suggested{background:var(--sap-crit-bg)!important;cursor:pointer;}
+td.suggested:hover{background:#FFE0C8!important;}
+td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 
-.tag-badge{
-  display:inline-flex;align-items:center;gap:2px;font-size:10px;
-  border-radius:4px;padding:1px 5px;margin-left:4px;
-  vertical-align:middle;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+.tag-chip{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:10px;border-radius:10px;padding:1px 6px 1px 7px;
+  margin-left:5px;vertical-align:middle;
+  max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
-.tag-badge.confirmed{background:var(--tag-b);color:#fff;}
-.tag-badge.suggestion{background:var(--sug-b);color:#fff;}
-.tag-badge .rx{cursor:pointer;opacity:.8;margin-left:2px;}
-.tag-badge .rx:hover{opacity:1;}
+.chip-ok{background:var(--sap-pos);color:#fff;}
+.chip-sug{background:var(--sap-crit);color:#fff;}
+.chip-rm{cursor:pointer;opacity:.7;line-height:1;flex-shrink:0;}
+.chip-rm:hover{opacity:1;}
 
-/* ── RIGHT PANEL: PROPERTIES ── */
-.props-panel{
-  width:236px;flex-shrink:0;background:var(--panel);
-  border-left:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;
+/* ── RIGHT — PROPERTIES ─────────────────────────── */
+.p-props{
+  width:var(--p-right);flex-shrink:0;background:var(--sap-base);
+  display:flex;flex-direction:column;overflow:hidden;
 }
-.ps{padding:10px 12px;border-bottom:1px solid var(--border);}
-.ps-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;}
-
-.armed-box{
-  background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px;
+.ps{padding:10px 12px;border-bottom:var(--bdr);}
+.ps-ttl{
+  font-size:11px;font-weight:700;text-transform:uppercase;
+  letter-spacing:.65px;color:var(--sap-text2);margin-bottom:8px;
 }
-.armed-label{font-weight:700;color:var(--navy);font-size:12px;}
-.armed-id{font-size:10px;color:#94a3b8;font-family:monospace;margin-top:2px;}
-.armed-clear{font-size:11px;color:var(--muted);cursor:pointer;text-decoration:underline;margin-top:4px;display:inline-block;}
-.no-armed{color:#cbd5e1;font-size:12px;font-style:italic;line-height:1.5;}
+.armed-card{
+  background:var(--sap-info-bg);border:1px solid #93C4F4;
+  border-radius:var(--r);padding:8px 10px;
+}
+.armed-name{font-size:13px;font-weight:600;color:var(--mcg-navy);line-height:1.3;}
+.armed-id{font-size:10px;color:var(--sap-text3);font-family:'Courier New',monospace;margin-top:3px;}
+.armed-clr{
+  display:inline-flex;align-items:center;gap:3px;
+  font-size:11px;color:var(--sap-text2);cursor:pointer;
+  margin-top:6px;padding:2px 7px;border-radius:var(--r);
+  border:1px solid var(--sap-border);background:#fff;font-family:inherit;
+}
+.armed-clr:hover{background:#F5F6F7;color:var(--sap-text);}
+.no-armed{font-size:12px;color:var(--sap-text3);line-height:1.55;font-style:italic;}
 
-.prop-field{margin-bottom:7px;}
-.prop-field label{display:block;font-size:11px;color:var(--muted);margin-bottom:2px;}
-.prop-field select{width:100%;padding:4px 7px;border:1px solid var(--border);border-radius:4px;font-size:12px;outline:none;}
-.prop-field select:focus{border-color:var(--blue);}
+.sel-val{font-size:14px;font-weight:600;color:var(--sap-text);}
+.sel-meta{font-size:11px;color:var(--sap-text2);margin-top:3px;}
 
-/* Progress bar */
-.prog-wrap{padding:10px 12px;border-bottom:1px solid var(--border);}
-.prog-label{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
-.prog-bar{height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;}
-.prog-fill{height:100%;background:var(--green);border-radius:3px;transition:width .3s;}
+.pf{margin-bottom:8px;}
+.pf:last-child{margin-bottom:0;}
+.pf label{display:block;font-size:11px;color:var(--sap-text2);margin-bottom:3px;}
+.pf select{
+  width:100%;height:28px;padding:0 8px;border:var(--bdr);border-radius:var(--r);
+  font-size:12px;color:var(--sap-text);background:#fff;outline:none;font-family:inherit;
+}
+.pf select:focus{border-color:var(--sap-brand);}
+
+/* Progress */
+.prog-sec{padding:10px 12px;border-bottom:var(--bdr);}
+.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.prog-lbl{font-size:11px;color:var(--sap-text2);}
+.prog-pct{font-size:11px;font-weight:700;color:var(--sap-text);}
+.prog-trk{height:6px;background:var(--sap-border);border-radius:3px;overflow:hidden;}
+.prog-fill{height:100%;background:var(--sap-pos);border-radius:3px;transition:width .3s ease;}
 
 /* Tags list */
-.tags-list{flex:1;overflow-y:auto;padding:8px 12px;}
-.tl-title{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:6px;display:flex;align-items:center;justify-content:space-between;}
-.clear-all{font-size:10px;color:var(--red);cursor:pointer;font-weight:400;}
-.clear-all:hover{text-decoration:underline;}
+.tags-sec{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.tags-hdr{
+  display:flex;align-items:center;padding:8px 12px;
+  border-bottom:var(--bdr);flex-shrink:0;gap:6px;
+}
+.tags-ttl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.65px;color:var(--sap-text2);}
+.tags-badge{
+  background:#ECEEF1;color:var(--sap-text);
+  font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;
+}
+.tags-clr{
+  margin-left:auto;font-size:11px;color:var(--sap-neg);
+  cursor:pointer;background:none;border:none;font-family:inherit;
+}
+.tags-clr:hover{text-decoration:underline;}
+.tags-list{flex:1;overflow-y:auto;padding:6px 10px;}
 .tli{
-  padding:6px 8px;border:1px solid var(--border);border-radius:5px;
-  margin-bottom:4px;font-size:11px;cursor:pointer;transition:all .1s;
+  padding:7px 8px;border:1px solid var(--sap-border);border-radius:var(--r);
+  margin-bottom:5px;font-size:11px;cursor:pointer;transition:all .1s;background:#fff;
 }
-.tli:hover{border-color:var(--blue);background:#eff6ff;}
-.tli.sug{border-color:#fde68a;background:#fffbeb;}
-.tli-concept{font-weight:600;color:var(--navy);font-size:11px;}
-.tli-value{color:var(--muted);margin-top:1px;}
-.tli-remove{float:right;color:var(--red);cursor:pointer;font-size:12px;line-height:1;}
+.tli:hover{border-color:var(--sap-brand);background:var(--sap-info-bg);}
+.tli.sug-item{border-color:#FFB78A;background:var(--sap-crit-bg);}
+.tli-hdr{display:flex;justify-content:space-between;align-items:flex-start;gap:4px;}
+.tli-cpt{font-weight:600;color:var(--mcg-navy);font-size:11px;flex:1;line-height:1.3;}
+.tli-rm{color:var(--sap-neg);cursor:pointer;font-size:13px;line-height:1;background:none;border:none;font-family:inherit;flex-shrink:0;}
+.tli-val{color:var(--sap-text2);margin-top:2px;font-size:11px;}
+.tli-empty{color:var(--sap-text3);font-size:12px;font-style:italic;padding:4px 0;}
 
-/* Accept suggestions bar */
-.sug-bar{
-  padding:8px 12px;background:#fffbeb;border-bottom:1px solid #fde68a;
-  display:none;flex-shrink:0;
-}
-.sug-bar.show{display:block;}
-.sug-bar p{font-size:11px;color:#92400e;margin-bottom:6px;}
-.sug-bar p strong{color:#78350f;}
-.sug-actions{display:flex;gap:6px;}
-.btn-accept{padding:4px 10px;background:var(--green);color:#fff;border:none;border-radius:4px;font-size:11px;cursor:pointer;font-weight:600;}
-.btn-accept:hover{background:#15803d;}
-.btn-dismiss{padding:4px 8px;background:#fff;color:var(--muted);border:1px solid var(--border);border-radius:4px;font-size:11px;cursor:pointer;}
-
-/* ── STATUS BAR ── */
+/* ── STATUS BAR ─────────────────────────────────── */
 .status-bar{
-  height:26px;background:var(--navy);color:rgba(255,255,255,.7);
-  display:flex;align-items:center;padding:0 14px;gap:16px;font-size:11px;flex-shrink:0;
+  height:var(--status-h);min-height:var(--status-h);
+  background:var(--mcg-navy);color:rgba(255,255,255,.6);
+  display:flex;align-items:center;padding:0 16px;gap:20px;
+  font-size:11px;flex-shrink:0;
 }
-.si{display:flex;align-items:center;gap:4px;}
-.dot{width:6px;height:6px;border-radius:50%;background:#475569;}
-.dot.g{background:var(--green);}
-.dot.a{background:var(--amber);}
+.si{display:flex;align-items:center;gap:5px;}
+.sdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);flex-shrink:0;}
+.sdot.ok{background:var(--sap-pos);}
+.sdot.warn{background:var(--sap-crit);}
+.s-sp{flex:1;}
+.s-str{color:#fff;font-weight:600;}
 
-/* ── MODAL ── */
-.modal-overlay{
-  display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);
-  z-index:1000;align-items:center;justify-content:center;
+/* ── TOAST NOTIFICATIONS ───────────────────────── */
+.toast-rgn{
+  position:fixed;bottom:36px;left:50%;transform:translateX(-50%);
+  z-index:5000;display:flex;flex-direction:column-reverse;
+  gap:8px;align-items:center;pointer-events:none;
 }
-.modal-overlay.open{display:flex;}
-.modal{
-  background:#fff;border-radius:10px;width:82vw;max-height:88vh;
-  display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);
+.toast{
+  background:#32363A;color:#fff;padding:10px 18px;
+  border-radius:var(--r);font-size:13px;
+  box-shadow:0 4px 16px rgba(0,0,0,.28);
+  display:flex;align-items:center;gap:8px;
+  pointer-events:auto;max-width:420px;
+  animation:toastIn .2s ease;
 }
-.modal-hdr{
-  padding:16px 20px;border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
-}
-.modal-hdr h2{font-size:16px;color:var(--navy);}
-.modal-close{cursor:pointer;font-size:20px;color:var(--muted);line-height:1;}
-.modal-body{flex:1;overflow:auto;padding:16px 20px;}
-.modal-ftr{padding:12px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;}
-.out-pre{
-  background:#0f172a;color:#e2e8f0;padding:16px;border-radius:6px;
-  font-family:'Courier New',monospace;font-size:11px;overflow:auto;
-  white-space:pre;max-height:50vh;line-height:1.5;
-}
-.val-item{padding:6px 10px;margin-bottom:4px;border-radius:4px;font-size:12px;}
-.val-warn{background:#fffbeb;border-left:3px solid var(--amber);}
-.val-err{background:#fef2f2;border-left:3px solid var(--red);}
-.val-ok{color:var(--green);font-size:12px;padding:4px 0 10px;}
+.toast.ok{border-left:4px solid var(--sap-pos);}
+.toast.warn{border-left:4px solid var(--sap-crit);}
+.toast.err{border-left:4px solid var(--sap-neg);}
+.toast.info{border-left:4px solid var(--sap-info);}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
 
-.btn-dl{background:var(--blue);color:#fff;border:none;padding:8px 16px;border-radius:5px;font-size:12px;cursor:pointer;font-weight:600;}
-.btn-dl:hover{background:#1d4ed8;}
-.btn-copy{background:#f1f5f9;color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:5px;font-size:12px;cursor:pointer;}
-.btn-copy:hover{background:#e2e8f0;}
-.btn-close{background:#f1f5f9;color:var(--text);border:1px solid var(--border);padding:8px 14px;border-radius:5px;font-size:12px;cursor:pointer;}
-
-/* upload button embedded in bar */
-.doc-upload{
-  padding:4px 10px;background:var(--blue);color:#fff;border:none;
-  border-radius:5px;font-size:11px;font-weight:600;cursor:pointer;
+/* ── LOADING OVERLAY ───────────────────────────── */
+.busy-ov{
+  display:none;position:fixed;inset:0;
+  background:rgba(255,255,255,.82);z-index:4000;
+  flex-direction:column;align-items:center;justify-content:center;gap:14px;
 }
-.doc-upload:hover{background:#1d4ed8;}
-
-::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-track{background:#f1f5f9;}
-::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:3px;}
-::-webkit-scrollbar-thumb:hover{background:#94a3b8;}
-
-/* Tooltip */
-[title]{position:relative;}
-
-/* Load overlay */
-.load-overlay{
-  display:none;position:fixed;inset:0;background:rgba(255,255,255,.85);
-  z-index:2000;align-items:center;justify-content:center;flex-direction:column;gap:12px;
+.busy-ov.show{display:flex;}
+.busy-spin{
+  width:36px;height:36px;border:3px solid #D9DBDD;
+  border-top-color:var(--sap-brand);border-radius:50%;
+  animation:spin .75s linear infinite;
 }
-.load-overlay.show{display:flex;}
-.spinner{width:32px;height:32px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+.busy-lbl{font-size:14px;color:var(--sap-text2);}
+
+/* ── DIALOG ─────────────────────────────────────── */
+.dlg-ov{
+  display:none;position:fixed;inset:0;
+  background:rgba(14,24,44,.55);z-index:3000;
+  align-items:center;justify-content:center;
+}
+.dlg-ov.open{display:flex;}
+.dlg{
+  background:#fff;border-radius:var(--r-lg);
+  width:86vw;max-width:980px;max-height:90vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 16px 48px rgba(0,0,0,.3);
+}
+.dlg-hdr{
+  padding:16px 20px;border-bottom:var(--bdr);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0;
+}
+.dlg-ttl{
+  font-size:16px;font-weight:400;color:var(--sap-text);
+  display:flex;align-items:center;gap:10px;
+}
+.dlg-ico{color:var(--sap-pos);font-size:18px;}
+.dlg-x{
+  width:28px;height:28px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--sap-text2);font-size:16px;
+  transition:background .15s;background:none;border:none;font-family:inherit;
+}
+.dlg-x:hover{background:#F5F6F7;color:var(--sap-text);}
+.dlg-body{flex:1;overflow:auto;padding:16px 20px;}
+.dlg-ftr{
+  padding:12px 20px;border-top:var(--bdr);
+  display:flex;gap:8px;justify-content:flex-end;flex-shrink:0;
+}
+
+/* Validation items */
+.vi{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;border-radius:var(--r);font-size:13px;margin-bottom:5px;}
+.vi.ok{background:var(--sap-pos-bg);color:#0A5C2F;}
+.vi.warn{background:var(--sap-crit-bg);color:#7A3500;}
+.vi.err{background:var(--sap-neg-bg);color:#8C0000;}
+
+/* Code block */
+.code-blk{
+  background:#1E2328;color:#ABB2BF;padding:16px;border-radius:var(--r);
+  font-family:'Courier New','Lucida Console',monospace;font-size:11px;
+  line-height:1.6;overflow:auto;white-space:pre;max-height:52vh;
+  margin-top:12px;
+}
+
+/* Dialog buttons */
+.btn-emp{
+  background:var(--sap-brand);border:1px solid var(--sap-brand-dk);
+  color:#fff;padding:8px 18px;border-radius:var(--r);
+  font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;
+  transition:background .15s;display:flex;align-items:center;gap:6px;
+}
+.btn-emp:hover{background:var(--sap-brand-dk);}
+.btn-std{
+  background:#fff;border:1px solid var(--sap-border);color:var(--sap-text);
+  padding:8px 16px;border-radius:var(--r);font-size:13px;
+  cursor:pointer;font-family:inherit;transition:all .15s;
+}
+.btn-std:hover{background:#F5F6F7;border-color:var(--sap-border-str);}
+
+/* Scrollbars */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:#C0C4CC;border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:#989EA8;}
 </style>
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
-<div class="load-overlay" id="loadOverlay">
-  <div class="spinner"></div>
-  <div style="font-size:13px;color:var(--muted)">Processing…</div>
+<!-- BUSY OVERLAY -->
+<div class="busy-ov" id="busyOv">
+  <div class="busy-spin"></div>
+  <div class="busy-lbl">Processing…</div>
 </div>
 
-<!-- BRAND HEADER -->
-<header class="brand-hdr">
-  <div class="brand">
-    <div class="brand-logo">
-      <span class="bl-mcg">MCG</span>
-      <span class="bl-ix">iXBRL</span>
+<!-- TOAST REGION -->
+<div class="toast-rgn" id="toastRgn"></div>
+
+<!-- ═══ SHELL BAR ════════════════════════════════ -->
+<header class="sap-shell">
+  <div class="shell-brand">
+    <div class="shell-diamond">
+      <svg viewBox="0 0 40 36" width="38" height="34" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polygon points="10,0 20,9 10,18 0,9"   fill="#3B78C4"/>
+        <polygon points="30,0 40,9 30,18 20,9"  fill="#1C3568"/>
+        <polygon points="10,18 20,27 10,36 0,27"  fill="#18A8C8"/>
+        <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A"/>
+      </svg>
     </div>
-    <div class="brand-name">MCG <span>iXBRL Tagger</span></div>
+    <div class="shell-text">
+      <span class="shell-company">MY CLOUD GLOBAL</span>
+      <span class="shell-product">iXBRL Tagger</span>
+    </div>
   </div>
-  <div class="vsep"></div>
-  <div class="steps" id="steps">
-    <div class="step active" data-step="1"><span class="snum">1</span> Taxonomy</div>
-    <span class="step-arr">›</span>
-    <div class="step" data-step="2"><span class="snum">2</span> Document</div>
-    <span class="step-arr">›</span>
-    <div class="step" data-step="3"><span class="snum">3</span> Tag</div>
-    <span class="step-arr">›</span>
-    <div class="step" data-step="4"><span class="snum">4</span> Export</div>
+
+  <div class="shell-wiz" id="shellWiz">
+    <div class="wz-step active" data-step="1">
+      <div class="wz-num" id="wn1">1</div>
+      <span class="wz-label">Taxonomy</span>
+    </div>
+    <span class="wz-arrow">›</span>
+    <div class="wz-step" data-step="2">
+      <div class="wz-num" id="wn2">2</div>
+      <span class="wz-label">Document</span>
+    </div>
+    <span class="wz-arrow">›</span>
+    <div class="wz-step" data-step="3">
+      <div class="wz-num" id="wn3">3</div>
+      <span class="wz-label">Tag</span>
+    </div>
+    <span class="wz-arrow">›</span>
+    <div class="wz-step" data-step="4">
+      <div class="wz-num" id="wn4">4</div>
+      <span class="wz-label">Export</span>
+    </div>
   </div>
-  <div class="sp"></div>
-  <div class="hdr-ctx">
-    <div class="hfld"><label>Entity:</label><input type="text" id="ent" placeholder="Company name" style="width:140px"></div>
-    <div class="hfld"><label>Period:</label><input type="date" id="ps" style="width:126px"> <span style="color:rgba(255,255,255,.3)">–</span> <input type="date" id="pe" style="width:126px"></div>
-    <div class="hfld"><label>CCY:</label><select id="ccy" style="width:62px"><option>ZAR</option><option>USD</option><option>EUR</option><option>GBP</option><option>AUD</option></select></div>
-    <div class="hfld"><label>Scale:</label><select id="dec" style="width:80px"><option value="0">Units</option><option value="-3" selected>Thousands</option><option value="-6">Millions</option></select></div>
-  </div>
-  <div class="hdr-btns">
-    <button class="btn-save" onclick="saveSession()" title="Save session to browser">💾 Save</button>
-    <button class="btn-gen" id="genBtn" onclick="generate()" disabled>⬇ Generate iXBRL</button>
+
+  <div class="shell-sp"></div>
+
+  <div class="shell-end">
+    <button class="btn-sh-sec" onclick="saveSession()" title="Save session to browser storage">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M13.5 1h-10A2.5 2.5 0 001 3.5v9A2.5 2.5 0 003.5 15h9a2.5 2.5 0 002.5-2.5v-10L13.5 1zM8 13a2 2 0 110-4 2 2 0 010 4zm2-8.5v2a.5.5 0 01-.5.5h-4a.5.5 0 01-.5-.5v-2a.5.5 0 01.5-.5h4a.5.5 0 01.5.5z"/>
+      </svg>
+      Save Session
+    </button>
+    <button class="btn-sh-pri" id="genBtn" onclick="generate()" disabled>
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+        <path d="M8 1v10M4 7l4 4 4-4M2 14h12"/>
+      </svg>
+      Generate iXBRL
+    </button>
+    <div class="shell-avatar" title="My Cloud Global">MCG</div>
   </div>
 </header>
 
+<!-- ═══ CONTEXT BAR ═══════════════════════════════ -->
+<div class="ctx-bar">
+  <div class="ctx-fld">
+    <span class="ctx-lbl">Entity</span>
+    <input type="text" class="ctx-in" id="ent" placeholder="Company name" style="width:170px">
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-fld">
+    <span class="ctx-lbl">Period</span>
+    <input type="date" class="ctx-in" id="ps" style="width:130px">
+    <span class="ctx-to">→</span>
+    <input type="date" class="ctx-in" id="pe" style="width:130px">
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-fld">
+    <span class="ctx-lbl">Currency</span>
+    <select class="ctx-sel" id="ccy" style="width:68px">
+      <option>ZAR</option><option>USD</option><option>EUR</option><option>GBP</option><option>AUD</option>
+    </select>
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-fld">
+    <span class="ctx-lbl">Scale</span>
+    <select class="ctx-sel" id="dec" style="width:100px">
+      <option value="0">Units</option>
+      <option value="-3" selected>Thousands</option>
+      <option value="-6">Millions</option>
+    </select>
+  </div>
+</div>
+
+<!-- ═══ WORKSPACE ══════════════════════════════════ -->
 <div class="workspace">
 
-  <!-- LEFT: TAXONOMY -->
-  <aside class="tax-panel">
-    <div class="panel-top">
-      <div class="panel-label">Taxonomy</div>
+  <!-- LEFT: TAXONOMY ─────────────────────────────── -->
+  <aside class="p-tax">
+    <div class="p-hdr">
+      <div class="p-title">Taxonomy</div>
       <select class="tax-sel" id="taxSel" onchange="loadBuiltin(this.value)">
         <option value="">— Select taxonomy —</option>
         <option value="ifrs" selected>IFRS 2024</option>
         <option value="usgaap">US-GAAP 2024</option>
         <option value="ukfrs">UK FRS 102</option>
       </select>
-      <div class="srch"><input type="text" id="csrch" placeholder="Search concepts…" oninput="filterTree(this.value)"></div>
+      <div class="srch-wrap">
+        <span class="srch-icon">⌕</span>
+        <input type="text" class="srch-in" id="csrch" placeholder="Search concepts…" oninput="filterTree(this.value)">
+      </div>
     </div>
-    <div class="tree" id="tree">
-      <div style="padding:20px 12px;color:#cbd5e1;font-size:12px">Select a taxonomy above to begin</div>
+    <div class="tax-tree" id="tree">
+      <div style="padding:28px 14px;text-align:center;color:var(--sap-text3);">
+        <div style="font-size:32px;margin-bottom:10px;opacity:.5">🔖</div>
+        <div style="font-size:13px">Select a taxonomy above<br>to browse concepts</div>
+      </div>
     </div>
   </aside>
 
-  <!-- CENTER: DOCUMENT -->
-  <main class="doc-panel">
+  <!-- CENTER: DOCUMENT ───────────────────────────── -->
+  <main class="p-doc">
     <div class="doc-bar" id="docBar">
-      <span class="doc-bar-label">Document:</span>
-      <div id="sheetTabs"></div>
-      <button class="doc-upload" onclick="document.getElementById('docIn').click()">+ Load Document</button>
+      <span class="doc-fn" id="docFn">No document</span>
+      <div id="sheetTabs" style="display:contents"></div>
+      <span class="tsep" id="tabSep" style="display:none"></span>
+      <button class="tbtn tbtn-pri" onclick="document.getElementById('docIn').click()">
+        ↑ Upload Document
+      </button>
       <input type="file" id="docIn" accept=".xlsx,.xls,.csv" style="display:none" onchange="loadDoc(this)">
-      <button class="auto-btn" id="autoBtn" onclick="autoSuggest()" style="display:none" title="Auto-match row labels to taxonomy concepts">✨ Auto-suggest</button>
-      <button class="undo-btn" id="undoBtn" onclick="undoLast()" style="display:none">↩ Undo</button>
+      <button class="tbtn tbtn-sug tbtn-ml" id="autoBtn" onclick="autoSuggest()" style="display:none">
+        ✨ Auto-suggest
+      </button>
+      <button class="tbtn tbtn-gh" id="undoBtn" onclick="undoLast()" style="display:none">
+        ↩ Undo
+      </button>
     </div>
 
-    <!-- Suggestion acceptance bar -->
+    <!-- Suggestion bar -->
     <div class="sug-bar" id="sugBar">
-      <p>✨ <strong id="sugCount">0</strong> automatic tag suggestions found based on your row labels. Review below or accept all.</p>
-      <div class="sug-actions">
-        <button class="btn-accept" onclick="acceptAllSuggestions()">✓ Accept All</button>
-        <button class="btn-dismiss" onclick="dismissSuggestions()">Dismiss</button>
-      </div>
+      <div class="sug-msg">✨ <strong id="sugCount">0</strong> concept suggestions found. Review below or accept all at once.</div>
+      <button class="btn-acc" onclick="acceptAllSuggestions()">✓ Accept All</button>
+      <button class="btn-dis" onclick="dismissSuggestions()">Dismiss</button>
     </div>
 
     <div class="doc-content" id="docContent">
-      <div class="dz" id="dz">
-        <div class="dz-icon">📊</div>
-        <h3>Load your financial document</h3>
-        <p>Upload an Excel (.xlsx) or CSV file, or try a sample below.<br>Then click values in the document to tag them.</p>
-        <div class="dz-btns">
-          <button class="sample-btn" onclick="loadSample('inc')">📈 Income Statement</button>
-          <button class="sample-btn" onclick="loadSample('bs')">📊 Balance Sheet</button>
+      <div class="empty-st" id="emptyState">
+        <div class="empty-ico">📊</div>
+        <div class="empty-ttl">Load your financial document</div>
+        <div class="empty-sub">
+          Upload an Excel (.xlsx) or CSV file, or try a sample below.<br>
+          Click numeric values in the document to tag them with taxonomy concepts.
+        </div>
+        <div class="empty-acts">
+          <button class="btn-smp" onclick="loadSample('inc')">📈 Income Statement</button>
+          <button class="btn-smp" onclick="loadSample('bs')">📊 Balance Sheet</button>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- RIGHT: PROPERTIES -->
-  <aside class="props-panel">
+  <!-- RIGHT: PROPERTIES ─────────────────────────── -->
+  <aside class="p-props">
+    <!-- Armed concept -->
     <div class="ps">
-      <div class="ps-title">Armed Concept</div>
+      <div class="ps-ttl">Active Concept</div>
       <div id="armDisp">
-        <div class="no-armed">Click a concept in the taxonomy tree to arm it, then click a value in the document to tag it.</div>
+        <div class="no-armed">Select a concept from the taxonomy tree, then click a cell value to apply a tag.</div>
       </div>
     </div>
 
+    <!-- Selected cell -->
     <div class="ps" id="selSec" style="display:none">
-      <div class="ps-title">Selected Value</div>
+      <div class="ps-ttl">Selected Value</div>
       <div id="selDisp"></div>
     </div>
 
+    <!-- Tag options -->
     <div class="ps">
-      <div class="ps-title">Tag Options</div>
-      <div class="prop-field">
-        <label>Sign</label>
-        <select id="tsign"><option value="1">Positive</option><option value="-1">Negative (negate)</option></select>
+      <div class="ps-ttl">Tag Options</div>
+      <div class="pf">
+        <label>Sign override</label>
+        <select id="tsign">
+          <option value="1">Positive (as shown)</option>
+          <option value="-1">Negative (negate)</option>
+        </select>
       </div>
-      <div class="prop-field">
-        <label>Format</label>
-        <select id="tfmt"><option value="ixt:num-dot-decimal">num-dot-decimal</option><option value="ixt:num-comma-decimal">num-comma-decimal</option></select>
+      <div class="pf">
+        <label>Number format</label>
+        <select id="tfmt">
+          <option value="ixt:num-dot-decimal">num-dot-decimal</option>
+          <option value="ixt:num-comma-decimal">num-comma-decimal</option>
+        </select>
       </div>
     </div>
 
-    <div class="prog-wrap" id="progWrap" style="display:none">
-      <div class="prog-label"><span>Tagging progress</span><span id="progPct">0%</span></div>
-      <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    <!-- Progress -->
+    <div class="prog-sec" id="progSec" style="display:none">
+      <div class="prog-hdr">
+        <span class="prog-lbl">Tagging progress</span>
+        <span class="prog-pct" id="progPct">0%</span>
+      </div>
+      <div class="prog-trk">
+        <div class="prog-fill" id="progFill" style="width:0%"></div>
+      </div>
     </div>
 
-    <div class="tags-list">
-      <div class="tl-title">
-        <span>Tags (<span id="tcnt">0</span>)</span>
-        <span class="clear-all" onclick="clearAllTags()" style="display:none" id="clearAllBtn">Clear all</span>
+    <!-- Tags -->
+    <div class="tags-sec">
+      <div class="tags-hdr">
+        <span class="tags-ttl">Applied Tags</span>
+        <span class="tags-badge" id="tcnt">0</span>
+        <button class="tags-clr" id="clearBtn" onclick="clearAllTags()" style="display:none">Clear all</button>
       </div>
-      <div id="tlb"><div style="color:#cbd5e1;font-size:12px;font-style:italic">No tags yet</div></div>
+      <div class="tags-list" id="tlb">
+        <div class="tli-empty">No tags applied yet</div>
+      </div>
     </div>
   </aside>
 </div>
 
-<!-- STATUS BAR -->
-<div class="status-bar">
-  <div class="si"><div class="dot" id="taxDot"></div><span id="taxStat">No taxonomy</span></div>
-  <div class="si"><div class="dot" id="docDot"></div><span id="docStat">No document</span></div>
-  <div class="si" style="margin-left:auto"><span id="armStat">No concept armed</span></div>
-  <div class="si">Tagged: <strong id="stcnt" style="margin-left:3px;color:#fff">0</strong></div>
-</div>
+<!-- ═══ STATUS BAR ════════════════════════════════ -->
+<footer class="status-bar">
+  <div class="si"><div class="sdot" id="taxDot"></div><span id="taxStat">No taxonomy</span></div>
+  <div class="si"><div class="sdot" id="docDot"></div><span id="docStat">No document</span></div>
+  <div class="s-sp"></div>
+  <div class="si"><span id="armStat">No concept armed</span></div>
+  <div class="si">Tagged: <span class="s-str" id="stcnt" style="margin-left:4px">0</span></div>
+</footer>
 
-<!-- OUTPUT MODAL -->
-<div class="modal-overlay" id="omod">
-  <div class="modal">
-    <div class="modal-hdr"><h2>Generated iXBRL Output</h2><span class="modal-close" onclick="closeModal()">✕</span></div>
-    <div class="modal-body">
-      <div id="valRes"></div>
-      <pre class="out-pre" id="outPre"></pre>
+<!-- ═══ OUTPUT DIALOG ══════════════════════════════ -->
+<div class="dlg-ov" id="omod">
+  <div class="dlg">
+    <div class="dlg-hdr">
+      <div class="dlg-ttl">
+        <span class="dlg-ico">✓</span>
+        Generated iXBRL Output
+      </div>
+      <button class="dlg-x" onclick="closeModal()">✕</button>
     </div>
-    <div class="modal-ftr">
-      <button class="btn-copy" onclick="copyOut()">Copy</button>
-      <button class="btn-dl" onclick="dlOut()">⬇ Download .xhtml</button>
-      <button class="btn-close" onclick="closeModal()">Close</button>
+    <div class="dlg-body">
+      <div id="valRes"></div>
+      <pre class="code-blk" id="outPre"></pre>
+    </div>
+    <div class="dlg-ftr">
+      <button class="btn-std" onclick="copyOut()">Copy to Clipboard</button>
+      <button class="btn-emp" onclick="dlOut()">↓ Download .xhtml</button>
+      <button class="btn-std" onclick="closeModal()">Close</button>
     </div>
   </div>
 </div>
@@ -512,25 +817,18 @@ td.sel-cell{outline:2px solid var(--blue)!important;outline-offset:-2px;}
 // ═══════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════
-const S = {
-  tax: null,
-  wb: null, sheet: 0,
-  rows: [],           // [{cells:[{v,isNum}], meta:{isSection,isBold}}]
-  tags: [],           // [{r,c,concept,val,isNum,isSuggestion}]
-  history: [],        // for undo
-  armed: null,
-  selCell: null,
-  suggestions: [],    // [{r,c,concept,score}]
-  totalNumeric: 0,
-  out: ''
+const S={
+  tax:null,wb:null,sheet:0,
+  rows:[],tags:[],history:[],suggestions:[],
+  armed:null,selCell:null,totalNumeric:0,out:''
 };
 
 // ═══════════════════════════════════════════════════
 // TAXONOMIES
 // ═══════════════════════════════════════════════════
-const TAX = {
+const TAX={
   ifrs:{
-    name:'IFRS 2024', prefix:'ifrs-full',
+    name:'IFRS 2024',prefix:'ifrs-full',
     ns:'http://xbrl.ifrs.org/taxonomy/2024-01-01/ifrs-full',
     tree:[
       {label:'Statement of Financial Position',icon:'📊',ch:[
@@ -610,7 +908,7 @@ const TAX = {
         {id:'CashFlowsFromUsedInOperatingActivities',label:'Cash flows from operating activities',t:'monetary'},
         {id:'CashFlowsFromUsedInInvestingActivities',label:'Cash flows from investing activities',t:'monetary'},
         {id:'CashFlowsFromUsedInFinancingActivities',label:'Cash flows from financing activities',t:'monetary'},
-        {id:'IncreaseDecreaseInCashAndCashEquivalents',label:'Net increase in cash and cash equivalents',t:'monetary'},
+        {id:'IncreaseDecreaseInCashAndCashEquivalents',label:'Net increase in cash and equivalents',t:'monetary'},
         {id:'CashAndCashEquivalents',label:'Cash at end of period',t:'monetary'},
       ]},
       {label:'Entity Information',icon:'🏢',ch:[
@@ -623,7 +921,7 @@ const TAX = {
     ]
   },
   usgaap:{
-    name:'US-GAAP 2024', prefix:'us-gaap',
+    name:'US-GAAP 2024',prefix:'us-gaap',
     ns:'http://fasb.org/us-gaap/2024',
     tree:[
       {label:'Balance Sheet',icon:'📊',ch:[
@@ -662,7 +960,7 @@ const TAX = {
     ]
   },
   ukfrs:{
-    name:'UK FRS 102', prefix:'uk-bus',
+    name:'UK FRS 102',prefix:'uk-bus',
     ns:'http://xbrl.frc.org.uk/FRS-102/2023-01-01',
     tree:[
       {label:'Balance Sheet',icon:'📊',ch:[
@@ -701,7 +999,7 @@ const TAX = {
 // ═══════════════════════════════════════════════════
 // SAMPLE DATA
 // ═══════════════════════════════════════════════════
-const SAMPLES = {
+const SAMPLES={
   inc:{name:'Income Statement',rows:[
     {c:[{v:"Description"},{v:"Note"},{v:"2024 (R'000)"},{v:"2023 (R'000)"}],meta:{isSection:true}},
     {c:[{v:'Revenue'},{v:'3'},{v:'760,575',n:1},{v:'698,142',n:1}],meta:{}},
@@ -775,60 +1073,80 @@ function isNumStr(s){
   return !isNaN(parseFloat(c))&&isFinite(c)&&c!=='';
 }
 function numVal(s){return parseFloat(s.trim().replace(/[,\s]/g,'').replace(/^\((.+)\)$/,'-$1'))||0;}
-function loading(show){document.getElementById('loadOverlay').classList.toggle('show',show);}
+function busy(show){document.getElementById('busyOv').classList.toggle('show',show);}
+
+// Toast notification system
+function toast(msg,type='info',dur=3200){
+  const rgn=document.getElementById('toastRgn');
+  const t=document.createElement('div');
+  t.className='toast '+type;
+  const icon={ok:'✓',warn:'⚠',err:'✕',info:'ℹ'}[type]||'ℹ';
+  t.innerHTML=`<span style="font-size:15px">${icon}</span><span>${esc(msg)}</span>`;
+  rgn.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),350);},dur);
+}
 
 // ═══════════════════════════════════════════════════
 // TAXONOMY
 // ═══════════════════════════════════════════════════
-let allConcepts = [];
+let allConcepts=[];
 
 function loadBuiltin(key){
   if(!key) return;
-  S.tax = TAX[key];
-  allConcepts = [];
-  collectConcepts(S.tax.tree, allConcepts);
-  renderTree(S.tax.tree, '');
-  setDot('taxDot','g'); setText('taxStat', S.tax.name+' loaded');
-  updateStep(1, true);
+  S.tax=TAX[key];
+  allConcepts=[];
+  collectConcepts(S.tax.tree,allConcepts);
+  renderTree(S.tax.tree,'');
+  setDot('taxDot','ok');
+  setText('taxStat',S.tax.name);
+  updateStep(1,true);
   if(S.rows.length) showAutoBtn();
+  toast(S.tax.name+' taxonomy loaded','ok');
 }
 
-function collectConcepts(nodes, out){
+function collectConcepts(nodes,out){
   nodes.forEach(n=>{
     if(n.id) out.push({id:n.id,label:n.label,t:n.t||'monetary',prefix:S.tax.prefix,ns:S.tax.ns});
-    if(n.ch) collectConcepts(n.ch, out);
+    if(n.ch) collectConcepts(n.ch,out);
   });
 }
 
-function renderTree(tree, filter){
+function renderTree(tree,filter){
   const el=document.getElementById('tree');
   el.innerHTML='';
   const fl=filter.toLowerCase();
   tree.forEach(group=>{
     const gd=document.createElement('div');
-    const gh=document.createElement('div'); gh.className='tgh';
-    gh.innerHTML=`<span class="arr">▼</span> ${group.icon||'📁'} ${group.label}`;
-    const gb=document.createElement('div');
-    gh.onclick=()=>toggle(gh,gb);
-    buildChildren(group.ch||[], gb, 1, fl);
-    if(fl && !gb.querySelector('.ci')) return;
-    gd.appendChild(gh); gd.appendChild(gb); el.appendChild(gd);
+    const gh=document.createElement('div');gh.className='tg-hdr';
+    const arr=document.createElement('span');arr.className='ci-expand';arr.textContent='▼';
+    gh.appendChild(arr);
+    gh.appendChild(document.createTextNode(' '+(group.icon||'📁')+' '+group.label));
+    const gb=document.createElement('div');gb.className='tb-body';
+    gh.onclick=()=>{gb.classList.toggle('hid');arr.classList.toggle('col');};
+    buildChildren(group.ch||[],gb,1,fl);
+    if(fl&&!gb.querySelector('.ci')) return;
+    gd.appendChild(gh);gd.appendChild(gb);el.appendChild(gd);
   });
-  if(!el.children.length) el.innerHTML='<div style="padding:16px 12px;color:#94a3b8;font-size:12px">No concepts match your search</div>';
+  if(!el.children.length){
+    el.innerHTML='<div style="padding:20px 14px;color:var(--sap-text3);font-size:13px;text-align:center">No concepts match your search</div>';
+  }
 }
 
-function buildChildren(nodes, container, depth, fl){
+function buildChildren(nodes,container,depth,fl){
   nodes.forEach(node=>{
     if(node.ch){
       const sd=document.createElement('div');
-      const sh=document.createElement('div'); sh.className='tsh';
+      const sh=document.createElement('div');sh.className='ts-hdr';
       sh.style.paddingLeft=(10+depth*14)+'px';
-      sh.innerHTML=`<span class="arr">▼</span> ${node.label}`;
-      const sb=document.createElement('div');
-      sh.onclick=()=>toggle(sh,sb);
+      sh.style.padding=`6px 12px 6px ${10+depth*14}px`;
+      const arr=document.createElement('span');arr.className='ci-expand';arr.textContent='▼';
+      sh.appendChild(arr);
+      sh.appendChild(document.createTextNode(' '+node.label));
+      const sb=document.createElement('div');sb.className='tb-body';
+      sh.onclick=()=>{sb.classList.toggle('hid');arr.classList.toggle('col');};
       buildChildren(node.ch,sb,depth+1,fl);
       if(fl&&!sb.querySelector('.ci')) return;
-      sd.appendChild(sh); sd.appendChild(sb); container.appendChild(sd);
+      sd.appendChild(sh);sd.appendChild(sb);container.appendChild(sd);
     } else if(node.id){
       if(fl&&!node.label.toLowerCase().includes(fl)&&!node.id.toLowerCase().includes(fl)) return;
       const c=mkConcept(node);
@@ -836,8 +1154,9 @@ function buildChildren(nodes, container, depth, fl){
       el.className='ci'+(S.armed&&S.armed.id===node.id?' armed':'')+(S.tags.some(t=>t.concept.id===node.id)?' used':'');
       el.dataset.cid=node.id;
       el.style.paddingLeft=(30+depth*14)+'px';
-      const tCls=node.t==='string'?'str':node.t==='decimal'?'dec':'';
-      el.innerHTML=`<span class="cdot"></span><span class="clabel">${node.label}<span class="cid">${S.tax.prefix}:${node.id}</span></span><span class="ctype ${tCls}">${node.t||'monetary'}</span>`;
+      const tMap={monetary:'t-mon',decimal:'t-dec',string:'t-str',date:'t-date'};
+      const tCls=tMap[node.t||'monetary']||'t-mon';
+      el.innerHTML=`<span class="ci-dot"></span><span class="ci-text"><span class="ci-label">${node.label}</span><span class="ci-id">${S.tax.prefix}:${node.id}</span></span><span class="ci-type ${tCls}">${node.t||'monetary'}</span>`;
       el.onclick=()=>arm(c,el);
       container.appendChild(el);
     }
@@ -845,7 +1164,6 @@ function buildChildren(nodes, container, depth, fl){
 }
 
 function mkConcept(n){return{id:n.id,label:n.label,type:n.t||'monetary',prefix:S.tax.prefix,ns:S.tax.ns};}
-function toggle(h,b){b.classList.toggle('hid');h.classList.toggle('col');}
 function filterTree(q){if(S.tax) renderTree(S.tax.tree,q);}
 
 // ═══════════════════════════════════════════════════
@@ -854,18 +1172,22 @@ function filterTree(q){if(S.tax) renderTree(S.tax.tree,q);}
 function arm(c,el){
   document.querySelectorAll('.ci.armed').forEach(e=>e.classList.remove('armed'));
   if(S.armed&&S.armed.id===c.id){S.armed=null;updateArm();return;}
-  S.armed=c; el&&el.classList.add('armed'); updateArm();
+  S.armed=c;el&&el.classList.add('armed');updateArm();
   if(S.selCell) applyTag(S.selCell.r,S.selCell.c);
 }
-function clearArmed(){S.armed=null;document.querySelectorAll('.ci.armed').forEach(e=>e.classList.remove('armed'));updateArm();}
+function clearArmed(){
+  S.armed=null;
+  document.querySelectorAll('.ci.armed').forEach(e=>e.classList.remove('armed'));
+  updateArm();
+}
 function updateArm(){
   const d=document.getElementById('armDisp');
   const s=document.getElementById('armStat');
   if(S.armed){
-    d.innerHTML=`<div class="armed-box"><div class="armed-label">${S.armed.label}</div><div class="armed-id">${S.armed.prefix}:${S.armed.id}</div><span class="armed-clear" onclick="clearArmed()">✕ Clear</span></div>`;
+    d.innerHTML=`<div class="armed-card"><div class="armed-name">${esc(S.armed.label)}</div><div class="armed-id">${S.armed.prefix}:${S.armed.id}</div><button class="armed-clr" onclick="clearArmed()">✕ Clear selection</button></div>`;
     s.textContent='Armed: '+S.armed.prefix+':'+S.armed.id;
   } else {
-    d.innerHTML='<div class="no-armed">Click a concept in the taxonomy tree to arm it, then click a value in the document to tag it.</div>';
+    d.innerHTML='<div class="no-armed">Select a concept from the taxonomy tree, then click a cell value to apply a tag.</div>';
     s.textContent='No concept armed';
   }
 }
@@ -874,19 +1196,19 @@ function updateArm(){
 // DOCUMENT LOADING
 // ═══════════════════════════════════════════════════
 async function loadDoc(inp){
-  const file=inp.files[0]; if(!file) return;
-  loading(true);
+  const file=inp.files[0];if(!file) return;
+  busy(true);
   try{
     const buf=await file.arrayBuffer();
     const wb=XLSX.read(new Uint8Array(buf),{type:'array',cellText:false});
-    S.wb=wb; S.sheet=0; S.tags=[]; S.history=[];
-    buildSheetTabs();
-    loadSheet(0);
-    setDot('docDot','g'); setText('docStat', file.name);
-    updateStep(2, true);
-    showAutoBtn();
-  }catch(e){alert('Could not read file: '+e.message);}
-  finally{loading(false);}
+    S.wb=wb;S.sheet=0;S.tags=[];S.history=[];
+    buildSheetTabs();loadSheet(0);
+    setDot('docDot','ok');setText('docStat',file.name);
+    setText('docFn',file.name);
+    updateStep(2,true);showAutoBtn();
+    toast('Document loaded: '+file.name,'ok');
+  } catch(e){toast('Could not read file: '+e.message,'err');}
+  finally{busy(false);}
 }
 
 function buildSheetTabs(){
@@ -899,7 +1221,7 @@ function buildSheetTabs(){
     t.onclick=()=>{S.sheet=i;loadSheet(i);buildSheetTabs();};
     tabs.appendChild(t);
   });
-  document.getElementById('docBar').style.display='flex';
+  document.getElementById('tabSep').style.display=S.wb.SheetNames.length>1?'block':'none';
 }
 
 function loadSheet(idx){
@@ -920,24 +1242,21 @@ function loadSheet(idx){
     const allCaps=ne.length>=1&&cells[0].v===cells[0].v.toUpperCase()&&cells[0].v.trim().length>1&&!cells[0].isNum;
     return{cells,meta:{isSection:allCaps&&ne.length<=2,isBold:false}};
   });
-  countNumeric();
-  renderTable();
+  countNumeric();renderTable();
 }
 
 function loadSample(key){
-  const s=SAMPLES[key]; if(!s) return;
-  S.tags=[]; S.history=[]; S.suggestions=[];
+  const s=SAMPLES[key];if(!s) return;
+  S.tags=[];S.history=[];S.suggestions=[];
   S.rows=s.rows.map(r=>({cells:r.c.map(c=>({v:c.v,raw:c.v,isNum:!!c.n})),meta:r.meta}));
   if(!document.getElementById('ent').value) document.getElementById('ent').value='Example Company Ltd';
   document.getElementById('ps').value='2024-01-01';
   document.getElementById('pe').value='2024-12-31';
-  setDot('docDot','g'); setText('docStat',s.name+' (sample)');
-  updateStep(2,true);
-  countNumeric();
-  renderTable();
-  updateTagList();
-  showAutoBtn();
-  document.getElementById('docBar').style.display='flex';
+  setDot('docDot','ok');setText('docStat',s.name+' (sample)');
+  setText('docFn',s.name+' (sample)');
+  updateStep(2,true);countNumeric();renderTable();updateTagList();showAutoBtn();
+  document.getElementById('emptyState').style.display='none';
+  toast('Sample loaded: '+s.name,'info');
 }
 
 function countNumeric(){
@@ -959,9 +1278,9 @@ function scoreMatch(a,b){
   if(a===b) return 1;
   if(a.includes(b)||b.includes(a)) return 0.85;
   const wa=new Set(a.split(/\s+/).filter(w=>w.length>2));
-  const wb=new Set(b.split(/\s+/).filter(w=>w.length>2));
-  const inter=[...wa].filter(w=>wb.has(w)).length;
-  const union=new Set([...wa,...wb]).size;
+  const wb2=new Set(b.split(/\s+/).filter(w=>w.length>2));
+  const inter=[...wa].filter(w=>wb2.has(w)).length;
+  const union=new Set([...wa,...wb2]).size;
   return union>0?inter/union:0;
 }
 
@@ -981,8 +1300,7 @@ function autoSuggest(){
     row.cells.forEach((cell,ci)=>{
       if(ci<=1) return;
       if(!(cell.isNum||isNumStr(cell.v))||!cell.v.trim()) return;
-      const key=`${ri}:${ci}`;
-      if(existingKeys.has(key)) return;
+      if(existingKeys.has(`${ri}:${ci}`)) return;
       S.suggestions.push({r:ri,c:ci,concept:best,score:bestScore});
     });
   });
@@ -991,11 +1309,12 @@ function autoSuggest(){
   document.getElementById('sugCount').textContent=n;
   if(n>0){
     bar.classList.add('show');
-    document.getElementById('autoBtn').classList.add('done');
+    document.getElementById('autoBtn').classList.add('on');
     document.getElementById('autoBtn').textContent='✨ '+n+' suggestions';
   } else {
     bar.classList.remove('show');
     document.getElementById('autoBtn').textContent='✨ No suggestions';
+    toast('No automatic suggestions found for this document.','info');
   }
   renderTable();
 }
@@ -1006,19 +1325,21 @@ function acceptAllSuggestions(){
     const cell=S.rows[sg.r]?.cells[sg.c];
     if(cell) S.tags.push({r:sg.r,c:sg.c,concept:sg.concept,val:cell.v,isNum:cell.isNum||isNumStr(cell.v),isSuggestion:false});
   });
+  const n=S.suggestions.length;
   S.suggestions=[];
   document.getElementById('sugBar').classList.remove('show');
   document.getElementById('autoBtn').textContent='✨ Auto-suggest';
-  document.getElementById('autoBtn').classList.remove('done');
-  renderTable(); updateTagList(); updateProgress();
+  document.getElementById('autoBtn').classList.remove('on');
+  renderTable();updateTagList();updateProgress();
   updateStep(3,true);
+  toast(n+' tags accepted','ok');
 }
 
 function dismissSuggestions(){
   S.suggestions=[];
   document.getElementById('sugBar').classList.remove('show');
   document.getElementById('autoBtn').textContent='✨ Auto-suggest';
-  document.getElementById('autoBtn').classList.remove('done');
+  document.getElementById('autoBtn').classList.remove('on');
   renderTable();
 }
 
@@ -1027,29 +1348,24 @@ function dismissSuggestions(){
 // ═══════════════════════════════════════════════════
 function renderTable(){
   const dc=document.getElementById('docContent');
-  if(!S.rows.length){
-    dc.innerHTML=''; return;
-  }
+  if(!S.rows.length){dc.innerHTML='';return;}
+  document.getElementById('emptyState') && (document.getElementById('emptyState').style.display='none');
   const maxC=Math.max(...S.rows.map(r=>r.cells.length),1);
   let h='<div class="fin-wrap"><table class="fin-tbl"><thead><tr>';
-  // Header row
   if(S.rows[0]&&S.rows[0].meta.isSection){
     S.rows[0].cells.forEach((c,ci)=>{
-      const align=ci>1?'num':'';
-      h+=`<th class="${align}">${esc(c.v)}</th>`;
+      h+=`<th class="${ci>1?'num-h':''}">${esc(c.v)}</th>`;
     });
     h+='</tr></thead><tbody>';
-    renderRows(S.rows.slice(1), maxC, s=>{h+=s;});
+    renderRows(S.rows.slice(1),maxC,s=>{h+=s;},1);
   } else {
-    for(let ci=0;ci<maxC;ci++) h+=`<th${ci>1?' class="num"':''}>Col ${ci+1}</th>`;
+    for(let ci=0;ci<maxC;ci++) h+=`<th${ci>1?' class="num-h"':''}>Col ${ci+1}</th>`;
     h+='</tr></thead><tbody>';
-    renderRows(S.rows, maxC, s=>{h+=s;});
+    renderRows(S.rows,maxC,s=>{h+=s;},0);
   }
   h+='</tbody></table></div>';
   dc.innerHTML=h;
-
-  // Setup drop zone events on content area
-  dc.ondragover=e=>{e.preventDefault();};
+  dc.ondragover=e=>e.preventDefault();
   dc.ondrop=async e=>{
     e.preventDefault();
     const f=e.dataTransfer.files[0];
@@ -1057,15 +1373,14 @@ function renderTable(){
   };
 }
 
-function renderRows(rows, maxC, push){
-  const startRowIdx = S.rows[0]?.meta.isSection ? 1 : 0;
+function renderRows(rows,maxC,push,startIdx){
   rows.forEach((row,i)=>{
-    const ri = startRowIdx + i;
+    const ri=startIdx+i;
     if(row.cells.every(c=>!c.v?.trim())){
-      push(`<tr><td colspan="${maxC}" style="height:8px;border:none"></td></tr>`);return;
+      push(`<tr><td colspan="${maxC}" style="height:8px;border:none;background:transparent!important"></td></tr>`);return;
     }
     const m=row.meta;
-    const cls=m.isSection?'row-section':m.isTotal?'row-total':m.isBold?'row-bold':'';
+    const cls=m.isSection?'t-sec':m.isTotal?'t-tot':m.isBold?'t-bold':'';
     push(`<tr class="${cls}">`);
     row.cells.forEach((cell,ci)=>{
       const v=cell.v||'';
@@ -1080,11 +1395,11 @@ function renderRows(rows, maxC, push){
       }
       let content=esc(v);
       if(tag){
-        const lbl=tag.concept.label.length>16?tag.concept.label.slice(0,14)+'…':tag.concept.label;
-        content+=`<span class="tag-badge confirmed" title="${tag.concept.prefix}:${tag.concept.id}">${lbl}<span class="rx" onclick="event.stopPropagation();removeTag(${ri},${ci})">✕</span></span>`;
+        const lbl=tag.concept.label.length>18?tag.concept.label.slice(0,16)+'…':tag.concept.label;
+        content+=`<span class="tag-chip chip-ok" title="${tag.concept.prefix}:${tag.concept.id}">${lbl}<span class="chip-rm" onclick="event.stopPropagation();removeTag(${ri},${ci})">✕</span></span>`;
       } else if(sug){
-        const lbl=sug.concept.label.length>16?sug.concept.label.slice(0,14)+'…':sug.concept.label;
-        content+=`<span class="tag-badge suggestion" title="Suggested: ${sug.concept.prefix}:${sug.concept.id} (${Math.round(sug.score*100)}% match)">${lbl}?</span>`;
+        const lbl=sug.concept.label.length>18?sug.concept.label.slice(0,16)+'…':sug.concept.label;
+        content+=`<span class="tag-chip chip-sug" title="Suggested: ${sug.concept.prefix}:${sug.concept.id} (${Math.round(sug.score*100)}%)">${lbl}?</span>`;
       }
       push(`<td class="${tdCls}" data-r="${ri}" data-c="${ci}" ${click}>${content}</td>`);
     });
@@ -1100,14 +1415,11 @@ function cellClick(el,r,c){
   el.classList.add('sel-cell');
   S.selCell={r,c};
   const cell=S.rows[r]?.cells[c];
-
-  // If clicking a suggestion, arm its concept first
   const sug=S.suggestions.find(s=>s.r===r&&s.c===c);
-  if(sug&&!S.armed){arm(mkConceptFromSug(sug),null);}
-
+  if(sug&&!S.armed) arm(mkConceptFromSug(sug),null);
   document.getElementById('selSec').style.display='block';
-  document.getElementById('selDisp').innerHTML=`<div style="font-size:12px;font-weight:600">${esc(cell?.v||'—')}</div><div style="font-size:11px;color:var(--muted);margin-top:2px">Row ${r+1} · Col ${c+1} · ${cell&&(cell.isNum||isNumStr(cell.v))?'Numeric':'Text'}</div>`;
-
+  document.getElementById('selDisp').innerHTML=
+    `<div class="sel-val">${esc(cell?.v||'—')}</div><div class="sel-meta">Row ${r+1} · Col ${c+1} · ${cell&&(cell.isNum||isNumStr(cell.v))?'Numeric':'Text'}</div>`;
   if(S.armed) applyTag(r,c);
 }
 
@@ -1117,14 +1429,12 @@ function applyTag(r,c){
   if(!S.armed) return;
   const cell=S.rows[r]?.cells[c];
   if(!cell||!cell.v.trim()) return;
-  // Push to history for undo
   S.history.push(JSON.stringify(S.tags));
   S.tags=S.tags.filter(t=>!(t.r===r&&t.c===c));
-  // Remove from suggestions
   S.suggestions=S.suggestions.filter(s=>!(s.r===r&&s.c===c));
   S.tags.push({r,c,concept:S.armed,val:cell.v,isNum:cell.isNum||isNumStr(cell.v),isSuggestion:false});
   document.getElementById('undoBtn').style.display='flex';
-  renderTable(); updateTagList(); updateProgress();
+  renderTable();updateTagList();updateProgress();
   updateStep(3,true);
   if(document.getElementById('sugBar').classList.contains('show')&&S.suggestions.length===0){
     document.getElementById('sugBar').classList.remove('show');
@@ -1134,23 +1444,24 @@ function applyTag(r,c){
 function removeTag(r,c){
   S.history.push(JSON.stringify(S.tags));
   S.tags=S.tags.filter(t=>!(t.r===r&&t.c===c));
-  renderTable(); updateTagList(); updateProgress();
+  renderTable();updateTagList();updateProgress();
 }
 
 function undoLast(){
   if(!S.history.length) return;
   S.tags=JSON.parse(S.history.pop());
   if(!S.history.length) document.getElementById('undoBtn').style.display='none';
-  renderTable(); updateTagList(); updateProgress();
+  renderTable();updateTagList();updateProgress();
+  toast('Undo successful','info');
 }
 
 function clearAllTags(){
   if(!S.tags.length) return;
-  if(!confirm('Clear all tags?')) return;
+  if(!confirm('Clear all '+S.tags.length+' applied tags?')) return;
   S.history.push(JSON.stringify(S.tags));
-  S.tags=[];
-  S.suggestions=[];
-  renderTable(); updateTagList(); updateProgress();
+  S.tags=[];S.suggestions=[];
+  renderTable();updateTagList();updateProgress();
+  toast('All tags cleared','warn');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1160,43 +1471,53 @@ function updateTagList(){
   const n=S.tags.length;
   document.getElementById('tcnt').textContent=n;
   document.getElementById('stcnt').textContent=n;
-  document.getElementById('clearAllBtn').style.display=n>0?'inline':'none';
+  document.getElementById('clearBtn').style.display=n>0?'block':'none';
   const b=document.getElementById('tlb');
-  if(!n){b.innerHTML='<div style="color:#cbd5e1;font-size:12px;font-style:italic">No tags yet</div>';return;}
-  b.innerHTML=S.tags.map(t=>`<div class="tli" onclick="hlCell(${t.r},${t.c})">
-    <span class="tli-remove" onclick="event.stopPropagation();removeTag(${t.r},${t.c})">✕</span>
-    <div class="tli-concept">${t.concept.prefix}:${t.concept.id}</div>
-    <div class="tli-value">${esc(t.val)}</div>
-  </div>`).join('');
+  if(!n){b.innerHTML='<div class="tli-empty">No tags applied yet</div>';document.getElementById('genBtn').disabled=true;return;}
+  b.innerHTML=S.tags.map(t=>`
+    <div class="tli${t.isSuggestion?' sug-item':''}" onclick="hlCell(${t.r},${t.c})">
+      <div class="tli-hdr">
+        <span class="tli-cpt">${t.concept.prefix}:${t.concept.id}</span>
+        <button class="tli-rm" onclick="event.stopPropagation();removeTag(${t.r},${t.c})">✕</button>
+      </div>
+      <div class="tli-val">${esc(t.val)}</div>
+    </div>`).join('');
   document.getElementById('genBtn').disabled=false;
 }
 
 function updateProgress(){
-  const n=S.tags.length;
-  const tot=S.totalNumeric||1;
+  const n=S.tags.length,tot=S.totalNumeric||1;
   const pct=Math.min(100,Math.round(n/tot*100));
-  document.getElementById('progWrap').style.display=tot>0?'block':'none';
+  document.getElementById('progSec').style.display=tot>0?'block':'none';
   document.getElementById('progFill').style.width=pct+'%';
   document.getElementById('progPct').textContent=pct+'%';
 }
 
 function hlCell(r,c){
   const el=document.querySelector(`td[data-r="${r}"][data-c="${c}"]`);
-  if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='2px solid var(--blue)';setTimeout(()=>el.style.outline='',1500);}
+  if(el){
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    el.style.outline='3px solid var(--sap-brand)';
+    el.style.transition='outline .2s';
+    setTimeout(()=>{el.style.outline='';},1800);
+  }
 }
 
 // ═══════════════════════════════════════════════════
-// STEPS
+// WIZARD STEPS
 // ═══════════════════════════════════════════════════
 function updateStep(n,done){
-  const steps=document.querySelectorAll('.step[data-step]');
-  steps.forEach(s=>{
+  document.querySelectorAll('.wz-step[data-step]').forEach(s=>{
     const sn=+s.dataset.step;
-    if(sn<n) s.className='step done';
-    else if(sn===n) s.className='step'+(done?' done':' active');
-    else s.className='step';
+    const num=document.getElementById('wn'+sn);
+    if(sn<n){s.className='wz-step done';if(num)num.textContent='✓';}
+    else if(sn===n){s.className='wz-step'+(done?' done':' active');if(num)num.textContent=done?'✓':sn;}
+    else{s.className='wz-step';if(num)num.textContent=sn;}
   });
-  if(done&&n<4) document.querySelector(`.step[data-step="${n+1}"]`).className='step active';
+  if(done&&n<4){
+    const next=document.querySelector(`.wz-step[data-step="${n+1}"]`);
+    if(next) next.className='wz-step active';
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -1212,9 +1533,9 @@ function generate(){
   const ns=S.tax?S.tax.ns:'http://xbrl.ifrs.org/taxonomy/2024-01-01/ifrs-full';
 
   const errs=[],warns=[];
-  if(!entity) warns.push('Entity name is empty — enter your company name in the header');
-  if(!ps||!pe) warns.push('Period dates not set');
-  if(!S.tags.length){alert('No tags applied yet — tag at least one value first.');return;}
+  if(!entity) warns.push('Entity name is empty — enter company name in the context bar');
+  if(!ps||!pe) warns.push('Reporting period dates are not set');
+  if(!S.tags.length){toast('No tags applied yet. Tag at least one value first.','warn');return;}
   const untagged=S.totalNumeric-S.tags.filter(t=>t.isNum).length;
   if(untagged>0) warns.push(`${untagged} numeric value(s) are not tagged`);
 
@@ -1223,11 +1544,12 @@ function generate(){
   const eid=(entity||'UNKNOWN').replace(/\s+/g,'-').toUpperCase();
   const scaleLabel=dec==='-6'?'Millions':dec==='-3'?'Thousands':'Units';
 
-  let tbl='<table style="border-collapse:collapse;width:100%;font-family:Arial,sans-serif;font-size:13px;">\n';
+  let tbl='<table style="border-collapse:collapse;width:100%;font-family:Arial,Helvetica,sans-serif;font-size:13px;">\n';
   S.rows.forEach((row,ri)=>{
-    if(row.cells.every(c=>!c.v?.trim())){tbl+=`  <tr><td colspan="${maxC}" style="height:8px"></td></tr>\n`;return;}
+    if(row.cells.every(c=>!c.v?.trim())){tbl+=`  <tr><td colspan="${maxC}" style="height:10px"></td></tr>\n`;return;}
     const bold=row.meta.isBold||row.meta.isSection||row.meta.isTotal;
-    const bg=row.meta.isSection?'background:#f1f5f9;':row.meta.isTotal?'border-top:2px solid #e2e8f0;':'';
+    const secBg=row.meta.isSection?'background:#ECEEF2;text-transform:uppercase;letter-spacing:.4px;font-size:11px;':'';
+    const totBdr=row.meta.isTotal?'border-top:2px solid #D9DBDD;border-bottom:2px solid #D9DBDD;':'';
     tbl+='  <tr>\n';
     row.cells.forEach((cell,ci)=>{
       const v=cell.v||'';
@@ -1245,7 +1567,7 @@ function generate(){
           cont=`<ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur">${exXml(v)}</ix:nonNumeric>`;
         }
       } else {cont=exXml(v);}
-      tbl+=`    <td style="padding:6px 12px;border-bottom:1px solid #f1f5f9;${bg}${align}${bld}">${cont}</td>\n`;
+      tbl+=`    <td style="padding:7px 14px;border-bottom:1px solid #F0F2F5;${secBg}${totBdr}${align}${bld}">${cont}</td>\n`;
     });
     tbl+='  </tr>\n';
   });
@@ -1280,20 +1602,23 @@ function generate(){
   </ix:header>
 </head>
 <body>
-  <div style="max-width:960px;margin:0 auto;padding:48px 24px;font-family:Arial,sans-serif;color:#0f172a;">
-    <div style="display:flex;align-items:center;gap:14px;margin-bottom:32px;padding-bottom:20px;border-bottom:3px solid #0F2358;">
-      <div style="background:#0F2358;padding:10px 14px;border-radius:6px;color:#fff;font-weight:700;font-size:13px;line-height:1.3;text-align:center;">
-        <div style="font-size:10px;letter-spacing:1px;">MCG</div>
-        <div style="color:#93c5fd;font-size:11px;">iXBRL</div>
-      </div>
+  <div style="max-width:980px;margin:0 auto;padding:48px 32px;font-family:Arial,Helvetica,sans-serif;color:#32363A;">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:36px;padding-bottom:24px;border-bottom:3px solid #1B3568;">
+      <svg viewBox="0 0 40 36" width="44" height="40" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="10,0 20,9 10,18 0,9" fill="#3B78C4"/>
+        <polygon points="30,0 40,9 30,18 20,9" fill="#1C3568"/>
+        <polygon points="10,18 20,27 10,36 0,27" fill="#18A8C8"/>
+        <polygon points="30,18 40,27 30,36 20,27" fill="#3DB87A"/>
+      </svg>
       <div>
-        <h1 style="font-size:22px;color:#0F2358;margin-bottom:4px;">${exXml(entity||'Financial Report')}</h1>
-        <p style="color:#64748b;font-size:12px;">Period: ${ps||'—'} to ${pe||'—'} &nbsp;·&nbsp; Currency: ${ccy} (${scaleLabel}) &nbsp;·&nbsp; Taxonomy: ${pfx}</p>
+        <div style="font-size:10px;font-weight:700;color:#6A6D70;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">MY CLOUD GLOBAL · iXBRL Tagger</div>
+        <h1 style="font-size:22px;font-weight:400;color:#1B3568;margin:0;">${exXml(entity||'Financial Report')}</h1>
+        <p style="color:#6A6D70;font-size:12px;margin:5px 0 0;">Period: ${ps||'—'} to ${pe||'—'} &nbsp;·&nbsp; Currency: ${ccy} (${scaleLabel}) &nbsp;·&nbsp; Taxonomy: ${pfx}</p>
       </div>
     </div>
     ${tbl}
-    <p style="margin-top:48px;padding-top:16px;border-top:1px solid #e2e8f0;font-size:11px;color:#94a3b8;">
-      Generated by MCG iXBRL Tagger &nbsp;·&nbsp; ${S.tags.length} facts tagged &nbsp;·&nbsp; ${new Date().toISOString().split('T')[0]}
+    <p style="margin-top:48px;padding-top:16px;border-top:1px solid #D9DBDD;font-size:11px;color:#A8ABAD;">
+      Generated by MCG iXBRL Tagger &nbsp;·&nbsp; ${S.tags.length} facts tagged &nbsp;·&nbsp; Taxonomy: ${pfx}
     </p>
   </div>
 </body>
@@ -1301,9 +1626,10 @@ function generate(){
 
   document.getElementById('outPre').textContent=S.out;
   let vh='';
-  errs.forEach(e=>vh+=`<div class="val-item val-err">❌ ${esc(e)}</div>`);
-  warns.forEach(w=>vh+=`<div class="val-item val-warn">⚠️ ${esc(w)}</div>`);
-  if(!vh) vh='<div class="val-ok">✅ No validation issues — ready to download</div>';
+  errs.forEach(e=>vh+=`<div class="vi err"><span>✕</span> ${esc(e)}</div>`);
+  warns.forEach(w=>vh+=`<div class="vi warn"><span>⚠</span> ${esc(w)}</div>`);
+  if(!errs.length&&!warns.length) vh='<div class="vi ok"><span>✓</span> Validation passed — no issues found. Ready to download.</div>';
+  else if(!errs.length) vh='<div class="vi ok" style="margin-bottom:8px"><span>✓</span> Output generated with warnings.</div>'+vh;
   document.getElementById('valRes').innerHTML=vh;
   document.getElementById('omod').classList.add('open');
   updateStep(4,true);
@@ -1313,11 +1639,17 @@ function generate(){
 // MODAL
 // ═══════════════════════════════════════════════════
 function closeModal(){document.getElementById('omod').classList.remove('open');}
-function copyOut(){navigator.clipboard.writeText(S.out).then(()=>{const b=event.target;b.textContent='Copied!';setTimeout(()=>b.textContent='Copy',2000);});}
+function copyOut(){
+  navigator.clipboard.writeText(S.out).then(()=>toast('Copied to clipboard','ok'));
+}
 function dlOut(){
   const name=((document.getElementById('ent').value.trim()||'report').replace(/\s+/g,'_'))+'_'+(document.getElementById('pe').value||'2024')+'_iXBRL.xhtml';
-  const a=Object.assign(document.createElement('a'),{href:URL.createObjectURL(new Blob([S.out],{type:'application/xhtml+xml'})),download:name});
+  const a=Object.assign(document.createElement('a'),{
+    href:URL.createObjectURL(new Blob([S.out],{type:'application/xhtml+xml'})),
+    download:name
+  });
   a.click();
+  toast('Downloading '+name,'ok');
 }
 
 // ═══════════════════════════════════════════════════
@@ -1325,11 +1657,18 @@ function dlOut(){
 // ═══════════════════════════════════════════════════
 function saveSession(){
   try{
-    const data={tags:S.tags,tax:document.getElementById('taxSel').value,ent:document.getElementById('ent').value,ps:document.getElementById('ps').value,pe:document.getElementById('pe').value,ccy:document.getElementById('ccy').value,dec:document.getElementById('dec').value};
+    const data={
+      tags:S.tags,
+      tax:document.getElementById('taxSel').value,
+      ent:document.getElementById('ent').value,
+      ps:document.getElementById('ps').value,
+      pe:document.getElementById('pe').value,
+      ccy:document.getElementById('ccy').value,
+      dec:document.getElementById('dec').value
+    };
     localStorage.setItem('mcg_ixbrl_session',JSON.stringify(data));
-    const btn=document.querySelector('.btn-save');
-    btn.textContent='✓ Saved';setTimeout(()=>btn.textContent='💾 Save',2000);
-  }catch(e){alert('Could not save: '+e.message);}
+    toast('Session saved to browser storage','ok');
+  }catch(e){toast('Could not save: '+e.message,'err');}
 }
 
 function restoreSession(){
@@ -1342,20 +1681,24 @@ function restoreSession(){
     if(d.pe) document.getElementById('pe').value=d.pe;
     if(d.ccy) document.getElementById('ccy').value=d.ccy;
     if(d.dec) document.getElementById('dec').value=d.dec;
-    // Tags will restore after document is loaded — stored for reference
   }catch(e){}
 }
 
 // ═══════════════════════════════════════════════════
 // HELPERS
 // ═══════════════════════════════════════════════════
-function setDot(id,cls){const d=document.getElementById(id);d.className='dot '+cls;}
-function setText(id,t){document.getElementById(id).textContent=t;}
+function setDot(id,cls){const d=document.getElementById(id);d.className='sdot '+cls;}
+function setText(id,t){const e=document.getElementById(id);if(e) e.textContent=t;}
 
-// Keyboard shortcut: Escape to clear armed
+// Keyboard shortcuts
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape'){clearArmed();}
+  if(e.key==='Escape') clearArmed();
   if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undoLast();}
+});
+
+// Close dialog on overlay click
+document.getElementById('omod').addEventListener('click',e=>{
+  if(e.target===document.getElementById('omod')) closeModal();
 });
 
 // ═══════════════════════════════════════════════════
