@@ -1071,6 +1071,75 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 .dt-act.del:hover{background:rgba(255,80,80,.16);color:#ff7070;}
 .dash-empty{text-align:center;padding:80px 20px;color:rgba(255,255,255,.22);font-size:14px;line-height:1.8;}
 .dash-empty.hid{display:none;}
+
+/* ── CONCEPT SEARCH & FILTER TABS ── */
+.conc-search-wrap{padding:10px 16px;background:#07101F;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;position:relative;}
+.conc-search{width:100%;background:#030B19;border:1px solid rgba(255,255,255,.1);border-radius:7px;color:#E8ECF4;font-size:12px;padding:7px 10px 7px 30px;font-family:inherit;outline:none;box-sizing:border-box;transition:border-color .15s;}
+.conc-search:focus{border-color:rgba(24,168,200,.5);}
+.conc-search-ico{position:absolute;left:26px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(255,255,255,.25);}
+.conc-tabs{display:flex;gap:4px;padding:8px 16px;background:#07101F;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;align-items:center;}
+.conc-tab{padding:4px 12px;border-radius:20px;border:1px solid rgba(255,255,255,.1);background:none;color:rgba(255,255,255,.35);font-size:10.5px;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:all .15s;font-family:inherit;}
+.conc-tab:hover{color:rgba(255,255,255,.7);}
+.conc-tab.act{background:rgba(24,168,200,.12);border-color:rgba(24,168,200,.5);color:#18A8C8;}
+.conc-cov{margin-left:auto;font-size:10px;color:rgba(255,255,255,.3);}
+.conc-cov b{color:#3DB87A;}
+
+/* ── TAGS REVIEW VIEW ── */
+.tag-item{display:flex;align-items:flex-start;border-bottom:1px solid rgba(255,255,255,.04);padding:10px 18px;gap:8px;}
+.tag-item:hover{background:rgba(255,255,255,.02);}
+.tag-item-num{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;font-size:9px;color:rgba(255,255,255,.25);margin-top:1px;}
+.tag-item-body{flex:1;min-width:0;}
+.tag-item-concept{font-size:11.5px;color:#18A8C8;font-weight:600;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tag-item-val{font-size:12px;color:rgba(232,236,244,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:monospace;}
+.tag-item-meta{font-size:10px;color:rgba(255,255,255,.22);margin-top:2px;}
+.tag-badge{flex-shrink:0;padding:2px 7px;border-radius:10px;font-size:9px;font-weight:700;align-self:center;}
+.tag-badge.num{background:rgba(61,184,122,.15);color:#3DB87A;}
+.tag-badge.txt{background:rgba(59,120,196,.15);color:#7BA8E5;}
+.tag-actions{display:flex;gap:0;align-self:center;flex-shrink:0;}
+.tag-btn{background:none;border:none;cursor:pointer;padding:5px 6px;border-radius:5px;line-height:1;color:rgba(255,255,255,.2);transition:all .15s;font-size:13px;}
+.tag-btn:hover{background:rgba(255,255,255,.07);color:#E8ECF4;}
+.tag-btn.del:hover{background:rgba(255,80,80,.1);color:#FF5050;}
+.tag-empty{text-align:center;padding:60px 24px;color:rgba(255,255,255,.22);font-size:13px;line-height:1.8;}
+
+/* ── RIGHT-CLICK CONTEXT MENU ── */
+#ctxMenu{position:fixed;background:#0D1A2E;border:1px solid rgba(59,120,196,.22);border-radius:10px;box-shadow:0 10px 44px rgba(0,0,0,.65);z-index:99999;min-width:218px;padding:5px 0;font-family:inherit;font-size:12px;display:none;}
+.ctx-mi{padding:9px 14px;cursor:pointer;color:rgba(232,236,244,.8);display:flex;align-items:center;gap:9px;transition:background .1s;white-space:nowrap;}
+.ctx-mi:hover{background:rgba(24,168,200,.1);color:#E8ECF4;}
+.ctx-mi.danger:hover{background:rgba(255,80,80,.1);color:#FF5050;}
+.ctx-mi-badge{margin-left:auto;font-size:10px;color:rgba(255,255,255,.25);font-family:monospace;}
+.ctx-mi-sub{font-size:10px;color:rgba(255,255,255,.28);padding:0 14px 6px 14px;margin-top:-4px;}
+.ctx-sep{border:none;border-top:1px solid rgba(255,255,255,.06);margin:4px 0;}
+
+/* ── STATUS SCORE CARD ── */
+.status-card{background:linear-gradient(135deg,#0B1628,#162140);border:1px solid rgba(59,120,196,.18);border-radius:12px;padding:20px 24px;margin-bottom:22px;display:flex;align-items:center;gap:20px;}
+.score-ring{width:72px;height:72px;position:relative;flex-shrink:0;}
+.score-ring svg{transform:rotate(-90deg);}
+.score-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-num{font-size:20px;font-weight:700;color:#fff;line-height:1;}
+.score-den{font-size:9px;color:rgba(255,255,255,.3);}
+.score-info{flex:1;}
+.score-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;}
+.score-sub{font-size:11.5px;color:rgba(255,255,255,.4);line-height:1.5;}
+.score-badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:700;margin-top:8px;}
+.score-badge.ready{background:rgba(61,184,122,.18);color:#3DB87A;}
+.score-badge.partial{background:rgba(255,149,0,.13);color:#FF9500;}
+.score-badge.notready{background:rgba(255,77,79,.1);color:#FF4D4F;}
+.chk-section-lbl{font-size:9.5px;font-weight:700;letter-spacing:1.2px;color:rgba(255,255,255,.2);text-transform:uppercase;padding:14px 14px 5px;}
+.chk{display:flex;align-items:center;gap:10px;padding:9px 14px;border-radius:8px;transition:background .1s;}
+.chk:hover{background:rgba(255,255,255,.02);}
+.chk-ico{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.chk-ico.ok{background:rgba(61,184,122,.18);color:#3DB87A;}
+.chk-ico.fail{background:rgba(255,77,79,.1);color:#FF4D4F;}
+.chk-ico.warn{background:rgba(255,149,0,.1);color:#FF9500;}
+.chk-ico.info{background:rgba(59,120,196,.13);color:#7BA8E5;}
+.chk-label{flex:1;font-size:12.5px;color:rgba(232,236,244,.8);}
+.chk-detail{font-size:10.5px;color:rgba(255,255,255,.28);font-family:monospace;}
+
+/* ── COVERAGE PILL ── */
+.cov-pill{display:flex;align-items:center;gap:5px;padding:4px 11px;background:rgba(61,184,122,.07);border:1px solid rgba(61,184,122,.18);border-radius:16px;cursor:pointer;transition:all .15s;user-select:none;}
+.cov-pill:hover{background:rgba(61,184,122,.14);}
+.cov-pill b{font-size:13px;font-weight:700;color:#3DB87A;}
+.cov-pill span{font-size:10px;color:rgba(255,255,255,.3);}
 </style>
 </head>
 <body>
@@ -1650,6 +1719,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
     Status
   </div>
+  <div class="sb-item" id="sb-tags" onclick="setSbView('tags')" title="Tag Review">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    Tags
+  </div>
   <hr class="sb-sep-line">
   <div class="sb-item" onclick="gotoBack()" title="My Companies">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
@@ -1692,6 +1765,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
       <option value="-3" selected>Thousands</option>
       <option value="-6">Millions</option>
     </select>
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="cov-pill" id="covPill" onclick="setSbView('status')" title="Tagged coverage — click for status">
+    <b id="covPct">0%</b><span>tagged</span>
   </div>
 </div>
 
@@ -1845,15 +1922,24 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 
 <!-- ═══ CONCEPTS VIEW (sidebar section) ═══════════ -->
 <div id="conceptsView" style="display:none;flex:1;overflow:hidden;flex-direction:column;background:#030B19;">
-  <div style="padding:18px 24px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;background:#07101F;">
-    <div style="font-size:17px;font-weight:700;color:#E8ECF4;margin-bottom:2px;">Taxonomy Concepts</div>
-    <div style="font-size:12px;color:rgba(255,255,255,.4);">Click any concept to arm it, then go to Report Data to tag values.</div>
+  <div style="padding:14px 18px 12px;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;background:#07101F;">
+    <div style="font-size:15px;font-weight:700;color:#E8ECF4;margin-bottom:2px;">Taxonomy Concepts</div>
+    <div style="font-size:11px;color:rgba(255,255,255,.35);">Click a concept to arm it, then click a cell in the report to tag.</div>
   </div>
-  <div style="display:flex;border-bottom:1px solid rgba(255,255,255,.07);background:#07101F;flex-shrink:0;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.5px;text-transform:uppercase;">
-    <div style="flex:1;padding:9px 18px;">Taxonomy Item Description</div>
-    <div style="width:90px;padding:9px 14px;text-align:center;">Exist Check</div>
-    <div style="width:80px;padding:9px 14px;text-align:center;">Type</div>
-    <div style="width:80px;padding:9px 14px;text-align:center;">Error</div>
+  <div class="conc-search-wrap">
+    <svg class="conc-search-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input class="conc-search" id="concSearch" type="text" placeholder="Search concepts…" oninput="filterConcepts(this.value)">
+  </div>
+  <div class="conc-tabs">
+    <button class="conc-tab act" id="ctab-all" onclick="setConcTab('all')">All</button>
+    <button class="conc-tab" id="ctab-tagged" onclick="setConcTab('tagged')">Tagged</button>
+    <button class="conc-tab" id="ctab-untagged" onclick="setConcTab('untagged')">Untagged</button>
+    <div class="conc-cov" id="concCovLabel"></div>
+  </div>
+  <div style="display:flex;border-bottom:1px solid rgba(255,255,255,.06);background:#07101F;flex-shrink:0;font-size:10px;font-weight:700;color:rgba(255,255,255,.25);letter-spacing:.5px;text-transform:uppercase;">
+    <div style="flex:1;padding:8px 18px;">Taxonomy Item</div>
+    <div style="width:70px;padding:8px 10px;text-align:center;">Exist</div>
+    <div style="width:80px;padding:8px 10px;text-align:center;">Type</div>
   </div>
   <div id="conceptList" style="flex:1;overflow-y:auto;"></div>
 </div>
@@ -1897,6 +1983,20 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   <div class="si"><span id="armStat">No concept armed</span></div>
   <div class="si">Tagged: <span class="s-str" id="stcnt" style="margin-left:4px">0</span></div>
 </footer>
+
+<div id="tagsView" style="display:none;flex:1;overflow:hidden;flex-direction:column;background:#030B19;">
+  <div style="padding:14px 18px 12px;background:#07101F;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;display:flex;align-items:center;gap:10px;">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#E8ECF4;margin-bottom:2px;">Applied Tags</div>
+      <div style="font-size:11px;color:rgba(255,255,255,.35);">Review, edit or remove tagged XBRL facts.</div>
+    </div>
+    <div style="margin-left:auto;display:flex;gap:8px;align-items:center;">
+      <span id="tagsViewCount" style="font-size:11px;color:rgba(255,255,255,.3);"></span>
+      <button class="rpt-btn" style="color:#FF5050;border-color:rgba(255,80,80,.3);" onclick="if(S.tags.length&&confirm('Remove all tags?')){S.history.push(JSON.stringify(S.tags));S.tags=[];renderTable();updateTagList();updateProgress();renderTagsView();toast('All tags cleared','ok');}">Clear All</button>
+    </div>
+  </div>
+  <div id="tagsViewList" style="flex:1;overflow-y:auto;"></div>
+</div>
 
 </div><!-- /app-main -->
 </div><!-- /app-body -->
@@ -2654,7 +2754,7 @@ function renderTable(){
           const lbl=sug.concept.label.length>18?sug.concept.label.slice(0,16)+'...':sug.concept.label;
           content+=`<span class="tag-chip chip-sug" title="Suggested: ${sug.concept.prefix}:${sug.concept.id} (${Math.round(sug.score*100)}%)">${lbl}?</span>`;
         }
-        html+=`<td class="${tdCls}" data-r="${ri}" data-c="${ci}" ${click}>${content}</td>`;
+        html+=`<td class="${tdCls}" data-r="${ri}" data-c="${ci}" ${click} oncontextmenu="showCtxMenu(event,${ri},${ci})">${content}</td>`;
       });
       html+='</tr>';
     });
@@ -2785,6 +2885,12 @@ function updateProgress(){
   document.getElementById('progSec').style.display=tot>0?'block':'none';
   document.getElementById('progFill').style.width=pct+'%';
   document.getElementById('progPct').textContent=pct+'%';
+  const pill=document.getElementById('covPct');
+  if(pill) pill.textContent=pct+'%';
+  const concCov=document.getElementById('concCovLabel');
+  if(concCov) concCov.innerHTML=`<b>${n}</b>&nbsp;/&nbsp;${tot} tagged`;
+  const tvCount=document.getElementById('tagsViewCount');
+  if(tvCount) tvCount.textContent=n+' tag'+(n===1?'':'s');
 }
 
 function hlCell(r,c){
@@ -3381,15 +3487,13 @@ function gotoHome(){
 // ═══════════════════════════════════════════════════
 // SIDEBAR NAVIGATION
 // ═══════════════════════════════════════════════════
-const SB_VIEWS=['report','concepts','ixbrl','status'];
+const SB_VIEWS=['report','concepts','ixbrl','status','tags'];
 function setSbView(v){
   S.sbView=v;
-  // Update sidebar active state
   SB_VIEWS.forEach(id=>{
     const el=document.getElementById('sb-'+id);
     if(el) el.classList.toggle('sb-act',id===v);
   });
-  // Show/hide the workspace panels
   const ws=document.querySelector('.workspace');
   const rptBar=document.querySelector('.rpt-toolbar');
   const ctxBar=document.querySelector('.ctx-bar');
@@ -3397,8 +3501,8 @@ function setSbView(v){
   const conceptsView=document.getElementById('conceptsView');
   const ixbrlView=document.getElementById('ixbrlInlineView');
   const statusView=document.getElementById('statusView');
-  // Hide all sub-views
-  [ws,rptBar,conceptsView,ixbrlView,statusView].forEach(el=>{if(el)el.style.display='none';});
+  const tagsView=document.getElementById('tagsView');
+  [ws,rptBar,conceptsView,ixbrlView,statusView,tagsView].forEach(el=>{if(el)el.style.display='none';});
   if(ctxBar) ctxBar.style.display='';
   if(statusBar) statusBar.style.display='';
   if(v==='report'){
@@ -3409,6 +3513,8 @@ function setSbView(v){
   } else if(v==='ixbrl'){
     if(ixbrlView) ixbrlView.style.display='flex';
     if(S.out) populateIxbrlView();
+  } else if(v==='tags'){
+    if(tagsView){tagsView.style.display='flex';renderTagsView();}
   } else if(v==='status'){
     if(statusView){statusView.style.display='flex';renderStatusView();}
   }
@@ -3497,6 +3603,22 @@ function recalcAll(){
 // ═══════════════════════════════════════════════════
 // CONCEPTS VIEW
 // ═══════════════════════════════════════════════════
+// Concept filter state
+let _concTab='all', _concSearch='';
+
+function filterConcepts(text){
+  _concSearch=text.toLowerCase();
+  renderConceptList();
+}
+function setConcTab(tab){
+  _concTab=tab;
+  ['all','tagged','untagged'].forEach(t=>{
+    const el=document.getElementById('ctab-'+t);
+    if(el) el.classList.toggle('act',t===tab);
+  });
+  renderConceptList();
+}
+
 function renderConceptList(){
   const el=document.getElementById('conceptList');
   if(!el) return;
@@ -3505,33 +3627,236 @@ function renderConceptList(){
     return;
   }
   const taggedIds=new Set(S.tags.map(t=>t.concept.prefix+':'+t.concept.id));
+  // Walk tree with section breadcrumbs
   const allC=[];
-  function walk(nodes){nodes.forEach(n=>{if(n.id) allC.push(n);if(n.ch) walk(n.ch);});}
-  walk(S.tax.tree);
+  function walk(nodes,path){
+    nodes.forEach(n=>{
+      if(n.id) allC.push({...n,_path:path});
+      if(n.ch) walk(n.ch, n.id?path:path+(n.label?n.label+' › ':''));
+    });
+  }
+  walk(S.tax.tree,'');
+
+  // Apply filters
+  let visible=allC;
+  if(_concSearch) visible=visible.filter(c=>(c.label||c.id).toLowerCase().includes(_concSearch)||c.id.toLowerCase().includes(_concSearch));
+  if(_concTab==='tagged') visible=visible.filter(c=>taggedIds.has((c.prefix||S.tax.prefix)+':'+c.id));
+  if(_concTab==='untagged') visible=visible.filter(c=>!taggedIds.has((c.prefix||S.tax.prefix)+':'+c.id));
+
+  const armed=S.armed;
   let h='';
-  allC.forEach(c=>{
-    const key=c.prefix+':'+c.id;
+  visible.forEach(c=>{
+    const pfx=c.prefix||S.tax.prefix;
+    const key=pfx+':'+c.id;
     const tagged=taggedIds.has(key);
+    const isArmed=armed&&armed.prefix===pfx&&armed.id===c.id;
     const isText=c.t==='text'||c.t==='string';
-    const existIcon=tagged
-      ?'<span style="color:#3DB87A;font-size:16px;">✓</span>'
-      :'<span style="color:rgba(255,255,255,.2);font-size:16px;">—</span>';
-    const errIcon=!tagged&&c.required
-      ?'<span style="color:#FF4D4F;font-size:11px;">required</span>'
-      :'';
-    h+=`<div style="display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.04);${tagged?'background:rgba(61,184,122,.04);':''}" onclick="armConceptFromList('${esc(c.prefix)}','${esc(c.id)}','${esc(c.label||c.id)}','${c.t||'monetary'}');setSbView('report')">
-      <div style="flex:1;padding:9px 18px;font-size:12px;color:rgba(232,236,244,${tagged?'.9':'.55'});cursor:pointer;">${esc(c.label||c.id)} <span style="color:rgba(255,255,255,.2);font-size:10px;">[${isText?'text block':'numeric'}]</span></div>
-      <div style="width:90px;text-align:center;padding:9px 4px;">${existIcon}</div>
-      <div style="width:80px;text-align:center;padding:9px 4px;font-size:10px;color:rgba(255,255,255,.35);">${isText?'text':'number'}</div>
-      <div style="width:80px;text-align:center;padding:9px 4px;">${errIcon}</div>
+    const typeColor=isText?'#7BA8E5':'#3DB87A';
+    const typeLabel=isText?'text':'number';
+    const tagCount=S.tags.filter(t=>t.concept.prefix===pfx&&t.concept.id===c.id).length;
+    h+=`<div style="display:flex;align-items:center;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;
+      ${isArmed?'background:rgba(24,168,200,.12);border-left:3px solid #18A8C8;':'border-left:3px solid transparent;'}
+      ${tagged&&!isArmed?'background:rgba(61,184,122,.04);':''}"
+      onclick="armConceptFromList('${esc(pfx)}','${esc(c.id)}','${esc(c.label||c.id)}','${c.t||'monetary'}')">
+      <div style="flex:1;padding:9px 14px;min-width:0;">
+        <div style="font-size:12px;color:rgba(232,236,244,${tagged?'.92':'.6'});white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(c.label||c.id)}</div>
+        ${c._path?`<div style="font-size:9.5px;color:rgba(255,255,255,.22);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${esc(c._path)}</div>`:''}
+      </div>
+      <div style="width:60px;text-align:center;padding:9px 4px;font-size:13px;">
+        ${tagged?`<span style="color:#3DB87A;">${tagCount>1?'✓'+tagCount:'✓'}</span>`:'<span style="color:rgba(255,255,255,.12);">—</span>'}
+      </div>
+      <div style="width:72px;text-align:center;padding:9px 4px;">
+        <span style="font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:10px;background:${isText?'rgba(59,120,196,.15)':'rgba(61,184,122,.12)'};color:${typeColor};">${typeLabel}</span>
+      </div>
     </div>`;
   });
-  el.innerHTML=h||'<div style="padding:40px;text-align:center;color:rgba(255,255,255,.3);">No concepts in taxonomy.</div>';
+
+  if(!visible.length){
+    h='<div style="padding:40px 24px;text-align:center;color:rgba(255,255,255,.25);font-size:13px;line-height:1.8;">'
+      +(_concSearch?`No concepts match "<b style="color:rgba(255,255,255,.5);">${esc(_concSearch)}</b>"`:_concTab==='tagged'?'No concepts tagged yet.':'No concepts found.')
+      +'</div>';
+  }
+  el.innerHTML=h;
 }
 
 function armConceptFromList(prefix,id,label,type){
   S.armed={prefix,id,label,t:type};
   updateArmedDisplay();
+  // Re-render concept list to show armed state
+  if(S.sbView==='concepts') renderConceptList();
+  else setSbView('report');
+}
+
+// ═══════════════════════════════════════════════════
+// TAGS REVIEW VIEW
+// ═══════════════════════════════════════════════════
+function renderTagsView(){
+  const el=document.getElementById('tagsViewList');
+  const cnt=document.getElementById('tagsViewCount');
+  if(!el) return;
+  if(!S.tags.length){
+    el.innerHTML='<div class="tag-empty">No tags applied yet.<br>Go to <b style="color:#18A8C8;">Report Data</b>, arm a concept from the taxonomy tree,<br>then click any cell to tag it.</div>';
+    if(cnt) cnt.textContent='0 tags';
+    return;
+  }
+  if(cnt) cnt.textContent=S.tags.length+' tag'+(S.tags.length===1?'':'s');
+  let h='';
+  S.tags.forEach((tag,i)=>{
+    const isNum=tag.isNum;
+    const row=S.rows[tag.r];
+    const rowPreview=row?.cells?.[0]?.v?.slice(0,40)||'Row '+tag.r;
+    const conceptLabel=tag.concept.label||tag.concept.id;
+    const conceptFull=(tag.concept.prefix||'')+':'+(tag.concept.id||'');
+    h+=`<div class="tag-item">
+      <div class="tag-item-num">${i+1}</div>
+      <div class="tag-item-body">
+        <div class="tag-item-concept" title="${esc(conceptFull)}">${esc(conceptLabel)}</div>
+        <div class="tag-item-val" title="${esc(tag.val)}">${esc(tag.val)}</div>
+        <div class="tag-item-meta">${esc(conceptFull)} · row ${tag.r+1}${tag.c>0?', col '+(tag.c+1):''}</div>
+      </div>
+      <span class="tag-badge ${isNum?'num':'txt'}">${isNum?'Num':'Text'}</span>
+      <div class="tag-actions">
+        <button class="tag-btn" title="Go to row" onclick="jumpToTag(${tag.r},${tag.c})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </button>
+        <button class="tag-btn" title="Re-arm this concept" onclick="rearmTag(${i})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </button>
+        <button class="tag-btn del" title="Remove tag" onclick="deleteTagByIdx(${i})">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>
+        </button>
+      </div>
+    </div>`;
+  });
+  el.innerHTML=h;
+}
+
+function deleteTagByIdx(idx){
+  S.history.push(JSON.stringify(S.tags));
+  S.tags.splice(idx,1);
+  renderTable();updateTagList();updateProgress();renderTagsView();
+  document.getElementById('undoBtn').style.display=S.tags.length?'flex':'none';
+  toast('Tag removed','ok');
+}
+
+function jumpToTag(r,c){
+  setSbView('report');
+  setTimeout(()=>{
+    const el=document.querySelector(`td[data-r="${r}"][data-c="${c}"]`);
+    if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.style.outline='3px solid #18A8C8';setTimeout(()=>el.style.outline='',1500);}
+  },100);
+}
+
+function rearmTag(idx){
+  const tag=S.tags[idx];
+  if(!tag) return;
+  S.armed={...tag.concept};
+  updateArmedDisplay();
+  setSbView('report');
+  toast('Concept armed: '+tag.concept.label,'ok');
+}
+
+// ═══════════════════════════════════════════════════
+// RIGHT-CLICK CONTEXT MENU
+// ═══════════════════════════════════════════════════
+let _ctxCell={r:-1,c:-1};
+
+function showCtxMenu(e,r,c){
+  e.preventDefault();
+  _ctxCell={r,c};
+  const menu=document.getElementById('ctxMenu');
+  const existingTag=S.tags.find(t=>t.r===r&&t.c===c);
+  const tagLbl=document.getElementById('ctxTagLabel');
+  const tagBadge=document.getElementById('ctxTagBadge');
+  const untagItem=document.getElementById('ctxUntag');
+  const tagItem=document.getElementById('ctxTag');
+  const conceptBadge=document.getElementById('ctxConceptBadge');
+  if(existingTag){
+    if(tagLbl) tagLbl.textContent='Re-tag cell';
+    if(tagBadge) tagBadge.textContent=existingTag.concept.label?.slice(0,22)||'';
+    untagItem.style.display='flex';
+  } else {
+    if(tagLbl) tagLbl.textContent=S.armed?'Tag as "'+((S.armed.label||S.armed.id).slice(0,22))+'"':'Tag cell (arm concept first)';
+    if(tagBadge) tagBadge.textContent='';
+    untagItem.style.display='none';
+  }
+  tagItem.style.opacity=S.armed?'1':'0.4';
+  if(conceptBadge) conceptBadge.textContent=S.armed?(S.armed.prefix+':'+S.armed.id).slice(0,24):'no concept armed';
+
+  const x=Math.min(e.clientX,window.innerWidth-230);
+  const y=Math.min(e.clientY,window.innerHeight-180);
+  menu.style.left=x+'px';menu.style.top=y+'px';menu.style.display='block';
+  setTimeout(()=>document.addEventListener('click',hideCtxMenu,{once:true}),10);
+}
+
+function hideCtxMenu(){document.getElementById('ctxMenu').style.display='none';}
+
+function ctxDoTag(){
+  hideCtxMenu();
+  if(!S.armed){toast('Arm a concept first from the taxonomy tree','warn');return;}
+  const {r,c}=_ctxCell;
+  const row=S.rows[r];if(!row) return;
+  const cell=row.cells[c];if(!cell) return;
+  S.history.push(JSON.stringify(S.tags));
+  S.tags=S.tags.filter(t=>!(t.r===r&&t.c===c));
+  S.tags.push({r,c,concept:{...S.armed},val:cell.v,isNum:cell.isNum,isSuggestion:false});
+  document.getElementById('undoBtn').style.display='flex';
+  renderTable();updateTagList();updateProgress();updateStep(3,true);
+  toast('Tagged: '+S.armed.label,'ok');
+}
+
+function ctxDoUntag(){
+  hideCtxMenu();
+  const {r,c}=_ctxCell;
+  S.history.push(JSON.stringify(S.tags));
+  S.tags=S.tags.filter(t=>!(t.r===r&&t.c===c));
+  renderTable();updateTagList();updateProgress();
+  toast('Tag removed','ok');
+}
+
+function ctxDoSuggest(){
+  hideCtxMenu();
+  const {r,c}=_ctxCell;
+  const row=S.rows[r];if(!row) return;
+  const label=(row.cells[0]?.v||'').toLowerCase();
+  if(!S.tax){toast('Load a taxonomy first','warn');return;}
+  const allC=[];
+  function walk(nodes){nodes.forEach(n=>{if(n.id) allC.push(n);if(n.ch) walk(n.ch);});}
+  walk(S.tax.tree);
+  // Score by label similarity
+  const scored=allC.map(concept=>{
+    const cLabel=(concept.label||concept.id).toLowerCase();
+    const words=label.split(/\s+/).filter(w=>w.length>3);
+    const score=words.reduce((s,w)=>s+(cLabel.includes(w)?2:0),0)
+      +(cLabel.includes(label.slice(0,8))?3:0);
+    return{concept,score};
+  }).filter(x=>x.score>0).sort((a,b)=>b.score-a.score).slice(0,1);
+  if(scored.length){
+    const best=scored[0].concept;
+    S.armed={prefix:best.prefix||S.tax.prefix,id:best.id,label:best.label||best.id,t:best.t||'monetary'};
+    updateArmedDisplay();
+    toast('Suggested: '+S.armed.label,'ok');
+  } else {
+    toast('No matching concept found for this row','warn');
+  }
+}
+
+function ctxJumpConcept(){
+  hideCtxMenu();
+  const {r,c}=_ctxCell;
+  const existing=S.tags.find(t=>t.r===r&&t.c===c);
+  if(existing){
+    S.armed={...existing.concept};
+    updateArmedDisplay();
+  }
+  _concSearch='';
+  if(S.armed){
+    _concSearch=(S.armed.label||S.armed.id).toLowerCase();
+    const inp=document.getElementById('concSearch');
+    if(inp) inp.value=_concSearch;
+  }
+  setConcTab('all');
+  setSbView('concepts');
 }
 
 // ═══════════════════════════════════════════════════
@@ -3540,27 +3865,82 @@ function armConceptFromList(prefix,id,label,type){
 function renderStatusView(){
   const el=document.getElementById('statusChecks');
   if(!el) return;
-  const checks=[];
   const entity=document.getElementById('ent')?.value.trim()||'';
   const ps=document.getElementById('ps')?.value||'';
   const pe=document.getElementById('pe')?.value||'';
-  checks.push({ok:!!entity,label:'Entity name set',detail:entity||'Missing — enter company name in context bar'});
-  checks.push({ok:!!(ps&&pe),label:'Reporting period set',detail:ps&&pe?`${ps} → ${pe}`:'Missing — set period start and end dates'});
-  checks.push({ok:!!S.tax,label:'Taxonomy loaded',detail:S.tax?S.tax.name:'No taxonomy selected'});
-  checks.push({ok:S.rows.length>0,label:'Document uploaded',detail:S.rows.length?`${S.rows.length} rows loaded`:'No document — upload your AFS'});
-  checks.push({ok:S.tags.length>0,label:'Tags applied',detail:S.tags.length?`${S.tags.length} facts tagged`:'No tags yet — go to Report Data and tag values'});
   const numericTagged=S.tags.filter(t=>t.isNum).length;
+  const textTagged=S.tags.filter(t=>!t.isNum).length;
   const coverage=S.totalNumeric>0?Math.round(numericTagged/S.totalNumeric*100):0;
-  checks.push({ok:coverage>=50,label:`Tagging coverage ${coverage}%`,detail:`${numericTagged} of ${S.totalNumeric} numeric values tagged`});
-  let h='';
-  checks.forEach(c=>{
-    const col=c.ok?'#3DB87A':'#FF9500';
-    const ico=c.ok?'✓':'⚠';
-    h+=`<div style="display:flex;align-items:flex-start;gap:14px;padding:14px 16px;border-radius:10px;background:rgba(255,255,255,.03);margin-bottom:10px;border:1px solid rgba(255,255,255,.06);">
-      <div style="width:28px;height:28px;border-radius:50%;background:${c.ok?'rgba(61,184,122,.15)':'rgba(255,149,0,.12)'};display:flex;align-items:center;justify-content:center;font-size:14px;color:${col};flex-shrink:0;">${ico}</div>
-      <div><div style="font-size:13px;font-weight:600;color:#E8ECF4;margin-bottom:3px;">${c.label}</div><div style="font-size:12px;color:rgba(255,255,255,.4);">${c.detail}</div></div>
-    </div>`;
+
+  // Scoring
+  const checks=[
+    {ok:!!entity,warn:false,label:'Entity name',detail:entity||'Missing — enter company name in context bar',action:''},
+    {ok:!!(ps&&pe),warn:false,label:'Reporting period',detail:ps&&pe?ps+' → '+pe:'Missing — set period start and end dates',action:''},
+    {ok:!!S.tax,warn:false,label:'Taxonomy loaded',detail:S.tax?S.tax.name:'No taxonomy — select one in Report Data',action:''},
+    {ok:S.rows.length>0,warn:false,label:'Document uploaded',detail:S.rows.length?S.rows.length+' rows loaded':'No document — upload your AFS (Word/Excel/PDF)',action:''},
+    {ok:S.tags.length>0,warn:false,label:'Tags applied',detail:S.tags.length?S.tags.length+' facts tagged':'No tags yet — arm a concept then click cells to tag',action:''},
+    {ok:coverage>=80,warn:coverage>=40&&coverage<80,label:'Numeric coverage '+coverage+'%',detail:numericTagged+' of '+(S.totalNumeric||0)+' numeric values tagged',action:''},
+    {ok:textTagged>0,warn:false,label:'Text blocks tagged',detail:textTagged>0?textTagged+' text blocks tagged':'No text blocks tagged (optional but recommended)',action:'',optional:true},
+  ];
+
+  const passed=checks.filter(c=>c.ok).length;
+  const total=checks.length;
+  const radius=28, circ=2*Math.PI*radius;
+  const fraction=passed/total;
+  const dashOffset=circ*(1-fraction);
+  const ringColor=fraction>=0.85?'#3DB87A':fraction>=0.55?'#FF9500':'#FF4D4F';
+  const readyClass=fraction>=0.85?'ready':fraction>=0.55?'partial':'notready';
+  const readyLabel=fraction>=0.85?'Ready to Generate':fraction>=0.55?'Partially Ready':'Not Ready';
+
+  // Score card
+  let h=`<div class="status-card">
+    <div class="score-ring">
+      <svg width="72" height="72" viewBox="0 0 72 72">
+        <circle class="score-ring-bg" cx="36" cy="36" r="${radius}" stroke="rgba(255,255,255,.07)" stroke-width="6" fill="none"/>
+        <circle cx="36" cy="36" r="${radius}" fill="none" stroke="${ringColor}" stroke-width="6" stroke-linecap="round"
+          stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dashOffset.toFixed(1)}"
+          style="transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .6s ease,stroke .3s;"/>
+      </svg>
+      <div class="score-inner">
+        <div class="score-num">${passed}</div>
+        <div class="score-den">of ${total}</div>
+      </div>
+    </div>
+    <div class="score-info">
+      <div class="score-title">iXBRL Readiness</div>
+      <div class="score-sub">${passed} of ${total} pre-flight checks passed<br>Coverage: ${coverage}% numeric facts tagged</div>
+      <span class="score-badge ${readyClass}">${readyLabel}</span>
+    </div>
+  </div>`;
+
+  // Sections
+  const sections=[
+    {label:'Document Setup',items:checks.slice(0,4)},
+    {label:'Tagging',items:checks.slice(4,7)},
+  ];
+  sections.forEach(sec=>{
+    h+=`<div class="chk-section-lbl">${sec.label}</div><div>`;
+    sec.items.forEach(c=>{
+      const iconCls=c.ok?'ok':c.warn?'warn':c.optional?'info':'fail';
+      const icon=c.ok?'✓':c.warn?'!':c.optional?'i':'✗';
+      h+=`<div class="chk">
+        <div class="chk-ico ${iconCls}">${icon}</div>
+        <div class="chk-label">${esc(c.label)}${c.optional?' <span style="font-size:10px;color:rgba(255,255,255,.25);">(optional)</span>':''}</div>
+        <div class="chk-detail">${esc(c.detail)}</div>
+      </div>`;
+    });
+    h+='</div>';
   });
+
+  // Quick actions
+  h+=`<div class="chk-section-lbl">Quick Actions</div>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;padding:8px 14px 20px;">
+    <button class="rpt-btn" onclick="setSbView('report')">→ Report Data</button>
+    <button class="rpt-btn" onclick="setSbView('concepts')">→ Browse Concepts</button>
+    <button class="rpt-btn" onclick="setSbView('tags')">→ Review Tags</button>
+    ${S.tags.length?`<button class="rpt-btn" style="background:rgba(24,168,200,.12);color:#18A8C8;border-color:rgba(24,168,200,.3);" onclick="setSbView('report');generate()">⚡ Generate iXBRL</button>`:''}
+  </div>`;
+
   el.innerHTML=h;
 }
 
@@ -3658,10 +4038,33 @@ function restoreSessionById(idx){
 function setDot(id,cls){const d=document.getElementById(id);d.className='sdot '+cls;}
 function setText(id,t){const e=document.getElementById(id);if(e) e.textContent=t;}
 
-// Keyboard shortcuts
+// ═══════════════════════════════════════════════════
+// KEYBOARD SHORTCUTS
+// ═══════════════════════════════════════════════════
 document.addEventListener('keydown',e=>{
-  if(e.key==='Escape') clearArmed();
-  if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undoLast();}
+  // Skip when user is typing in an input/select
+  const tag=document.activeElement?.tagName;
+  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+
+  const mod=e.ctrlKey||e.metaKey;
+
+  if(e.key==='Escape'){
+    hideCtxMenu();
+    if(S.armed){clearArmed();toast('Concept deselected','ok');}
+  }
+  if(mod&&e.key==='z'){e.preventDefault();undoLast();}
+  if(mod&&e.key==='g'){e.preventDefault();generate();}
+  if(mod&&e.key==='s'){e.preventDefault();saveSession();}
+  if(mod&&e.key==='1'){e.preventDefault();setSbView('report');}
+  if(mod&&e.key==='2'){e.preventDefault();setSbView('concepts');}
+  if(mod&&e.key==='3'){e.preventDefault();setSbView('ixbrl');}
+  if(mod&&e.key==='4'){e.preventDefault();setSbView('status');}
+  if(mod&&e.key==='5'){e.preventDefault();setSbView('tags');}
+  if(mod&&e.key==='f'){
+    e.preventDefault();
+    setSbView('concepts');
+    setTimeout(()=>document.getElementById('concSearch')?.focus(),80);
+  }
 });
 
 // (modal removed — omod stub kept for compatibility)
@@ -3734,5 +4137,28 @@ renderRecentSessions();
   if(ncn) ncn.addEventListener('keydown',e=>{if(e.key==='Enter') createCompany();});
 })();
 </script>
+
+<!-- ═══ RIGHT-CLICK CONTEXT MENU ═══════════════════ -->
+<div id="ctxMenu">
+  <div class="ctx-mi" id="ctxTag" onclick="ctxDoTag()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+    <span id="ctxTagLabel">Tag cell</span>
+    <span class="ctx-mi-badge" id="ctxTagBadge"></span>
+  </div>
+  <div class="ctx-mi" id="ctxUntag" onclick="ctxDoUntag()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    Remove tag
+  </div>
+  <div class="ctx-sep"></div>
+  <div class="ctx-mi" onclick="ctxDoSuggest()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    Auto-suggest concept
+  </div>
+  <div class="ctx-mi" onclick="ctxJumpConcept()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="9 18 15 12 9 6"/></svg>
+    View in Concepts
+    <span class="ctx-mi-badge" id="ctxConceptBadge"></span>
+  </div>
+</div>
 </body>
 </html>
