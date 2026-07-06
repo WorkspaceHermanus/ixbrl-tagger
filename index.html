@@ -3642,9 +3642,30 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
       document.body.classList.toggle('ixv-sb-closed',!sbOpen);
     });
 
-    /* find facts by class; fallback to ix element names for strict XML renderers */
-    var found=document.querySelectorAll('.ixv-fact');
-    if(!found.length) found=document.querySelectorAll('ix\\:nonFraction,ix\\:nonNumeric');
+    /* Multi-strategy fact discovery:
+       1. CSS class selector (HTML mode)
+       2. getElementsByTagNameNS (XHTML/XML mode — querySelectorAll class
+          selectors do NOT match XML-namespace elements in strict XML DOM)
+       3. TreeWalker getAttribute fallback (last resort) */
+    var found=[];
+    var byCls=document.querySelectorAll('.ixv-fact');
+    if(byCls&&byCls.length){
+      found=Array.prototype.slice.call(byCls);
+    } else {
+      var ixNS='http://www.xbrl.org/2013/inlineXBRL';
+      var nf=document.getElementsByTagNameNS(ixNS,'nonFraction');
+      var nn=document.getElementsByTagNameNS(ixNS,'nonNumeric');
+      found=Array.prototype.slice.call(nf).concat(Array.prototype.slice.call(nn));
+      if(!found.length){
+        /* TreeWalker: getAttribute works even when className API is absent */
+        var tw=document.createTreeWalker(document.body||document.documentElement,0x1,null,false);
+        var nd;
+        while((nd=tw.nextNode())){
+          var cls=nd.getAttribute&&nd.getAttribute('class')||'';
+          if(cls.indexOf('ixv-fact')!==-1) found.push(nd);
+        }
+      }
+    }
     found.forEach(function(el){
       allFacts.push(el);
       el.addEventListener('click',function(e){e.stopPropagation();openPanel(el);});
