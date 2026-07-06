@@ -1292,7 +1292,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
         </div>
         <div class="fc fc-3">
           <div class="fc-label">Export ready</div>
-          <div class="fc-value fc-green">iXBRL .xhtml ↓</div>
+          <div class="fc-value fc-green">iXBRL .html ↓</div>
         </div>
       </div>
       <div class="mockup-scene">
@@ -1436,7 +1436,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
         <div class="fc-num">04</div>
         <div class="fc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
         <div class="fc-h">One-Click iXBRL Export</div>
-        <p class="fc-p">Generates a fully compliant inline XBRL .xhtml document ready for EDGAR, Companies House or your regulatory portal.</p>
+        <p class="fc-p">Generates a fully compliant inline XBRL .html document ready for EDGAR, Companies House or your regulatory portal.</p>
       </div>
     </div>
   </div>
@@ -1468,7 +1468,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
       <div class="step-card reveal rd4">
         <div class="step-num">4</div>
         <div class="step-h">Export iXBRL</div>
-        <p class="step-p">Hit Generate — download a standards-compliant .xhtml filing ready for regulatory submission.</p>
+        <p class="step-p">Hit Generate — download a standards-compliant .html filing ready for regulatory submission.</p>
       </div>
     </div>
   </div>
@@ -1969,7 +1969,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   </div>
   <div style="padding:10px 18px;border-top:1px solid #E9E9E9;display:flex;gap:10px;flex-shrink:0;background:#f8f9fa;">
     <button class="btn-std" onclick="copyOut()">Copy XHTML</button>
-    <button class="btn-emp" onclick="dlOut()">Download .xhtml</button>
+    <button class="btn-emp" onclick="dlOut()">Download .html</button>
   </div>
 </div>
 
@@ -3414,7 +3414,7 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   <div class="ixv-pb" id="ixv-pb"><div class="ixv-hint">Click any highlighted value in the document to inspect the XBRL fact.</div></div>
 </div>
 
-<script>//<![CDATA[
+<script>
 (function(){
   var CTX=${JSON.stringify(ctxData)};
   var META={entity:${JSON.stringify(entity||'')},ccy:${JSON.stringify(ccy)},dec:${JSON.stringify(dec)},scale:${JSON.stringify(scaleLabel)},pfx:${JSON.stringify(pfx)}};
@@ -3694,19 +3694,18 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
     ixvInit();
   }
 })();
-//]]><\/script>`;
+<\/script>`;
 
-  S.out=`<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+  S.out=`<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:ix="http://www.xbrl.org/2013/inlineXBRL"
       xmlns:ixt="http://www.xbrl.org/inlineXBRL/transformation/2022-02-16"
       xmlns:xbrli="http://www.xbrl.org/2003/instance"
       xmlns:${pfx}="${ns}"
       xmlns:iso4217="http://www.xbrl.org/2003/iso4217"
-      xml:lang="en">
+      lang="en">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+  <meta charset="UTF-8"/>
   <title>${exXml(entity||'Financial Report')} - iXBRL</title>
   <ix:header>
     <ix:hidden></ix:hidden>
@@ -3774,9 +3773,9 @@ function copyOut(){
   navigator.clipboard.writeText(S.out).then(()=>toast('XHTML copied to clipboard','ok'));
 }
 function dlOut(){
-  const name=((document.getElementById('ent').value.trim()||'report').replace(/\s+/g,'_'))+'_'+(document.getElementById('pe').value||'2024')+'_iXBRL.xhtml';
+  const name=((document.getElementById('ent').value.trim()||'report').replace(/\s+/g,'_'))+'_'+(document.getElementById('pe').value||'2024')+'_iXBRL.html';
   const a=Object.assign(document.createElement('a'),{
-    href:URL.createObjectURL(new Blob([S.out],{type:'application/xhtml+xml'})),
+    href:URL.createObjectURL(new Blob([S.out],{type:'text/html'})),
     download:name
   });
   a.click();
@@ -4142,7 +4141,7 @@ function populateIxbrlView(){
   const codePre=document.getElementById('ixCodePre');
   if(codePre) codePre.textContent=S.out;
   if(frame){
-    const blob=new Blob([S.out],{type:'application/xhtml+xml'});
+    const blob=new Blob([S.out],{type:'text/html'});
     const url=URL.createObjectURL(blob);
     frame.src=url;
   }
