@@ -3233,83 +3233,345 @@ function generate(){
     ctx_pri:{type:'duration',start:adj(ps,-1)||'2023-01-01',end:adj(pe,-1)||'2023-12-31',entity:eid}
   };
 
-  // Inline iXBRL viewer script — right-panel fact inspector
+  // Full Arelle-style iXBRL viewer — header bar + left sidebar + right inspector
   const viewerScript=`
 <style>
-  .ixv-fact{cursor:pointer;border-radius:2px;transition:background .12s,outline .12s;}
-  .ixv-fact:hover{background:rgba(24,168,200,.18)!important;outline:1px solid rgba(24,168,200,.5);}
-  .ixv-fact-active{background:rgba(24,168,200,.35)!important;outline:2px solid #18A8C8!important;border-radius:2px;}
-  .ixv-fact-related{background:rgba(59,120,196,.18)!important;outline:1px dashed #3B78C4;border-radius:2px;}
-  #ixv-panel{position:fixed;right:-360px;top:0;bottom:0;width:340px;background:#0D1A2E;color:#E8ECF4;overflow-y:auto;transition:right .25s cubic-bezier(.4,0,.2,1);z-index:9999;box-shadow:-6px 0 40px rgba(0,0,0,.45);font-family:Arial,Helvetica,sans-serif;font-size:13px;}
-  #ixv-panel.ixv-open{right:0;}
-  .ixv-ph{display:flex;justify-content:space-between;align-items:center;padding:14px 18px;background:#1B3568;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:1;}
-  .ixv-ph-title{font-size:9.5px;font-weight:700;letter-spacing:1.8px;color:#18A8C8;text-transform:uppercase;}
-  .ixv-close{background:none;border:none;color:rgba(255,255,255,.4);cursor:pointer;font-size:22px;line-height:1;padding:0;transition:color .15s;}
-  .ixv-close:hover{color:#fff;}
-  .ixv-pb{padding:20px 18px;}
-  .ixv-concept-label{font-size:15px;font-weight:600;color:#fff;margin-bottom:5px;line-height:1.4;}
-  .ixv-concept-name{font-size:10px;color:rgba(255,255,255,.35);margin-bottom:20px;word-break:break-all;font-family:monospace;}
-  .ixv-val-box{background:rgba(24,168,200,.1);border:1px solid rgba(24,168,200,.22);border-radius:10px;padding:16px;margin-bottom:20px;text-align:center;}
-  .ixv-val-label{font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:#18A8C8;text-transform:uppercase;margin-bottom:8px;}
-  .ixv-val-num{font-size:24px;font-weight:700;color:#fff;word-break:break-all;line-height:1.2;}
-  .ixv-val-sub{font-size:10.5px;color:rgba(255,255,255,.4);margin-top:6px;}
-  .ixv-sec{font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.25);text-transform:uppercase;margin:18px 0 8px;padding-bottom:6px;border-bottom:1px solid rgba(255,255,255,.06);}
-  .ixv-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-  .ixv-row:last-child{border-bottom:none;}
-  .ixv-rk{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;padding-right:12px;padding-top:1px;}
-  .ixv-rv{font-size:11.5px;color:rgba(255,255,255,.8);text-align:right;word-break:break-all;line-height:1.5;}
-  .ixv-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
-  .ixv-bm{background:rgba(61,184,122,.18);color:#3DB87A;}
-  .ixv-bt{background:rgba(59,120,196,.18);color:#7BA8E5;}
-  .ixv-bd{background:rgba(255,149,0,.15);color:#FF9500;}
-  .ixv-nav{display:flex;align-items:center;justify-content:space-between;margin-top:20px;padding-top:14px;border-top:1px solid rgba(255,255,255,.07);}
-  .ixv-nb{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.65);border-radius:6px;padding:5px 14px;cursor:pointer;font-size:12px;transition:background .15s;}
-  .ixv-nb:hover:not(:disabled){background:rgba(255,255,255,.14);}
-  .ixv-nb:disabled{opacity:.25;cursor:not-allowed;}
-  .ixv-ni{font-size:11px;color:rgba(255,255,255,.35);}
-  .ixv-hint{font-size:12px;color:rgba(255,255,255,.25);text-align:center;padding:48px 24px;line-height:1.7;}
+/* === IXV ARELLE-STYLE VIEWER === */
+body{margin:0;padding-top:52px;}
+body>div:first-child{margin-left:320px!important;transition:margin-left .25s cubic-bezier(.4,0,.2,1);}
+body.ixv-sb-closed>div:first-child{margin-left:0!important;}
+
+/* Fact highlighting */
+.ixv-fact{cursor:pointer;border-radius:2px;transition:background .12s,outline .12s;}
+.ixv-fact:hover{background:rgba(24,168,200,.18)!important;outline:1px solid rgba(24,168,200,.5);}
+.ixv-fact-hl{outline:1px solid rgba(24,168,200,.45)!important;background:rgba(24,168,200,.07)!important;}
+.ixv-fact-active{background:rgba(24,168,200,.32)!important;outline:2px solid #18A8C8!important;border-radius:2px;}
+.ixv-fact-related{background:rgba(59,120,196,.18)!important;outline:1px dashed #3B78C4;border-radius:2px;}
+
+/* Header bar */
+#ixv-hdr{position:fixed;top:0;left:0;right:0;height:52px;background:#060F1C;border-bottom:1px solid rgba(255,255,255,.1);z-index:10001;display:flex;align-items:center;padding:0 14px;gap:10px;font-family:Arial,Helvetica,sans-serif;box-sizing:border-box;box-shadow:0 2px 16px rgba(0,0,0,.5);}
+#ixv-sb-btn{background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;font-size:18px;padding:6px 8px;border-radius:6px;line-height:1;transition:background .15s,color .15s;flex-shrink:0;}
+#ixv-sb-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+.ixv-hdr-div{width:1px;height:24px;background:rgba(255,255,255,.1);flex-shrink:0;}
+#ixv-hdr-entity{font-size:13px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:260px;}
+#ixv-hdr-meta{font-size:11px;color:rgba(255,255,255,.38);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#ixv-hdr-sp{flex:1;}
+.ixv-hdr-hl{display:flex;align-items:center;gap:7px;cursor:pointer;}
+.ixv-hdr-hl-lbl{font-size:11px;color:rgba(255,255,255,.45);white-space:nowrap;}
+.ixv-tog{position:relative;width:34px;height:18px;flex-shrink:0;}
+.ixv-tog input{opacity:0;width:0;height:0;position:absolute;}
+.ixv-tog-track{position:absolute;inset:0;background:rgba(255,255,255,.12);border-radius:9px;transition:background .18s;cursor:pointer;}
+.ixv-tog input:checked+.ixv-tog-track{background:#18A8C8;}
+.ixv-tog-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;background:#fff;border-radius:50%;transition:transform .18s;pointer-events:none;}
+.ixv-tog input:checked~.ixv-tog-thumb{transform:translateX(16px);}
+#ixv-hdr-cnt{background:rgba(24,168,200,.18);color:#18A8C8;border:1px solid rgba(24,168,200,.28);border-radius:12px;padding:2px 10px;font-size:11px;font-weight:700;white-space:nowrap;flex-shrink:0;}
+
+/* Left sidebar */
+#ixv-sb{position:fixed;top:52px;left:0;bottom:0;width:320px;background:#07111F;border-right:1px solid rgba(255,255,255,.07);z-index:10000;display:flex;flex-direction:column;font-family:Arial,Helvetica,sans-serif;transition:transform .25s cubic-bezier(.4,0,.2,1);}
+#ixv-sb.ixv-sb-off{transform:translateX(-320px);}
+
+/* Sidebar tabs */
+.ixv-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.07);flex-shrink:0;background:#060F1C;}
+.ixv-tab{flex:1;padding:11px 8px;font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:rgba(255,255,255,.32);border:none;border-bottom:2px solid transparent;background:none;cursor:pointer;transition:color .15s,border-color .15s;}
+.ixv-tab.ixv-tab-on{color:#18A8C8;border-bottom-color:#18A8C8;}
+.ixv-tab:hover:not(.ixv-tab-on){color:rgba(255,255,255,.6);}
+
+/* Sidebar search */
+.ixv-sb-srch-wrap{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0;}
+.ixv-srch-rel{position:relative;}
+.ixv-srch-ico{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.22);font-size:13px;pointer-events:none;}
+.ixv-srch{width:100%;box-sizing:border-box;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#E8ECF4;font-size:12px;padding:7px 9px 7px 30px;border-radius:6px;outline:none;transition:border-color .15s;}
+.ixv-srch:focus{border-color:rgba(24,168,200,.5);}
+.ixv-sb-sel{width:100%;box-sizing:border-box;margin-top:7px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#E8ECF4;font-size:11px;padding:6px 9px;border-radius:6px;outline:none;cursor:pointer;}
+.ixv-sb-sel option{background:#07111F;}
+
+/* Facts list */
+#ixv-fl-pane{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#ixv-fl-pane.ixv-pane-off{display:none;}
+#ixv-fl-cnt{padding:6px 12px;font-size:10px;color:rgba(255,255,255,.28);border-bottom:1px solid rgba(255,255,255,.04);flex-shrink:0;}
+#ixv-fl{flex:1;overflow-y:auto;overflow-x:hidden;}
+#ixv-fl::-webkit-scrollbar{width:3px;}
+#ixv-fl::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.ixv-fi{padding:10px 13px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .1s;border-left:3px solid transparent;}
+.ixv-fi:hover{background:rgba(255,255,255,.04);}
+.ixv-fi.ixv-fi-on{background:rgba(24,168,200,.1);border-left-color:#18A8C8;}
+.ixv-fi-lbl{font-size:11.5px;font-weight:600;color:#E8ECF4;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ixv-fi-val{font-size:13px;font-weight:700;color:#18A8C8;margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ixv-fi-meta{font-size:10px;color:rgba(255,255,255,.28);display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+.ixv-fbadge{display:inline-block;padding:1px 6px;border-radius:7px;font-size:9px;font-weight:700;letter-spacing:.3px;}
+.ixv-fbm{background:rgba(61,184,122,.15);color:#3DB87A;}
+.ixv-fbt{background:rgba(59,120,196,.15);color:#7BA8E5;}
+.ixv-fbd{background:rgba(255,149,0,.12);color:#FF9500;}
+.ixv-fbtb{background:rgba(24,168,200,.12);color:#18A8C8;}
+#ixv-fl-empty{padding:36px 18px;text-align:center;color:rgba(255,255,255,.18);font-size:12px;line-height:1.9;}
+
+/* Concepts pane */
+#ixv-cp-pane{flex:1;display:none;flex-direction:column;overflow:hidden;}
+#ixv-cp-pane.ixv-pane-on{display:flex;}
+#ixv-cp{flex:1;overflow-y:auto;}
+#ixv-cp::-webkit-scrollbar{width:3px;}
+#ixv-cp::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.ixv-ci{padding:9px 13px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .1s;}
+.ixv-ci:hover{background:rgba(255,255,255,.05);}
+.ixv-ci-lbl{font-size:12px;font-weight:600;color:#E8ECF4;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ixv-ci-name{font-size:10px;color:rgba(255,255,255,.3);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
+.ixv-ci-cnt{font-size:10px;color:rgba(24,168,200,.7);}
+
+/* Right inspector panel */
+#ixv-panel{position:fixed;right:-364px;top:52px;bottom:0;width:344px;background:#0A1627;color:#E8ECF4;overflow-y:auto;overflow-x:hidden;transition:right .25s cubic-bezier(.4,0,.2,1);z-index:10002;box-shadow:-4px 0 32px rgba(0,0,0,.5);font-family:Arial,Helvetica,sans-serif;font-size:13px;}
+#ixv-panel.ixv-open{right:0;}
+#ixv-panel::-webkit-scrollbar{width:3px;}
+#ixv-panel::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px;}
+.ixv-ph{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;background:#1B3568;border-bottom:1px solid rgba(255,255,255,.08);position:sticky;top:0;z-index:1;}
+.ixv-ph-t{font-size:9px;font-weight:700;letter-spacing:1.8px;color:#18A8C8;text-transform:uppercase;}
+.ixv-ph-x{background:none;border:none;color:rgba(255,255,255,.38);cursor:pointer;font-size:20px;line-height:1;padding:0;transition:color .15s;}
+.ixv-ph-x:hover{color:#fff;}
+.ixv-pb{padding:18px 16px;}
+.ixv-clbl{font-size:15px;font-weight:700;color:#fff;margin-bottom:4px;line-height:1.4;}
+.ixv-cname{font-size:10px;color:rgba(255,255,255,.28);margin-bottom:18px;word-break:break-all;font-family:monospace;}
+.ixv-vbox{background:rgba(24,168,200,.08);border:1px solid rgba(24,168,200,.2);border-radius:10px;padding:15px;margin-bottom:18px;text-align:center;}
+.ixv-vlbl{font-size:8.5px;font-weight:700;letter-spacing:1.5px;color:#18A8C8;text-transform:uppercase;margin-bottom:7px;}
+.ixv-vnum{font-size:21px;font-weight:700;color:#fff;word-break:break-all;line-height:1.25;}
+.ixv-vsub{font-size:10px;color:rgba(255,255,255,.38);margin-top:5px;}
+.ixv-sec{font-size:8px;font-weight:700;letter-spacing:1.5px;color:rgba(255,255,255,.2);text-transform:uppercase;margin:16px 0 7px;padding-bottom:5px;border-bottom:1px solid rgba(255,255,255,.06);}
+.ixv-row{display:flex;justify-content:space-between;align-items:flex-start;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ixv-row:last-child{border-bottom:none;}
+.ixv-rk{font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;padding-right:10px;padding-top:1px;min-width:68px;}
+.ixv-rv{font-size:11px;color:rgba(255,255,255,.82);text-align:right;word-break:break-all;line-height:1.5;}
+.ixv-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.ixv-bm{background:rgba(61,184,122,.18);color:#3DB87A;}
+.ixv-bt{background:rgba(59,120,196,.18);color:#7BA8E5;}
+.ixv-bd{background:rgba(255,149,0,.15);color:#FF9500;}
+.ixv-btb{background:rgba(24,168,200,.15);color:#18A8C8;}
+.ixv-nav{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:12px;border-top:1px solid rgba(255,255,255,.07);}
+.ixv-nb{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);border-radius:6px;padding:5px 13px;cursor:pointer;font-size:12px;transition:background .15s;}
+.ixv-nb:hover:not([disabled]){background:rgba(255,255,255,.14);}
+.ixv-nb[disabled]{opacity:.22;cursor:not-allowed;}
+.ixv-ni{font-size:11px;color:rgba(255,255,255,.3);}
+.ixv-jmp{display:block;text-align:center;margin-top:12px;font-size:11px;color:rgba(24,168,200,.75);cursor:pointer;text-decoration:underline;text-underline-offset:2px;}
+.ixv-jmp:hover{color:#18A8C8;}
+.ixv-hint{font-size:12px;color:rgba(255,255,255,.18);text-align:center;padding:44px 20px;line-height:1.9;}
 </style>
-<div id="ixv-panel">
-  <div class="ixv-ph">
-    <span class="ixv-ph-title">Fact Inspector</span>
-    <button class="ixv-close" onclick="ixvClose()">&#215;</button>
+
+<!-- ARELLE HEADER BAR -->
+<div id="ixv-hdr">
+  <button id="ixv-sb-btn" title="Toggle facts sidebar">&#9776;</button>
+  <svg viewBox="0 0 28 26" width="22" height="20" xmlns="http://www.w3.org/2000/svg"><polygon points="7,0 14,6.5 7,13 0,6.5" fill="#3B78C4"/><polygon points="21,0 28,6.5 21,13 14,6.5" fill="#1C3568"/><polygon points="7,13 14,19.5 7,26 0,19.5" fill="#18A8C8"/><polygon points="21,13 28,19.5 21,26 14,19.5" fill="#3DB87A"/></svg>
+  <span class="ixv-hdr-div"></span>
+  <span id="ixv-hdr-entity">${exXml(entity||'Financial Report')}</span>
+  <span id="ixv-hdr-meta">${ps||''} &#8211; ${pe||''} &nbsp;&#124;&nbsp; ${ccy} &nbsp;&#124;&nbsp; ${pfx}</span>
+  <span id="ixv-hdr-sp"></span>
+  <label class="ixv-hdr-hl" title="Highlight all tagged facts">
+    <span class="ixv-hdr-hl-lbl">Highlight all</span>
+    <label class="ixv-tog">
+      <input type="checkbox" id="ixv-hl-chk" onchange="ixvHlAll()"/>
+      <span class="ixv-tog-track"></span>
+      <span class="ixv-tog-thumb"></span>
+    </label>
+  </label>
+  <span id="ixv-hdr-cnt">0 facts</span>
+</div>
+
+<!-- LEFT SIDEBAR -->
+<div id="ixv-sb">
+  <div class="ixv-tabs">
+    <button class="ixv-tab ixv-tab-on" id="ixv-t-facts" onclick="ixvTab('facts')">&#9776; Facts</button>
+    <button class="ixv-tab" id="ixv-t-concs" onclick="ixvTab('concs')">&#9711; Concepts</button>
   </div>
-  <div class="ixv-pb" id="ixv-pb">
-    <div class="ixv-hint">Click any highlighted element in the document to inspect the tagged XBRL fact.</div>
+
+  <!-- Facts pane -->
+  <div id="ixv-fl-pane">
+    <div class="ixv-sb-srch-wrap">
+      <div class="ixv-srch-rel">
+        <span class="ixv-srch-ico">&#9906;</span>
+        <input class="ixv-srch" id="ixv-fl-srch" type="text" placeholder="Search facts&#8230;" oninput="ixvSrchFacts(this.value)" autocomplete="off"/>
+      </div>
+      <select class="ixv-sb-sel" id="ixv-fl-per" onchange="ixvPerFilter(this.value)">
+        <option value="all">All periods</option>
+        <option value="ctx_cur">Current period</option>
+        <option value="ctx_pri">Prior period</option>
+      </select>
+    </div>
+    <div id="ixv-fl-cnt"></div>
+    <div id="ixv-fl"><div id="ixv-fl-empty">Loading&#8230;</div></div>
+  </div>
+
+  <!-- Concepts pane -->
+  <div id="ixv-cp-pane">
+    <div class="ixv-sb-srch-wrap">
+      <div class="ixv-srch-rel">
+        <span class="ixv-srch-ico">&#9906;</span>
+        <input class="ixv-srch" id="ixv-cp-srch" type="text" placeholder="Search concepts&#8230;" oninput="ixvSrchConcs(this.value)" autocomplete="off"/>
+      </div>
+    </div>
+    <div id="ixv-cp"></div>
   </div>
 </div>
+
+<!-- RIGHT FACT INSPECTOR -->
+<div id="ixv-panel">
+  <div class="ixv-ph"><span class="ixv-ph-t">Fact Inspector</span><button class="ixv-ph-x" onclick="ixvClose()">&#215;</button></div>
+  <div class="ixv-pb" id="ixv-pb"><div class="ixv-hint">Click any highlighted value in the document to inspect the XBRL fact.</div></div>
+</div>
+
 <script>
 (function(){
   var CTX=${JSON.stringify(ctxData)};
-  var META={entity:${JSON.stringify(entity||'')},ccy:${JSON.stringify(ccy)},dec:${JSON.stringify(dec)},scale:${JSON.stringify(scaleLabel)}};
-  var allFacts=[],activeFact=null,curIdx=0;
+  var META={entity:${JSON.stringify(entity||'')},ccy:${JSON.stringify(ccy)},dec:${JSON.stringify(dec)},scale:${JSON.stringify(scaleLabel)},pfx:${JSON.stringify(pfx)}};
+
+  var allFacts=[],filteredFacts=[],activeFact=null,curIdx=0,hlAll=false,sbOpen=true,srchVal='',perFilter='all',cpSrch='';
 
   function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
-  function scaleOf(d){return d==='-6'?'Millions':d==='-3'?'Thousands':d==='0'?'Units':'Dec '+d;}
+  function scaleOf(d){return d==='-6'?'Millions':d==='-3'?'Thousands':d==='0'?'Units':d?'Decimals '+d:'';}
 
-  function renderPanel(el){
+  function fmtPeriod(ctx){
+    var ci=CTX[ctx]||{};
+    if(ci.instant) return ci.instant;
+    if(ci.start&&ci.end) return ci.start+' – '+ci.end;
+    return ctx||'';
+  }
+
+  function fmtVal(el){
+    var sign=el.getAttribute('sign')||'';
+    var raw=el.textContent.trim();
+    if(!raw) return '—';
+    return (sign==='-'&&raw.charAt(0)!=='-'&&raw.charAt(0)!=='(')?'('+raw+')':raw;
+  }
+
+  function typeOf(el){
+    var t=el.getAttribute('data-type')||'string';
+    var num=t==='monetary'||t==='decimal'||t==='shares'||t==='pure';
+    return {t:t,num:num,lbl:num?'Monetary':t==='date'?'Date':t==='text-block'?'Text Block':'String',cls:num?'ixv-bm':t==='date'?'ixv-bd':t==='text-block'?'ixv-fbtb':'ixv-fbt'};
+  }
+
+  /* ── SIDEBAR TAB ─────────────────────────────── */
+  window.ixvTab=function(t){
+    document.getElementById('ixv-fl-pane').classList.toggle('ixv-pane-off',t!=='facts');
+    document.getElementById('ixv-cp-pane').classList.toggle('ixv-pane-on',t==='concs');
+    document.getElementById('ixv-t-facts').classList.toggle('ixv-tab-on',t==='facts');
+    document.getElementById('ixv-t-concs').classList.toggle('ixv-tab-on',t==='concs');
+    if(t==='concs') renderConcs();
+  };
+
+  window.ixvSrchFacts=function(v){srchVal=v.toLowerCase();renderFacts();};
+  window.ixvPerFilter=function(v){perFilter=v;renderFacts();};
+  window.ixvSrchConcs=function(v){cpSrch=v.toLowerCase();renderConcs();};
+
+  /* ── FACTS LIST ──────────────────────────────── */
+  function renderFacts(){
+    var fl=document.getElementById('ixv-fl');
+    var cnt=document.getElementById('ixv-fl-cnt');
+    filteredFacts=allFacts.filter(function(el){
+      if(perFilter!=='all'&&el.getAttribute('contextRef')!==perFilter) return false;
+      if(srchVal){
+        var lbl=(el.getAttribute('data-concept')||'').toLowerCase();
+        var v=el.textContent.toLowerCase();
+        var nm=(el.getAttribute('name')||'').toLowerCase();
+        if(lbl.indexOf(srchVal)<0&&v.indexOf(srchVal)<0&&nm.indexOf(srchVal)<0) return false;
+      }
+      return true;
+    });
+    cnt.textContent=filteredFacts.length+' fact'+(filteredFacts.length!==1?'s':'');
+    if(!filteredFacts.length){fl.innerHTML='<div id="ixv-fl-empty">'+(srchVal||perFilter!=='all'?'No facts match.':'No tagged facts found.')+'</div>';return;}
+    var h='';
+    filteredFacts.forEach(function(el,i){
+      var lbl=el.getAttribute('data-concept')||el.getAttribute('name')||'(unnamed)';
+      var val=fmtVal(el);
+      var period=fmtPeriod(el.getAttribute('contextRef'));
+      var ti=typeOf(el);
+      var isOn=el===activeFact;
+      var unit=ti.num?' '+META.ccy:'';
+      h+='<div class="ixv-fi'+(isOn?' ixv-fi-on':'')+'" data-i="'+i+'" onclick="ixvFiClick('+i+')">'
+        +'<div class="ixv-fi-lbl">'+esc(lbl)+'</div>'
+        +'<div class="ixv-fi-val">'+esc(val.length>60?val.slice(0,60)+'…':val)+esc(unit)+'</div>'
+        +'<div class="ixv-fi-meta">'+(period?'<span>'+esc(period)+'</span>':'')+'<span class="ixv-fbadge '+ti.cls+'">'+ti.lbl+'</span></div>'
+        +'</div>';
+    });
+    fl.innerHTML=h;
+  }
+
+  window.ixvFiClick=function(i){
+    var el=filteredFacts[i];if(!el)return;
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){openPanel(el);},280);
+  };
+
+  function markSidebar(el){
+    document.querySelectorAll('.ixv-fi').forEach(function(it){it.classList.remove('ixv-fi-on');});
+    var i=filteredFacts.indexOf(el);
+    if(i>=0){var it=document.querySelector('.ixv-fi[data-i="'+i+'"]');if(it){it.classList.add('ixv-fi-on');it.scrollIntoView({block:'nearest'});}}
+  }
+
+  /* ── CONCEPTS PANE ───────────────────────────── */
+  function renderConcs(){
+    var wrap=document.getElementById('ixv-cp');
+    var names={};
+    allFacts.forEach(function(el){var n=el.getAttribute('name');if(n)names[n]=(names[n]||0)+1;});
+    var keys=Object.keys(names).sort();
+    if(cpSrch) keys=keys.filter(function(n){return n.toLowerCase().indexOf(cpSrch)>=0;});
+    if(!keys.length){wrap.innerHTML='<div style="padding:32px 16px;text-align:center;color:rgba(255,255,255,.18);font-size:12px;">'+(cpSrch?'No match.':'No concepts tagged.')+'</div>';return;}
+    var h='';
+    keys.forEach(function(name){
+      var f=allFacts.find(function(el){return el.getAttribute('name')===name;});
+      var lbl=f?f.getAttribute('data-concept')||name:name;
+      h+='<div class="ixv-ci" onclick="ixvCiClick(\''+name.replace(/'/g,'\\\'')+'\')">'
+        +'<div class="ixv-ci-lbl">'+esc(lbl)+'</div>'
+        +'<div class="ixv-ci-name">'+esc(name)+'</div>'
+        +'<div class="ixv-ci-cnt">&#10003; '+names[name]+' fact'+(names[name]!==1?'s':'')+' tagged</div>'
+        +'</div>';
+    });
+    wrap.innerHTML=h;
+  }
+
+  window.ixvCiClick=function(name){
+    var el=allFacts.find(function(f){return f.getAttribute('name')===name;});
+    if(!el)return;
+    ixvTab('facts');
+    srchVal='';document.getElementById('ixv-fl-srch').value='';
+    renderFacts();
+    el.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){openPanel(el);},280);
+  };
+
+  /* ── HEADER ──────────────────────────────────── */
+  window.ixvHlAll=function(){
+    hlAll=document.getElementById('ixv-hl-chk').checked;
+    allFacts.forEach(function(f){
+      if(f===activeFact)return;
+      f.classList.toggle('ixv-fact-hl',hlAll);
+      f.classList.remove('ixv-fact-related');
+    });
+  };
+
+  /* ── RIGHT PANEL ─────────────────────────────── */
+  function openPanel(el){
     var name=el.getAttribute('name')||'';
-    var label=el.getAttribute('data-concept')||name.split(':').pop()||name;
+    var lbl=el.getAttribute('data-concept')||name.split(':').pop()||name;
     var ctx=el.getAttribute('contextRef')||'';
     var unit=el.getAttribute('unitRef')||'';
     var dec2=el.getAttribute('decimals')||META.dec;
-    var sign=el.getAttribute('sign')||'';
-    var type=el.getAttribute('data-type')||'string';
-    var raw=el.textContent.trim();
-    var val=(sign==='-'?'-':'')+raw;
-
+    var val=fmtVal(el);
     var ci=CTX[ctx]||{};
-    var period=ci.start&&ci.end?ci.start+' – '+ci.end:(ci.instant||ctx);
+    var period=fmtPeriod(ctx);
     var entity2=META.entity||ci.entity||'';
     var unitDisp=unit?unit.replace(/^u_/,''):'';
-    var scaleDisp=dec2?scaleOf(dec2):'';
-    var isNum=type==='monetary'||type==='decimal';
-    var badgeClass=isNum?'ixv-bm':type==='date'?'ixv-bd':'ixv-bt';
-    var typeLabel=isNum?'Monetary':type==='date'?'Date':type==='string'?'String':'Text Block';
+    var scaleDisp=scaleOf(dec2);
+    var ti=typeOf(el);
+    var periodType=ci.instant?'Instant':ci.start&&ci.end?'Duration':'';
 
     var same=allFacts.filter(function(f){return f.getAttribute('name')===name;});
     curIdx=same.indexOf(el);
+
+    allFacts.forEach(function(f){
+      f.classList.remove('ixv-fact-active','ixv-fact-related');
+      f.classList.toggle('ixv-fact-hl',hlAll&&f!==el);
+    });
+    same.forEach(function(f){if(f!==el)f.classList.add('ixv-fact-related');});
+    el.classList.remove('ixv-fact-hl','ixv-fact-related');
+    el.classList.add('ixv-fact-active');
+    activeFact=el;
+    markSidebar(el);
 
     var nav='';
     if(same.length>1){
@@ -3317,59 +3579,79 @@ function generate(){
         +'<button class="ixv-nb" onclick="ixvNav(-1)"'+(curIdx<=0?' disabled':'')+'>&#8249; Prev</button>'
         +'<span class="ixv-ni">'+(curIdx+1)+' / '+same.length+'</span>'
         +'<button class="ixv-nb" onclick="ixvNav(1)"'+(curIdx>=same.length-1?' disabled':'')+'>Next &#8250;</button>'
-        +'</div>';
+        +'</div>'
+        +'<span class="ixv-jmp" onclick="ixvCiClick(\''+name.replace(/'/g,'\\\'')+'\')">'
+        +'Show all '+same.length+' occurrences in sidebar</span>';
     }
 
     var rows=''
       +'<div class="ixv-row"><span class="ixv-rk">Period</span><span class="ixv-rv">'+esc(period)+'</span></div>'
+      +(periodType?'<div class="ixv-row"><span class="ixv-rk">Type</span><span class="ixv-rv">'+esc(periodType)+'</span></div>':'')
       +(entity2?'<div class="ixv-row"><span class="ixv-rk">Entity</span><span class="ixv-rv">'+esc(entity2)+'</span></div>':'')
-      +'<div class="ixv-row"><span class="ixv-rk">Context</span><span class="ixv-rv" style="font-family:monospace;font-size:11px;">'+esc(ctx)+'</span></div>'
+      +'<div class="ixv-row"><span class="ixv-rk">Context</span><span class="ixv-rv" style="font-family:monospace;font-size:10px;">'+esc(ctx)+'</span></div>'
       +(unitDisp?'<div class="ixv-row"><span class="ixv-rk">Currency</span><span class="ixv-rv">'+esc(unitDisp)+'</span></div>':'')
       +(scaleDisp?'<div class="ixv-row"><span class="ixv-rk">Scale</span><span class="ixv-rv">'+esc(scaleDisp)+'</span></div>':'')
-      +'<div class="ixv-row"><span class="ixv-rk">Type</span><span class="ixv-rv"><span class="ixv-badge '+badgeClass+'">'+typeLabel+'</span></span></div>'
-      +'<div class="ixv-row"><span class="ixv-rk">Concept</span><span class="ixv-rv" style="font-family:monospace;font-size:10px;">'+esc(name)+'</span></div>';
+      +(dec2?'<div class="ixv-row"><span class="ixv-rk">Decimals</span><span class="ixv-rv" style="font-family:monospace">'+esc(dec2)+'</span></div>':'')
+      +'<div class="ixv-row"><span class="ixv-rk">Data type</span><span class="ixv-rv"><span class="ixv-badge '+ti.cls.replace('ixv-f','ixv-')+'">'+ti.lbl+'</span></span></div>'
+      +'<div class="ixv-row"><span class="ixv-rk">Concept</span><span class="ixv-rv" style="font-family:monospace;font-size:10px;word-break:break-all;">'+esc(name)+'</span></div>';
 
+    var vDisplay=val.length>140?val.slice(0,140)+'…':val;
     document.getElementById('ixv-pb').innerHTML=
-      '<div class="ixv-concept-label">'+esc(label)+'</div>'
-      +'<div class="ixv-concept-name">'+esc(name)+'</div>'
-      +'<div class="ixv-val-box">'
-        +'<div class="ixv-val-label">Tagged Value</div>'
-        +'<div class="ixv-val-num">'+esc(val)+'</div>'
-        +((unitDisp||scaleDisp)?'<div class="ixv-val-sub">'+esc(unitDisp||'')+(unitDisp&&scaleDisp?' · ':'')+esc(scaleDisp||'')+'</div>':'')
+      '<div class="ixv-clbl">'+esc(lbl)+'</div>'
+      +'<div class="ixv-cname">'+esc(name)+'</div>'
+      +'<div class="ixv-vbox">'
+        +'<div class="ixv-vlbl">Tagged Value</div>'
+        +'<div class="ixv-vnum">'+esc(vDisplay)+'</div>'
+        +((unitDisp||scaleDisp)?'<div class="ixv-vsub">'+esc(unitDisp)+(unitDisp&&scaleDisp?' · ':'')+esc(scaleDisp)+'</div>':'')
       +'</div>'
       +'<div class="ixv-sec">Context</div><div>'+rows+'</div>'
       +nav;
 
-    allFacts.forEach(function(f){f.classList.remove('ixv-fact-active','ixv-fact-related');});
-    same.forEach(function(f){f.classList.add('ixv-fact-related');});
-    el.classList.remove('ixv-fact-related');
-    el.classList.add('ixv-fact-active');
-    activeFact=el;
     document.getElementById('ixv-panel').classList.add('ixv-open');
   }
 
   window.ixvClose=function(){
     document.getElementById('ixv-panel').classList.remove('ixv-open');
-    allFacts.forEach(function(f){f.classList.remove('ixv-fact-active','ixv-fact-related');});
+    allFacts.forEach(function(f){
+      f.classList.remove('ixv-fact-active','ixv-fact-related');
+      f.classList.toggle('ixv-fact-hl',hlAll);
+    });
     activeFact=null;
+    document.querySelectorAll('.ixv-fi').forEach(function(it){it.classList.remove('ixv-fi-on');});
   };
 
   window.ixvNav=function(dir){
-    if(!activeFact) return;
+    if(!activeFact)return;
     var name=activeFact.getAttribute('name');
     var same=allFacts.filter(function(f){return f.getAttribute('name')===name;});
     var next=same[curIdx+dir];
-    if(next){next.scrollIntoView({behavior:'smooth',block:'center'});renderPanel(next);}
+    if(next){next.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){openPanel(next);},200);}
   };
 
+  /* ── INIT ────────────────────────────────────── */
   document.addEventListener('DOMContentLoaded',function(){
+    document.getElementById('ixv-sb-btn').addEventListener('click',function(){
+      sbOpen=!sbOpen;
+      document.getElementById('ixv-sb').classList.toggle('ixv-sb-off',!sbOpen);
+      document.body.classList.toggle('ixv-sb-closed',!sbOpen);
+    });
+
     document.querySelectorAll('.ixv-fact').forEach(function(el){
       allFacts.push(el);
-      el.addEventListener('click',function(e){e.stopPropagation();renderPanel(el);});
+      el.addEventListener('click',function(e){e.stopPropagation();openPanel(el);});
     });
+
+    document.getElementById('ixv-hdr-cnt').textContent=allFacts.length+' fact'+(allFacts.length!==1?'s':'');
+    renderFacts();
+
     document.addEventListener('click',function(e){
       var p=document.getElementById('ixv-panel');
-      if(p&&!p.contains(e.target)&&activeFact&&!activeFact.contains(e.target)) ixvClose();
+      if(p&&p.classList.contains('ixv-open')&&!p.contains(e.target)&&activeFact&&!activeFact.contains(e.target)) ixvClose();
+    });
+    document.addEventListener('keydown',function(e){
+      if(e.key==='Escape') ixvClose();
+      if(e.key==='ArrowRight'&&activeFact) ixvNav(1);
+      if(e.key==='ArrowLeft'&&activeFact) ixvNav(-1);
     });
   });
 })();
