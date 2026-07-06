@@ -3414,7 +3414,7 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   <div class="ixv-pb" id="ixv-pb"><div class="ixv-hint">Click any highlighted value in the document to inspect the XBRL fact.</div></div>
 </div>
 
-<script>
+<script>//<![CDATA[
 (function(){
   var CTX=${JSON.stringify(ctxData)};
   var META={entity:${JSON.stringify(entity||'')},ccy:${JSON.stringify(ccy)},dec:${JSON.stringify(dec)},scale:${JSON.stringify(scaleLabel)},pfx:${JSON.stringify(pfx)}};
@@ -3468,7 +3468,7 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
         var lbl=(el.getAttribute('data-concept')||'').toLowerCase();
         var v=el.textContent.toLowerCase();
         var nm=(el.getAttribute('name')||'').toLowerCase();
-        if(lbl.indexOf(srchVal)<0&&v.indexOf(srchVal)<0&&nm.indexOf(srchVal)<0) return false;
+        if(lbl.indexOf(srchVal)===-1&&v.indexOf(srchVal)===-1&&nm.indexOf(srchVal)===-1) return false;
       }
       return true;
     });
@@ -3509,19 +3509,24 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
     var names={};
     allFacts.forEach(function(el){var n=el.getAttribute('name');if(n)names[n]=(names[n]||0)+1;});
     var keys=Object.keys(names).sort();
-    if(cpSrch) keys=keys.filter(function(n){return n.toLowerCase().indexOf(cpSrch)>=0;});
+    if(cpSrch) keys=keys.filter(function(n){return n.toLowerCase().indexOf(cpSrch)===-1?false:true;});
     if(!keys.length){wrap.innerHTML='<div style="padding:32px 16px;text-align:center;color:rgba(255,255,255,.18);font-size:12px;">'+(cpSrch?'No match.':'No concepts tagged.')+'</div>';return;}
     var h='';
     keys.forEach(function(name){
       var f=allFacts.find(function(el){return el.getAttribute('name')===name;});
       var lbl=f?f.getAttribute('data-concept')||name:name;
-      h+='<div class="ixv-ci" onclick="ixvCiClick(\''+name.replace(/'/g,'\\\'')+'\')">'
+      h+='<div class="ixv-ci" data-cname="'+esc(name)+'">'
         +'<div class="ixv-ci-lbl">'+esc(lbl)+'</div>'
         +'<div class="ixv-ci-name">'+esc(name)+'</div>'
         +'<div class="ixv-ci-cnt">&#10003; '+names[name]+' fact'+(names[name]!==1?'s':'')+' tagged</div>'
         +'</div>';
     });
     wrap.innerHTML=h;
+    wrap.onclick=function(e){
+      var ci=e.target;
+      while(ci&&ci!==wrap&&!ci.classList.contains('ixv-ci'))ci=ci.parentNode;
+      if(ci&&ci.dataset&&ci.dataset.cname) ixvCiClick(ci.dataset.cname);
+    };
   }
 
   window.ixvCiClick=function(name){
@@ -3580,7 +3585,7 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
         +'<span class="ixv-ni">'+(curIdx+1)+' / '+same.length+'</span>'
         +'<button class="ixv-nb" onclick="ixvNav(1)"'+(curIdx>=same.length-1?' disabled':'')+'>Next &#8250;</button>'
         +'</div>'
-        +'<span class="ixv-jmp" onclick="ixvCiClick(\''+name.replace(/'/g,'\\\'')+'\')">'
+        +'<span class="ixv-jmp" data-cname="'+esc(name)+'" onclick="ixvCiClick(this.getAttribute(\'data-cname\'))">'
         +'Show all '+same.length+' occurrences in sidebar</span>';
     }
 
@@ -3629,19 +3634,24 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   };
 
   /* ── INIT ────────────────────────────────────── */
-  document.addEventListener('DOMContentLoaded',function(){
-    document.getElementById('ixv-sb-btn').addEventListener('click',function(){
+  function ixvInit(){
+    var btn=document.getElementById('ixv-sb-btn');
+    if(btn) btn.addEventListener('click',function(){
       sbOpen=!sbOpen;
       document.getElementById('ixv-sb').classList.toggle('ixv-sb-off',!sbOpen);
       document.body.classList.toggle('ixv-sb-closed',!sbOpen);
     });
 
-    document.querySelectorAll('.ixv-fact').forEach(function(el){
+    /* find facts by class; fallback to ix element names for strict XML renderers */
+    var found=document.querySelectorAll('.ixv-fact');
+    if(!found.length) found=document.querySelectorAll('ix\\:nonFraction,ix\\:nonNumeric');
+    found.forEach(function(el){
       allFacts.push(el);
       el.addEventListener('click',function(e){e.stopPropagation();openPanel(el);});
     });
 
-    document.getElementById('ixv-hdr-cnt').textContent=allFacts.length+' fact'+(allFacts.length!==1?'s':'');
+    var cntEl=document.getElementById('ixv-hdr-cnt');
+    if(cntEl) cntEl.textContent=allFacts.length+' fact'+(allFacts.length!==1?'s':'');
     renderFacts();
 
     document.addEventListener('click',function(e){
@@ -3653,9 +3663,17 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
       if(e.key==='ArrowRight'&&activeFact) ixvNav(1);
       if(e.key==='ArrowLeft'&&activeFact) ixvNav(-1);
     });
-  });
+  }
+
+  /* Run immediately if DOM is ready (XHTML/XML mode fires DOMContentLoaded
+     before deferred scripts execute, so readyState check is essential) */
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',ixvInit);
+  } else {
+    ixvInit();
+  }
 })();
-<\/script>`;
+//]]><\/script>`;
 
   S.out=`<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
