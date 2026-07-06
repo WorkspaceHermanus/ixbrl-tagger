@@ -1786,6 +1786,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 4v6h-6"/><path d="M1 20v-6h6"/><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/></svg>
     Recalc
   </button>
+  <button class="rpt-btn" id="applyAllBtn" onclick="applyAllSuggestions()" style="display:none" title="Apply all auto-suggested tags at once">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+    Apply All (<span id="sugCount">0</span>)
+  </button>
   <div class="rpt-sp"></div>
   <button class="rpt-btn" onclick="generate()" id="rptGenBtn" title="Generate iXBRL output">
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
@@ -1802,7 +1806,8 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
       <div class="p-title">Taxonomy</div>
       <select class="tax-sel" id="taxSel" onchange="loadBuiltin(this.value)">
         <option value="">— Select taxonomy —</option>
-        <option value="ifrs" selected>IFRS 2024</option>
+        <option value="cipc" selected>CIPC IFRS (SA) — Full</option>
+        <option value="ifrs">IFRS 2024</option>
         <option value="usgaap">US-GAAP 2024</option>
         <option value="ukfrs">UK FRS 102</option>
       </select>
@@ -2022,6 +2027,195 @@ const S={
 // TAXONOMIES
 // ═══════════════════════════════════════════════════
 const TAX={
+  cipc:{
+    name:'CIPC IFRS (SA)',prefix:'ifrs-full',
+    ns:'http://xbrl.ifrs.org/taxonomy/2024-01-01/ifrs-full',
+    tree:[
+      {label:'Statement of Financial Position',icon:'📊',ch:[
+        {label:'Assets',ch:[
+          {label:'Current Assets',ch:[
+            {id:'CashAndCashEquivalents',label:'Cash and cash equivalents',t:'monetary'},
+            {id:'CurrentTaxAssets',label:'Current tax assets',t:'monetary'},
+            {id:'TradeAndOtherCurrentReceivables',label:'Trade and other receivables',t:'monetary'},
+            {id:'OtherCurrentFinancialAssets',label:'Other current financial assets',t:'monetary'},
+            {id:'Inventories',label:'Inventories',t:'monetary'},
+            {id:'OtherCurrentNonfinancialAssets',label:'Other current non-financial assets',t:'monetary'},
+            {id:'CurrentAssets',label:'Total current assets',t:'monetary'},
+          ]},
+          {label:'Non-current Assets',ch:[
+            {id:'PropertyPlantAndEquipment',label:'Property, plant and equipment',t:'monetary'},
+            {id:'RightofuseAssets',label:'Right-of-use assets',t:'monetary'},
+            {id:'Goodwill',label:'Goodwill',t:'monetary'},
+            {id:'IntangibleAssetsOtherThanGoodwill',label:'Intangible assets',t:'monetary'},
+            {id:'InvestmentProperty',label:'Investment property',t:'monetary'},
+            {id:'InvestmentsInAssociates',label:'Investments in associates',t:'monetary'},
+            {id:'InvestmentsInJointVentures',label:'Investments in joint ventures',t:'monetary'},
+            {id:'DeferredTaxAssets',label:'Deferred tax assets',t:'monetary'},
+            {id:'OtherNoncurrentFinancialAssets',label:'Other non-current financial assets',t:'monetary'},
+            {id:'NoncurrentAssets',label:'Total non-current assets',t:'monetary'},
+          ]},
+          {id:'Assets',label:'Total assets',t:'monetary'},
+        ]},
+        {label:'Equity and Liabilities',ch:[
+          {label:'Equity',ch:[
+            {id:'IssuedCapital',label:'Share capital',t:'monetary'},
+            {id:'SharePremium',label:'Share premium',t:'monetary'},
+            {id:'RetainedEarnings',label:'Retained earnings',t:'monetary'},
+            {id:'OtherReserves',label:'Other reserves',t:'monetary'},
+            {id:'EquityAttributableToOwnersOfParent',label:'Equity attributable to owners',t:'monetary'},
+            {id:'NoncontrollingInterests',label:'Non-controlling interests',t:'monetary'},
+            {id:'Equity',label:'Total equity',t:'monetary'},
+          ]},
+          {label:'Non-current Liabilities',ch:[
+            {id:'NoncurrentPortionOfNoncurrentBorrowings',label:'Non-current borrowings',t:'monetary'},
+            {id:'NoncurrentLeaseLiabilities',label:'Lease liabilities (non-current)',t:'monetary'},
+            {id:'DeferredTaxLiabilities',label:'Deferred tax liabilities',t:'monetary'},
+            {id:'NoncurrentProvisions',label:'Non-current provisions',t:'monetary'},
+            {id:'OtherNoncurrentFinancialLiabilities',label:'Other non-current financial liabilities',t:'monetary'},
+            {id:'NoncurrentLiabilities',label:'Total non-current liabilities',t:'monetary'},
+          ]},
+          {label:'Current Liabilities',ch:[
+            {id:'CurrentPortionOfNoncurrentBorrowings',label:'Current portion of borrowings',t:'monetary'},
+            {id:'CurrentLeaseLiabilities',label:'Lease liabilities (current)',t:'monetary'},
+            {id:'TradeAndOtherCurrentPayables',label:'Trade and other payables',t:'monetary'},
+            {id:'CurrentTaxLiabilities',label:'Current tax liabilities',t:'monetary'},
+            {id:'CurrentProvisions',label:'Current provisions',t:'monetary'},
+            {id:'OtherCurrentFinancialLiabilities',label:'Other current financial liabilities',t:'monetary'},
+            {id:'CurrentLiabilities',label:'Total current liabilities',t:'monetary'},
+          ]},
+          {id:'Liabilities',label:'Total liabilities',t:'monetary'},
+          {id:'EquityAndLiabilities',label:'Total equity and liabilities',t:'monetary'},
+        ]},
+      ]},
+      {label:'Statement of Profit or Loss',icon:'📈',ch:[
+        {id:'Revenue',label:'Revenue',t:'monetary'},
+        {id:'CostOfSales',label:'Cost of sales',t:'monetary'},
+        {id:'GrossProfit',label:'Gross profit',t:'monetary'},
+        {id:'OtherIncome',label:'Other income',t:'monetary'},
+        {id:'DistributionCosts',label:'Distribution costs',t:'monetary'},
+        {id:'AdministrativeExpense',label:'Administrative expenses',t:'monetary'},
+        {id:'OtherExpenseByFunction',label:'Other operating expenses',t:'monetary'},
+        {id:'FinanceIncome',label:'Finance income',t:'monetary'},
+        {id:'FinanceCosts',label:'Finance costs',t:'monetary'},
+        {id:'ShareOfProfitLossOfAssociatesAndJointVenturesAccountedForUsingEquityMethod',label:'Share of profit of associates',t:'monetary'},
+        {id:'ProfitLossBeforeTax',label:'Profit before tax',t:'monetary'},
+        {id:'IncomeTaxExpenseContinuingOperations',label:'Income tax expense',t:'monetary'},
+        {id:'ProfitLoss',label:'Profit for the year',t:'monetary'},
+        {id:'ProfitLossAttributableToOwnersOfParent',label:'Profit attributable to owners',t:'monetary'},
+        {id:'ProfitLossAttributableToNoncontrollingInterests',label:'Profit attributable to NCI',t:'monetary'},
+        {id:'BasicEarningsLossPerShare',label:'Basic earnings per share',t:'decimal'},
+        {id:'DilutedEarningsLossPerShare',label:'Diluted earnings per share',t:'decimal'},
+        {label:'Other Comprehensive Income',ch:[
+          {id:'OtherComprehensiveIncome',label:'Other comprehensive income',t:'monetary'},
+          {id:'ComprehensiveIncome',label:'Total comprehensive income',t:'monetary'},
+        ]},
+      ]},
+      {label:'Statement of Cash Flows',icon:'💧',ch:[
+        {label:'Operating Activities',ch:[
+          {id:'CashFlowsFromUsedInOperatingActivities',label:'Cash from operating activities',t:'monetary'},
+          {id:'AdjustmentsForDepreciationAndAmortisationExpense',label:'Depreciation and amortisation',t:'monetary'},
+          {id:'AdjustmentsForImpairmentLossRecognisedInProfitOrLoss',label:'Impairment losses',t:'monetary'},
+          {id:'AdjustmentsForGainLossOnDisposals',label:'Gain/loss on disposals',t:'monetary'},
+          {id:'AdjustmentsForSharebasedPayments',label:'Share-based payment expense',t:'monetary'},
+          {id:'AdjustmentsForFinanceCosts',label:'Finance costs adjustment',t:'monetary'},
+          {id:'AdjustmentsForIncomeTaxExpense',label:'Income tax expense adjustment',t:'monetary'},
+          {id:'IncreaseDecreaseInTradeAndOtherReceivables',label:'Change in trade receivables',t:'monetary'},
+          {id:'IncreaseDecreaseInInventories',label:'Change in inventories',t:'monetary'},
+          {id:'IncreaseDecreaseInTradeAndOtherPayables',label:'Change in trade payables',t:'monetary'},
+          {id:'IncomeTaxesPaidRefund',label:'Income taxes paid',t:'monetary'},
+        ]},
+        {label:'Investing Activities',ch:[
+          {id:'CashFlowsFromUsedInInvestingActivities',label:'Cash from investing activities',t:'monetary'},
+          {id:'PurchaseOfPropertyPlantAndEquipment',label:'Purchase of PPE',t:'monetary'},
+          {id:'ProceedsFromSalesOfPropertyPlantAndEquipment',label:'Proceeds from disposal of PPE',t:'monetary'},
+          {id:'PurchaseOfIntangibleAssets',label:'Purchase of intangible assets',t:'monetary'},
+          {id:'PurchaseOfInvestmentProperty',label:'Purchase of investment property',t:'monetary'},
+          {id:'DividendsReceived',label:'Dividends received',t:'monetary'},
+          {id:'InterestReceived',label:'Interest received',t:'monetary'},
+          {id:'ProceedsFromSalesOfInterestsInSubsidiaries',label:'Proceeds from disposal of subsidiaries',t:'monetary'},
+        ]},
+        {label:'Financing Activities',ch:[
+          {id:'CashFlowsFromUsedInFinancingActivities',label:'Cash from financing activities',t:'monetary'},
+          {id:'ProceedsFromBorrowings',label:'Proceeds from borrowings',t:'monetary'},
+          {id:'RepaymentsOfBorrowings',label:'Repayments of borrowings',t:'monetary'},
+          {id:'PaymentsOfLeaseLiabilities',label:'Lease liability payments',t:'monetary'},
+          {id:'DividendsPaid',label:'Dividends paid',t:'monetary'},
+          {id:'InterestPaid',label:'Interest paid',t:'monetary'},
+          {id:'ProceedsFromIssuingShares',label:'Proceeds from share issuance',t:'monetary'},
+          {id:'RepaymentsOfShorttermBorrowingsClassifiedAsFinancingActivities',label:'Repayment of short-term borrowings',t:'monetary'},
+        ]},
+        {id:'NetIncreaseDecreaseInCashAndCashEquivalents',label:'Net change in cash and cash equivalents',t:'monetary'},
+        {id:'CashAndCashEquivalentsAtBeginningOfPeriod',label:'Cash at beginning of period',t:'monetary'},
+        {id:'EffectOfExchangeRateChangesOnCashAndCashEquivalents',label:'Effect of exchange rates on cash',t:'monetary'},
+        {id:'CashAndCashEquivalentsAtEndOfPeriod',label:'Cash at end of period',t:'monetary'},
+      ]},
+      {label:'Statement of Changes in Equity',icon:'⚖️',ch:[
+        {id:'ChangesInEquity',label:'Total changes in equity',t:'monetary'},
+        {id:'IssuanceOfOrdinaryShares',label:'Issue of share capital',t:'monetary'},
+        {id:'DividendsRecognisedAsDistributionsToOwnersOfParent',label:'Dividends paid to owners',t:'monetary'},
+        {id:'IncreaseDecreaseThroughTransfersAndOtherChangesEquity',label:'Transfers and other changes',t:'monetary'},
+      ]},
+      {label:'Notes — Disclosures',icon:'📝',ch:[
+        {label:'Accounting Policies',ch:[
+          {id:'DisclosureOfSummaryOfSignificantAccountingPoliciesExplanatory',label:'Summary of accounting policies',t:'string'},
+          {id:'DescriptionOfBasisOfPreparation',label:'Basis of preparation',t:'string'},
+          {id:'DescriptionOfAccountingPolicyForPropertyPlantAndEquipment',label:'Accounting policy: PPE',t:'string'},
+          {id:'DescriptionOfAccountingPolicyForRevenue',label:'Accounting policy: Revenue',t:'string'},
+          {id:'DescriptionOfAccountingPolicyForFinancialInstruments',label:'Accounting policy: Financial instruments',t:'string'},
+          {id:'DescriptionOfAccountingPolicyForLeasesLessee',label:'Accounting policy: Leases',t:'string'},
+          {id:'DescriptionOfAccountingPolicyForIncomeTax',label:'Accounting policy: Income tax',t:'string'},
+          {id:'DescriptionOfAccountingPolicyForForeignCurrencyTranslation',label:'Accounting policy: Foreign currency',t:'string'},
+          {id:'DescriptionOfAccountingPolicyForInventories',label:'Accounting policy: Inventories',t:'string'},
+        ]},
+        {label:'PPE Note',ch:[
+          {id:'DisclosureOfDetailedInformationAboutPropertyPlantAndEquipmentExplanatory',label:'PPE — detailed disclosure',t:'string'},
+          {id:'AdditionsOtherThanThroughBusinessCombinationsPropertyPlantAndEquipment',label:'Additions to PPE',t:'monetary'},
+          {id:'DisposalsPropertyPlantAndEquipment',label:'Disposals of PPE',t:'monetary'},
+          {id:'DepreciationPropertyPlantAndEquipment',label:'Depreciation charge for year',t:'monetary'},
+          {id:'AccumulatedDepreciationAndAmortisationPropertyPlantAndEquipment',label:'Accumulated depreciation',t:'monetary'},
+        ]},
+        {label:'Borrowings Note',ch:[
+          {id:'DisclosureOfBorrowingsExplanatory',label:'Borrowings — detailed disclosure',t:'string'},
+          {id:'Borrowings',label:'Total borrowings',t:'monetary'},
+          {id:'ShorttermBorrowings',label:'Short-term borrowings',t:'monetary'},
+          {id:'LongtermBorrowings',label:'Long-term borrowings',t:'monetary'},
+          {id:'WeightedAverageInterestRateOnBorrowings',label:'Weighted average interest rate',t:'decimal'},
+        ]},
+        {label:'Revenue Note',ch:[
+          {id:'DisclosureOfRevenueExplanatory',label:'Revenue — detailed disclosure',t:'string'},
+          {id:'RevenueFromContractsWithCustomers',label:'Revenue from contracts with customers',t:'monetary'},
+          {id:'OtherRevenue',label:'Other revenue',t:'monetary'},
+        ]},
+        {label:'Income Tax Note',ch:[
+          {id:'DisclosureOfIncomeTaxExplanatory',label:'Income tax — detailed disclosure',t:'string'},
+          {id:'CurrentTaxExpenseIncome',label:'Current tax expense',t:'monetary'},
+          {id:'DeferredTaxExpenseIncome',label:'Deferred tax expense',t:'monetary'},
+          {id:'ApplicableTaxRate',label:'Applicable tax rate',t:'decimal'},
+          {id:'EffectiveTaxRate',label:'Effective tax rate',t:'decimal'},
+        ]},
+        {label:'Related Parties',ch:[
+          {id:'DisclosureOfRelatedPartyExplanatory',label:'Related party transactions',t:'string'},
+        ]},
+        {label:'Going Concern',ch:[
+          {id:'DisclosureOfGoingConcernExplanatory',label:'Going concern',t:'string'},
+        ]},
+        {label:'Events After Reporting Date',ch:[
+          {id:'DisclosureOfEventsAfterReportingPeriodExplanatory',label:'Events after reporting period',t:'string'},
+        ]},
+        {label:'Commitments & Contingencies',ch:[
+          {id:'DisclosureOfCommitmentsExplanatory',label:'Commitments',t:'string'},
+          {id:'DisclosureOfContingentLiabilitiesExplanatory',label:'Contingent liabilities',t:'string'},
+          {id:'CapitalCommitments',label:'Capital commitments',t:'monetary'},
+        ]},
+        {label:'Entity Information',ch:[
+          {id:'NameOfUltimateParentOfGroup',label:'Ultimate parent entity',t:'string'},
+          {id:'CountryOfIncorporation',label:'Country of incorporation',t:'string'},
+          {id:'NumberOfEmployees',label:'Number of employees',t:'decimal'},
+          {id:'DescriptionOfNatureOfEntitysOperationsAndPrincipalActivities',label:'Nature of operations',t:'string'},
+        ]},
+      ]},
+    ]
+  },
   ifrs:{
     name:'IFRS 2024',prefix:'ifrs-full',
     ns:'http://xbrl.ifrs.org/taxonomy/2024-01-01/ifrs-full',
@@ -2375,6 +2569,7 @@ function clearArmed(){
   document.querySelectorAll('.ci.armed').forEach(e=>e.classList.remove('armed'));
   updateArm();
 }
+function updateArmedDisplay(){updateArm();}
 function updateArm(){
   const d=document.getElementById('armDisp');
   const s=document.getElementById('armStat');
@@ -2626,38 +2821,72 @@ function scoreMatch(a,b){
 }
 
 function autoSuggest(){
-  if(!S.tax||!S.rows.length) return;
+  if(!S.tax||!S.rows.length){toast('Load a taxonomy and document first','warn');return;}
   S.suggestions=[];
-  const existingKeys=new Set(S.tags.map(t=>`${t.r}:${t.c}`));
+  const existingKeys=new Set(S.tags.map(t=>t.r+':'+t.c));
+  // Build concept pool — prefer exact label matches first, then fuzzy
   S.rows.forEach((row,ri)=>{
-    const label=row.cells[0]?.v||'';
-    if(!label.trim()) return;
+    const rawLabel=row.cells[0]?.v||'';
+    const label=rawLabel.trim();
+    if(!label||row.meta?.isSection) return;
+    // Score all concepts
     let best=null,bestScore=0;
     allConcepts.forEach(c=>{
+      if(!c.id||!c.label) return;
       const sc=scoreMatch(label,c.label);
-      if(sc>bestScore&&sc>=0.55){bestScore=sc;best=c;}
+      if(sc>bestScore&&sc>=0.5){bestScore=sc;best=c;}
     });
     if(!best) return;
+    // Tag every numeric cell in this row (ci≥1)
     row.cells.forEach((cell,ci)=>{
-      if(ci<=1) return;
-      if(!(cell.isNum||isNumStr(cell.v))||!cell.v.trim()) return;
-      if(existingKeys.has(`${ri}:${ci}`)) return;
-      S.suggestions.push({r:ri,c:ci,concept:best,score:bestScore});
+      if(ci<1) return;
+      const hasVal=cell.v&&cell.v.trim();
+      if(!hasVal) return;
+      const isNum=cell.isNum||isNumStr(cell.v);
+      if(!isNum&&ci>0) return;
+      if(existingKeys.has(ri+':'+ci)) return;
+      S.suggestions.push({r:ri,c:ci,concept:{...best,prefix:best.prefix||S.tax.prefix},score:bestScore,isNum:true});
     });
   });
   const n=S.suggestions.length;
+  // Update toolbar button
+  const applyBtn=document.getElementById('applyAllBtn');
+  const sugCnt=document.getElementById('sugCount');
+  if(sugCnt) sugCnt.textContent=n;
+  if(applyBtn) applyBtn.style.display=n>0?'':'none';
+  // Legacy sugBar if present
   const bar=document.getElementById('sugBar');
-  document.getElementById('sugCount').textContent=n;
-  if(n>0){
-    bar.classList.add('show');
-    document.getElementById('autoBtn').classList.add('on');
-    document.getElementById('autoBtn').textContent='✨ '+n+' suggestions';
-  } else {
-    bar.classList.remove('show');
-    document.getElementById('autoBtn').textContent='✨ No suggestions';
-    toast('No automatic suggestions found for this document.','info');
+  if(bar) bar.classList.toggle('show',n>0);
+  const autoBtn=document.getElementById('autoBtn');
+  if(autoBtn){
+    autoBtn.classList.toggle('on',n>0);
+    autoBtn.textContent=n>0?'✨ '+n+' suggestions':'✨ Auto-suggest';
   }
   renderTable();
+  if(n>0) toast(n+' concepts suggested — review highlights or click "Apply All"','ok');
+  else toast('No matches found — try loading a taxonomy with more concepts','info');
+}
+
+function applyAllSuggestions(){
+  if(!S.suggestions.length){toast('Run Auto-suggest first','warn');return;}
+  S.history.push(JSON.stringify(S.tags));
+  const existingKeys=new Set(S.tags.map(t=>t.r+':'+t.c));
+  let applied=0;
+  S.suggestions.forEach(sug=>{
+    if(existingKeys.has(sug.r+':'+sug.c)) return;
+    const row=S.rows[sug.r];
+    if(!row) return;
+    const cell=row.cells[sug.c];
+    if(!cell||!cell.v?.trim()) return;
+    S.tags.push({r:sug.r,c:sug.c,concept:sug.concept,val:cell.v,isNum:sug.isNum||cell.isNum,isSuggestion:true});
+    applied++;
+  });
+  S.suggestions=[];
+  const applyBtn=document.getElementById('applyAllBtn');
+  if(applyBtn) applyBtn.style.display='none';
+  document.getElementById('undoBtn').style.display='flex';
+  renderTable();updateTagList();updateProgress();updateStep(3,true);
+  toast(applied+' tags applied from suggestions','ok');
 }
 
 function acceptAllSuggestions(){
@@ -3375,6 +3604,9 @@ function gotoDash(){
   renderDash();
 }
 function loadDemoCompany(){
+  // Remove existing demo companies first
+  let cos=getCompanies().filter(c=>!c.name.includes('Demo Company'));
+  saveCompanies(cos);
   const id='co_demo_'+Date.now();
   const demoRows=[
     {cells:[{v:'STATEMENT OF FINANCIAL POSITION',raw:'',isNum:false}],meta:{isSection:true}},
@@ -3418,11 +3650,64 @@ function loadDemoCompany(){
     {cells:[{v:'Administrative expenses',raw:'',isNum:false},{v:'(3 880 000)',raw:-3880000,isNum:true},{v:'(3 420 000)',raw:-3420000,isNum:true}],meta:{}},
     {cells:[{v:'Profit before tax',raw:'',isNum:false},{v:'11 190 000',raw:11190000,isNum:true},{v:'9 220 000',raw:9220000,isNum:true}],meta:{isTotal:true}},
     {cells:[{v:'Income tax expense',raw:'',isNum:false},{v:'(3 133 200)',raw:-3133200,isNum:true},{v:'(2 581 600)',raw:-2581600,isNum:true}],meta:{}},
-    {cells:[{v:'Profit for the year',raw:'',isNum:false},{v:'8 056 800',raw:8056800,isNum:true},{v:'6 638 400',raw:6638400,isNum:true}],meta:{isTotal:true}}
+    {cells:[{v:'Profit for the year',raw:'',isNum:false},{v:'8 056 800',raw:8056800,isNum:true},{v:'6 638 400',raw:6638400,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Other comprehensive income for the year, net of tax',raw:'',isNum:false},{v:'—',raw:0,isNum:false},{v:'—',raw:0,isNum:false}],meta:{}},
+    {cells:[{v:'Total comprehensive income for the year',raw:'',isNum:false},{v:'8 056 800',raw:8056800,isNum:true},{v:'6 638 400',raw:6638400,isNum:true}],meta:{isTotal:true}},
+    // STATEMENT OF CASH FLOWS
+    {cells:[{v:'STATEMENT OF CASH FLOWS',raw:'',isNum:false}],meta:{isSection:true}},
+    {cells:[{v:'',raw:'',isNum:false},{v:'2024',raw:'2024',isNum:false},{v:'2023',raw:'2023',isNum:false}],meta:{}},
+    {cells:[{v:'OPERATING ACTIVITIES',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Profit before tax',raw:'',isNum:false},{v:'11 190 000',raw:11190000,isNum:true},{v:'9 220 000',raw:9220000,isNum:true}],meta:{}},
+    {cells:[{v:'Adjustments for:',raw:'',isNum:false}],meta:{}},
+    {cells:[{v:'  Depreciation and amortisation',raw:'',isNum:false},{v:'1 840 000',raw:1840000,isNum:true},{v:'1 620 000',raw:1620000,isNum:true}],meta:{}},
+    {cells:[{v:'  Finance costs',raw:'',isNum:false},{v:'780 000',raw:780000,isNum:true},{v:'860 000',raw:860000,isNum:true}],meta:{}},
+    {cells:[{v:'Changes in working capital:',raw:'',isNum:false}],meta:{}},
+    {cells:[{v:'  Increase in trade and other receivables',raw:'',isNum:false},{v:'(680 000)',raw:-680000,isNum:true},{v:'(420 000)',raw:-420000,isNum:true}],meta:{}},
+    {cells:[{v:'  Increase in inventories',raw:'',isNum:false},{v:'(340 000)',raw:-340000,isNum:true},{v:'(180 000)',raw:-180000,isNum:true}],meta:{}},
+    {cells:[{v:'  Increase in trade and other payables',raw:'',isNum:false},{v:'520 000',raw:520000,isNum:true},{v:'310 000',raw:310000,isNum:true}],meta:{}},
+    {cells:[{v:'Income taxes paid',raw:'',isNum:false},{v:'(2 980 000)',raw:-2980000,isNum:true},{v:'(2 410 000)',raw:-2410000,isNum:true}],meta:{}},
+    {cells:[{v:'Net cash from operating activities',raw:'',isNum:false},{v:'10 330 000',raw:10330000,isNum:true},{v:'9 000 000',raw:9000000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'',raw:'',isNum:false}],meta:{}},
+    {cells:[{v:'INVESTING ACTIVITIES',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Purchase of property, plant and equipment',raw:'',isNum:false},{v:'(3 070 000)',raw:-3070000,isNum:true},{v:'(2 540 000)',raw:-2540000,isNum:true}],meta:{}},
+    {cells:[{v:'Proceeds from disposal of equipment',raw:'',isNum:false},{v:'120 000',raw:120000,isNum:true},{v:'85 000',raw:85000,isNum:true}],meta:{}},
+    {cells:[{v:'Purchase of intangible assets',raw:'',isNum:false},{v:'(420 000)',raw:-420000,isNum:true},{v:'(310 000)',raw:-310000,isNum:true}],meta:{}},
+    {cells:[{v:'Net cash used in investing activities',raw:'',isNum:false},{v:'(3 370 000)',raw:-3370000,isNum:true},{v:'(2 765 000)',raw:-2765000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'',raw:'',isNum:false}],meta:{}},
+    {cells:[{v:'FINANCING ACTIVITIES',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Repayment of borrowings',raw:'',isNum:false},{v:'(800 000)',raw:-800000,isNum:true},{v:'(750 000)',raw:-750000,isNum:true}],meta:{}},
+    {cells:[{v:'Lease liability payments',raw:'',isNum:false},{v:'(380 000)',raw:-380000,isNum:true},{v:'(340 000)',raw:-340000,isNum:true}],meta:{}},
+    {cells:[{v:'Interest paid',raw:'',isNum:false},{v:'(780 000)',raw:-780000,isNum:true},{v:'(860 000)',raw:-860000,isNum:true}],meta:{}},
+    {cells:[{v:'Dividends paid',raw:'',isNum:false},{v:'(1 500 000)',raw:-1500000,isNum:true},{v:'(1 200 000)',raw:-1200000,isNum:true}],meta:{}},
+    {cells:[{v:'Net cash used in financing activities',raw:'',isNum:false},{v:'(3 460 000)',raw:-3460000,isNum:true},{v:'(3 150 000)',raw:-3150000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'',raw:'',isNum:false}],meta:{}},
+    {cells:[{v:'Net increase in cash and cash equivalents',raw:'',isNum:false},{v:'3 500 000',raw:3500000,isNum:true},{v:'3 085 000',raw:3085000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Cash and cash equivalents at beginning of year',raw:'',isNum:false},{v:'2 760 000',raw:2760000,isNum:true},{v:'(325 000)',raw:-325000,isNum:true}],meta:{}},
+    {cells:[{v:'Cash and cash equivalents at end of year',raw:'',isNum:false},{v:'3 440 000',raw:3440000,isNum:true},{v:'2 760 000',raw:2760000,isNum:true}],meta:{isTotal:true}},
+    // STATEMENT OF CHANGES IN EQUITY
+    {cells:[{v:'STATEMENT OF CHANGES IN EQUITY',raw:'',isNum:false}],meta:{isSection:true}},
+    {cells:[{v:'',raw:'',isNum:false},{v:'Share Capital',raw:'',isNum:false},{v:'Retained Earnings',raw:'',isNum:false},{v:'Other Reserves',raw:'',isNum:false},{v:'Total Equity',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Balance at 1 March 2023',raw:'',isNum:false},{v:'5 000 000',raw:5000000,isNum:true},{v:'4 511 600',raw:4511600,isNum:true},{v:'680 000',raw:680000,isNum:true},{v:'10 191 600',raw:10191600,isNum:true}],meta:{}},
+    {cells:[{v:'Total comprehensive income',raw:'',isNum:false},{v:'—',raw:0,isNum:false},{v:'6 638 400',raw:6638400,isNum:true},{v:'300 000',raw:300000,isNum:true},{v:'6 938 400',raw:6938400,isNum:true}],meta:{}},
+    {cells:[{v:'Dividends paid',raw:'',isNum:false},{v:'—',raw:0,isNum:false},{v:'(1 200 000)',raw:-1200000,isNum:true},{v:'—',raw:0,isNum:false},{v:'(1 200 000)',raw:-1200000,isNum:true}],meta:{}},
+    {cells:[{v:'Balance at 28 February 2024',raw:'',isNum:false},{v:'5 000 000',raw:5000000,isNum:true},{v:'8 950 000',raw:8950000,isNum:true},{v:'980 000',raw:980000,isNum:true},{v:'14 930 000',raw:14930000,isNum:true}],meta:{isTotal:true}},
+    {cells:[{v:'Total comprehensive income',raw:'',isNum:false},{v:'—',raw:0,isNum:false},{v:'8 056 800',raw:8056800,isNum:true},{v:'220 000',raw:220000,isNum:true},{v:'8 276 800',raw:8276800,isNum:true}],meta:{}},
+    {cells:[{v:'Dividends paid',raw:'',isNum:false},{v:'—',raw:0,isNum:false},{v:'(1 500 000)',raw:-1500000,isNum:true},{v:'—',raw:0,isNum:false},{v:'(1 500 000)',raw:-1500000,isNum:true}],meta:{}},
+    {cells:[{v:'Balance at 28 February 2025',raw:'',isNum:false},{v:'5 000 000',raw:5000000,isNum:true},{v:'11 506 800',raw:11506800,isNum:true},{v:'1 200 000',raw:1200000,isNum:true},{v:'17 706 800',raw:17706800,isNum:true}],meta:{isTotal:true}},
+    // NOTES
+    {cells:[{v:'NOTES TO THE FINANCIAL STATEMENTS',raw:'',isNum:false}],meta:{isSection:true}},
+    {cells:[{v:'1.  BASIS OF PREPARATION AND ACCOUNTING POLICIES',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'The financial statements have been prepared in accordance with International Financial Reporting Standards (IFRS) as issued by the International Accounting Standards Board (IASB) and the requirements of the Companies Act No. 71 of 2008 of South Africa.\n\nThe financial statements have been prepared on the historical cost basis, except for certain financial instruments measured at fair value. The financial statements are presented in South African Rand (ZAR), which is the functional and presentation currency of the company.',raw:'',isNum:false}],meta:{isTextBlock:true}},
+    {cells:[{v:'2.  REVENUE RECOGNITION',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Revenue is recognised when (or as) a performance obligation is satisfied, i.e. when control of the goods or services underlying the particular performance obligation is transferred to the customer. Revenue is measured at the transaction price allocated to the satisfied performance obligation.\n\nRevenue from the sale of goods is recognised at the point in time when control of the goods has transferred to the customer, being when the goods have been shipped or delivered. Revenue from the rendering of services is recognised over time as the services are performed.',raw:'',isNum:false}],meta:{isTextBlock:true}},
+    {cells:[{v:'3.  PROPERTY, PLANT AND EQUIPMENT',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'Property, plant and equipment is initially recognised at cost. Subsequent to initial recognition, PPE is measured at cost less accumulated depreciation and impairment losses. Depreciation is recognised on a straight-line basis over the estimated useful lives of assets.\n\nUseful lives: Buildings — 20 to 50 years; Plant and machinery — 5 to 15 years; Furniture and equipment — 3 to 10 years; Motor vehicles — 5 to 8 years.',raw:'',isNum:false}],meta:{isTextBlock:true}},
+    {cells:[{v:'4.  GOING CONCERN',raw:'',isNum:false}],meta:{isBold:true}},
+    {cells:[{v:'The directors have assessed the ability of the company to continue as a going concern and believe that the preparation of the financial statements on a going concern basis is still appropriate. The company has adequate resources to continue operating for the foreseeable future.',raw:'',isNum:false}],meta:{isTextBlock:true}}
   ];
   const now=new Date().toISOString();
   const co={id,name:'Demo Company (Pty) Ltd',regNumber:'2021/012345/07',yearEnd:'2024-02-28',framework:'ifrs',status:'draft',tagCount:0,createdAt:now,updatedAt:now,session:{entity:'Demo Company (Pty) Ltd',taxKey:'',ps:'2024-03-01',pe:'2025-02-28',ccy:'ZAR',dec:'-3',tags:[],rows:demoRows}};
-  const cos=getCompanies();
+  cos=getCompanies();
   cos.unshift(co);
   saveCompanies(cos);
   renderDash();
@@ -4074,8 +4359,8 @@ document.addEventListener('keydown',e=>{
 // ═══════════════════════════════════════════════════
 // Pre-load default taxonomy values in app view (hidden)
 restoreSession();
-document.getElementById('taxSel').value='ifrs';
-loadBuiltin('ifrs');
+document.getElementById('taxSel').value='cipc';
+loadBuiltin('cipc');
 document.getElementById('ps').value='2024-01-01';
 document.getElementById('pe').value='2024-12-31';
 // Render home view recent sessions
