@@ -3592,7 +3592,7 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
         +'<span class="ixv-ni">'+(curIdx+1)+' / '+same.length+'</span>'
         +'<button class="ixv-nb" onclick="ixvNav(1)"'+(curIdx>=same.length-1?' disabled':'')+'>Next &#8250;</button>'
         +'</div>'
-        +'<span class="ixv-jmp" data-cname="'+esc(name)+'" onclick="ixvCiClick(this.getAttribute(\'data-cname\'))">'
+        +'<span class="ixv-jmp" data-cname="'+esc(name)+'" onclick="ixvCiClick(this.dataset.cname)">'
         +'Show all '+same.length+' occurrences in sidebar</span>';
     }
 
