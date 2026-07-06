@@ -3175,6 +3175,8 @@ function generate(){
   // Build body content: mix of tables and text block paragraphs
   let bodyContent='';
   let tblRows=[];
+  let factIdx=0;
+  const viewerFacts=[];
 
   function flushTbl(){
     if(!tblRows.length) return;
@@ -3198,9 +3200,13 @@ function generate(){
           if(tag.isNum){
             const neg=/^\(.*\)$/.test(v.trim());
             const sign=neg?' sign="-"':'';
-            cont=`<ix:nonFraction name="${tag.concept.prefix}:${tag.concept.id}" contextRef="${ctx}" unitRef="u_${ccy}" decimals="${dec}"${sign} format="ixt:num-dot-decimal" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'monetary'}">${exXml(v)}</ix:nonFraction>`;
+            const fid='ixvf_'+factIdx++;
+            viewerFacts.push({id:fid,name:tag.concept.prefix+':'+tag.concept.id,label:tag.concept.label||tag.concept.id,value:v,contextRef:ctx,unit:'u_'+ccy,decimals:dec,type:tag.concept.t||'monetary'});
+            cont=`<ix:nonFraction id="${fid}" name="${tag.concept.prefix}:${tag.concept.id}" contextRef="${ctx}" unitRef="u_${ccy}" decimals="${dec}"${sign} format="ixt:num-dot-decimal" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'monetary'}">${exXml(v)}</ix:nonFraction>`;
           } else {
-            cont=`<ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'string'}">${exXml(v)}</ix:nonNumeric>`;
+            const fid='ixvf_'+factIdx++;
+            viewerFacts.push({id:fid,name:tag.concept.prefix+':'+tag.concept.id,label:tag.concept.label||tag.concept.id,value:v,contextRef:'ctx_cur',unit:'',decimals:'',type:tag.concept.t||'string'});
+            cont=`<ix:nonNumeric id="${fid}" name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'string'}">${exXml(v)}</ix:nonNumeric>`;
           }
         } else {cont=exXml(v);}
         bodyContent+=`    <td style="padding:7px 14px;border-bottom:1px solid #F0F2F5;${secBg}${totBdr}${align}${bld}">${cont}</td>\n`;
@@ -3217,7 +3223,9 @@ function generate(){
       const tag=S.tags.find(t=>t.r===ri&&t.c===0);
       const v=row.cells[0]?.v||'';
       if(tag){
-        bodyContent+=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;margin:16px 0;"><ix:nonNumeric name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'string'}">${exXml(v)}</ix:nonNumeric></p>\n`;
+        const fid='ixvf_'+factIdx++;
+        viewerFacts.push({id:fid,name:tag.concept.prefix+':'+tag.concept.id,label:tag.concept.label||tag.concept.id,value:v,contextRef:'ctx_cur',unit:'',decimals:'',type:tag.concept.t||'string'});
+        bodyContent+=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;margin:16px 0;"><ix:nonNumeric id="${fid}" name="${tag.concept.prefix}:${tag.concept.id}" contextRef="ctx_cur" class="ixv-fact" data-concept="${exXml(tag.concept.label)}" data-type="${tag.concept.t||'string'}">${exXml(v)}</ix:nonNumeric></p>\n`;
       } else {
         bodyContent+=`<p style="font-family:Arial,Helvetica,sans-serif;font-size:13px;line-height:1.7;margin:16px 0;color:#444;">${exXml(v)}</p>\n`;
       }
@@ -3432,18 +3440,15 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
     return ctx||'';
   }
 
-  function fmtVal(el){
-    var sign=el.getAttribute('sign')||'';
-    var raw=el.textContent.trim();
-    if(!raw) return '—';
-    return (sign==='-'&&raw.charAt(0)!=='-'&&raw.charAt(0)!=='(')?'('+raw+')':raw;
-  }
+  function fmtVal(f){return f.value||'—';}
 
-  function typeOf(el){
-    var t=el.getAttribute('data-type')||'string';
+  function typeOf(f){
+    var t=f.type||'string';
     var num=t==='monetary'||t==='decimal'||t==='shares'||t==='pure';
     return {t:t,num:num,lbl:num?'Monetary':t==='date'?'Date':t==='text-block'?'Text Block':'String',cls:num?'ixv-bm':t==='date'?'ixv-bd':t==='text-block'?'ixv-fbtb':'ixv-fbt'};
   }
+
+  function getDomEl(f){return document.getElementById(f.id);}
 
   /* ── SIDEBAR TAB ─────────────────────────────── */
   window.ixvTab=function(t){
@@ -3462,12 +3467,12 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   function renderFacts(){
     var fl=document.getElementById('ixv-fl');
     var cnt=document.getElementById('ixv-fl-cnt');
-    filteredFacts=allFacts.filter(function(el){
-      if(perFilter!=='all'&&el.getAttribute('contextRef')!==perFilter) return false;
+    filteredFacts=allFacts.filter(function(f){
+      if(perFilter!=='all'&&f.contextRef!==perFilter) return false;
       if(srchVal){
-        var lbl=(el.getAttribute('data-concept')||'').toLowerCase();
-        var v=el.textContent.toLowerCase();
-        var nm=(el.getAttribute('name')||'').toLowerCase();
+        var lbl=(f.label||'').toLowerCase();
+        var v=(f.value||'').toLowerCase();
+        var nm=(f.name||'').toLowerCase();
         if(lbl.indexOf(srchVal)===-1&&v.indexOf(srchVal)===-1&&nm.indexOf(srchVal)===-1) return false;
       }
       return true;
@@ -3475,12 +3480,12 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
     cnt.textContent=filteredFacts.length+' fact'+(filteredFacts.length!==1?'s':'');
     if(!filteredFacts.length){fl.innerHTML='<div id="ixv-fl-empty">'+(srchVal||perFilter!=='all'?'No facts match.':'No tagged facts found.')+'</div>';return;}
     var h='';
-    filteredFacts.forEach(function(el,i){
-      var lbl=el.getAttribute('data-concept')||el.getAttribute('name')||'(unnamed)';
-      var val=fmtVal(el);
-      var period=fmtPeriod(el.getAttribute('contextRef'));
-      var ti=typeOf(el);
-      var isOn=el===activeFact;
+    filteredFacts.forEach(function(f,i){
+      var lbl=f.label||f.name||'(unnamed)';
+      var val=fmtVal(f);
+      var period=fmtPeriod(f.contextRef);
+      var ti=typeOf(f);
+      var isOn=f===activeFact;
       var unit=ti.num?' '+META.ccy:'';
       h+='<div class="ixv-fi'+(isOn?' ixv-fi-on':'')+'" data-i="'+i+'" onclick="ixvFiClick('+i+')">'
         +'<div class="ixv-fi-lbl">'+esc(lbl)+'</div>'
@@ -3492,9 +3497,10 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   }
 
   window.ixvFiClick=function(i){
-    var el=filteredFacts[i];if(!el)return;
-    el.scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(function(){openPanel(el);},280);
+    var f=filteredFacts[i];if(!f)return;
+    var de=getDomEl(f);
+    if(de) de.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){openPanel(f);},de?280:0);
   };
 
   function markSidebar(el){
@@ -3507,14 +3513,14 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   function renderConcs(){
     var wrap=document.getElementById('ixv-cp');
     var names={};
-    allFacts.forEach(function(el){var n=el.getAttribute('name');if(n)names[n]=(names[n]||0)+1;});
+    allFacts.forEach(function(f){var n=f.name;if(n)names[n]=(names[n]||0)+1;});
     var keys=Object.keys(names).sort();
-    if(cpSrch) keys=keys.filter(function(n){return n.toLowerCase().indexOf(cpSrch)===-1?false:true;});
+    if(cpSrch) keys=keys.filter(function(n){return n.toLowerCase().indexOf(cpSrch)!==-1;});
     if(!keys.length){wrap.innerHTML='<div style="padding:32px 16px;text-align:center;color:rgba(255,255,255,.18);font-size:12px;">'+(cpSrch?'No match.':'No concepts tagged.')+'</div>';return;}
     var h='';
     keys.forEach(function(name){
-      var f=allFacts.find(function(el){return el.getAttribute('name')===name;});
-      var lbl=f?f.getAttribute('data-concept')||name:name;
+      var f=allFacts.find(function(x){return x.name===name;});
+      var lbl=f?f.label||name:name;
       h+='<div class="ixv-ci" data-cname="'+esc(name)+'">'
         +'<div class="ixv-ci-lbl">'+esc(lbl)+'</div>'
         +'<div class="ixv-ci-name">'+esc(name)+'</div>'
@@ -3530,13 +3536,14 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   }
 
   window.ixvCiClick=function(name){
-    var el=allFacts.find(function(f){return f.getAttribute('name')===name;});
-    if(!el)return;
+    var f=allFacts.find(function(x){return x.name===name;});
+    if(!f)return;
     ixvTab('facts');
     srchVal='';document.getElementById('ixv-fl-srch').value='';
     renderFacts();
-    el.scrollIntoView({behavior:'smooth',block:'center'});
-    setTimeout(function(){openPanel(el);},280);
+    var de=getDomEl(f);
+    if(de) de.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(function(){openPanel(f);},de?280:0);
   };
 
   /* ── HEADER ──────────────────────────────────── */
@@ -3544,39 +3551,39 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
     hlAll=document.getElementById('ixv-hl-chk').checked;
     allFacts.forEach(function(f){
       if(f===activeFact)return;
-      f.classList.toggle('ixv-fact-hl',hlAll);
-      f.classList.remove('ixv-fact-related');
+      var de=getDomEl(f);
+      if(de){de.classList.toggle('ixv-fact-hl',hlAll);de.classList.remove('ixv-fact-related');}
     });
   };
 
   /* ── RIGHT PANEL ─────────────────────────────── */
-  function openPanel(el){
-    var name=el.getAttribute('name')||'';
-    var lbl=el.getAttribute('data-concept')||name.split(':').pop()||name;
-    var ctx=el.getAttribute('contextRef')||'';
-    var unit=el.getAttribute('unitRef')||'';
-    var dec2=el.getAttribute('decimals')||META.dec;
-    var val=fmtVal(el);
+  function openPanel(f){
+    var name=f.name||'';
+    var lbl=f.label||name.split(':').pop()||name;
+    var ctx=f.contextRef||'';
+    var unit=f.unit||'';
+    var dec2=f.decimals||META.dec;
+    var val=fmtVal(f);
     var ci=CTX[ctx]||{};
     var period=fmtPeriod(ctx);
     var entity2=META.entity||ci.entity||'';
     var unitDisp=unit?unit.replace(/^u_/,''):'';
     var scaleDisp=scaleOf(dec2);
-    var ti=typeOf(el);
+    var ti=typeOf(f);
     var periodType=ci.instant?'Instant':ci.start&&ci.end?'Duration':'';
 
-    var same=allFacts.filter(function(f){return f.getAttribute('name')===name;});
-    curIdx=same.indexOf(el);
+    var same=allFacts.filter(function(x){return x.name===name;});
+    curIdx=same.indexOf(f);
 
-    allFacts.forEach(function(f){
-      f.classList.remove('ixv-fact-active','ixv-fact-related');
-      f.classList.toggle('ixv-fact-hl',hlAll&&f!==el);
+    allFacts.forEach(function(x){
+      var de=getDomEl(x);
+      if(de){de.classList.remove('ixv-fact-active','ixv-fact-related');de.classList.toggle('ixv-fact-hl',hlAll&&x!==f);}
     });
-    same.forEach(function(f){if(f!==el)f.classList.add('ixv-fact-related');});
-    el.classList.remove('ixv-fact-hl','ixv-fact-related');
-    el.classList.add('ixv-fact-active');
-    activeFact=el;
-    markSidebar(el);
+    same.forEach(function(x){if(x!==f){var de=getDomEl(x);if(de)de.classList.add('ixv-fact-related');}});
+    var fde=getDomEl(f);
+    if(fde){fde.classList.remove('ixv-fact-hl','ixv-fact-related');fde.classList.add('ixv-fact-active');}
+    activeFact=f;
+    markSidebar(f);
 
     var nav='';
     if(same.length>1){
@@ -3618,8 +3625,8 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
   window.ixvClose=function(){
     document.getElementById('ixv-panel').classList.remove('ixv-open');
     allFacts.forEach(function(f){
-      f.classList.remove('ixv-fact-active','ixv-fact-related');
-      f.classList.toggle('ixv-fact-hl',hlAll);
+      var de=getDomEl(f);
+      if(de){de.classList.remove('ixv-fact-active','ixv-fact-related');de.classList.toggle('ixv-fact-hl',hlAll);}
     });
     activeFact=null;
     document.querySelectorAll('.ixv-fi').forEach(function(it){it.classList.remove('ixv-fi-on');});
@@ -3627,10 +3634,14 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
 
   window.ixvNav=function(dir){
     if(!activeFact)return;
-    var name=activeFact.getAttribute('name');
-    var same=allFacts.filter(function(f){return f.getAttribute('name')===name;});
+    var name=activeFact.name;
+    var same=allFacts.filter(function(f){return f.name===name;});
     var next=same[curIdx+dir];
-    if(next){next.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(function(){openPanel(next);},200);}
+    if(next){
+      var de=getDomEl(next);
+      if(de) de.scrollIntoView({behavior:'smooth',block:'center'});
+      setTimeout(function(){openPanel(next);},de?200:0);
+    }
   };
 
   /* ── INIT ────────────────────────────────────── */
@@ -3642,33 +3653,15 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
       document.body.classList.toggle('ixv-sb-closed',!sbOpen);
     });
 
-    /* Multi-strategy fact discovery:
-       1. CSS class selector (HTML mode)
-       2. getElementsByTagNameNS (XHTML/XML mode — querySelectorAll class
-          selectors do NOT match XML-namespace elements in strict XML DOM)
-       3. TreeWalker getAttribute fallback (last resort) */
-    var found=[];
-    var byCls=document.querySelectorAll('.ixv-fact');
-    if(byCls&&byCls.length){
-      found=Array.prototype.slice.call(byCls);
-    } else {
-      var ixNS='http://www.xbrl.org/2013/inlineXBRL';
-      var nf=document.getElementsByTagNameNS(ixNS,'nonFraction');
-      var nn=document.getElementsByTagNameNS(ixNS,'nonNumeric');
-      found=Array.prototype.slice.call(nf).concat(Array.prototype.slice.call(nn));
-      if(!found.length){
-        /* TreeWalker: getAttribute works even when className API is absent */
-        var tw=document.createTreeWalker(document.body||document.documentElement,0x1,null,false);
-        var nd;
-        while((nd=tw.nextNode())){
-          var cls=nd.getAttribute&&nd.getAttribute('class')||'';
-          if(cls.indexOf('ixv-fact')!==-1) found.push(nd);
-        }
-      }
-    }
-    found.forEach(function(el){
-      allFacts.push(el);
-      el.addEventListener('click',function(e){e.stopPropagation();openPanel(el);});
+    /* Read pre-built fact data from embedded JSON — no DOM traversal needed,
+       works identically regardless of HTML vs XHTML parser mode */
+    var dataEl=document.getElementById('ixv-data');
+    var facts=[];
+    try{facts=JSON.parse(dataEl?dataEl.textContent:'[]');}catch(e){}
+    facts.forEach(function(f){
+      allFacts.push(f);
+      var de=document.getElementById(f.id);
+      if(de) de.addEventListener('click',function(e){e.stopPropagation();openPanel(f);});
     });
 
     var cntEl=document.getElementById('ixv-hdr-cnt');
@@ -3677,7 +3670,10 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
 
     document.addEventListener('click',function(e){
       var p=document.getElementById('ixv-panel');
-      if(p&&p.classList.contains('ixv-open')&&!p.contains(e.target)&&activeFact&&!activeFact.contains(e.target)) ixvClose();
+      if(p&&p.classList.contains('ixv-open')&&!p.contains(e.target)){
+        var fde=activeFact?getDomEl(activeFact):null;
+        if(!fde||!fde.contains(e.target)) ixvClose();
+      }
     });
     document.addEventListener('keydown',function(e){
       if(e.key==='Escape') ixvClose();
@@ -3686,8 +3682,6 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
     });
   }
 
-  /* Run immediately if DOM is ready (XHTML/XML mode fires DOMContentLoaded
-     before deferred scripts execute, so readyState check is essential) */
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded',ixvInit);
   } else {
@@ -3743,6 +3737,7 @@ body.ixv-sb-closed>div:first-child{margin-left:0!important;}
       Generated by MCG iXBRL Tagger | ${S.tags.length} facts tagged | Taxonomy: ${pfx}
     </p>
   </div>
+  <script id="ixv-data" type="application/json">${JSON.stringify(viewerFacts).replace(/</g,'\\u003c').replace(/>/g,'\\u003e')}</script>
   ${viewerScript}
 </body>
 </html>`;
