@@ -620,32 +620,60 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 /* ── NAV ──────────────────────────────────────── */
 .hn{
   position:sticky;top:0;z-index:500;
-  background:rgba(3,11,25,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
-  border-bottom:1px solid rgba(255,255,255,.055);
-  display:flex;align-items:center;padding:0 56px;height:64px;
+  background:rgba(5,11,23,.78);backdrop-filter:blur(22px) saturate(160%);-webkit-backdrop-filter:blur(22px) saturate(160%);
+  border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:8px;padding:0 40px;height:72px;
+  box-shadow:0 1px 0 rgba(255,255,255,.04),0 16px 40px -24px rgba(0,0,0,.7);
 }
-.hn-brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0;margin-right:44px;}
-.hn-company{font-size:13px;font-weight:800;color:#E8ECF4;letter-spacing:.2px;}
-.hn-divider{width:1px;height:16px;background:rgba(255,255,255,.1);margin:0 2px;}
-.hn-product{font-size:13px;color:rgba(255,255,255,.36);font-weight:400;}
-.hn-links{display:flex;align-items:center;gap:2px;}
-.hn-link{font-size:13px;color:rgba(255,255,255,.46);text-decoration:none;padding:6px 14px;border-radius:8px;transition:all .18s;}
-.hn-link:hover{color:#E8ECF4;background:rgba(255,255,255,.055);}
+.hn-brand{display:flex;align-items:center;gap:13px;text-decoration:none;flex-shrink:0;margin-right:8px;}
+.hn-brand svg{filter:drop-shadow(0 2px 10px rgba(58,144,192,.4));flex-shrink:0;}
+.hn-brand-text{display:flex;flex-direction:column;line-height:1.2;gap:2px;}
+.hn-company{font-size:13.5px;font-weight:700;color:#F2F5FB;letter-spacing:.3px;}
+.hn-product{font-size:11px;color:#6FCBE0;font-weight:600;letter-spacing:1.1px;text-transform:uppercase;}
+.hn-links{display:flex;align-items:center;gap:2px;margin-left:24px;padding-left:24px;border-left:1px solid rgba(255,255,255,.09);}
+.hn-link{position:relative;font-size:13.5px;color:rgba(226,232,255,.6);text-decoration:none;padding:9px 16px;border-radius:8px;transition:color .18s,background .18s;font-weight:500;}
+.hn-link:hover{color:#fff;background:rgba(255,255,255,.06);}
 .hn-sp{flex:1;}
 .hn-cta{
   background:linear-gradient(135deg,#18A8C8 0%,#2B6CB5 100%);
-  color:#fff;border:none;padding:9px 24px;border-radius:8px;
-  font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;
-  display:flex;align-items:center;gap:8px;
-  transition:all .22s;box-shadow:0 0 24px rgba(24,168,200,.2);
+  color:#fff;border:none;padding:10px 22px;border-radius:9px;
+  font-size:13.5px;font-weight:700;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:9px;
+  transition:all .22s;box-shadow:0 2px 20px rgba(24,168,200,.28);
 }
-.hn-cta:hover{transform:translateY(-1px);box-shadow:0 4px 32px rgba(24,168,200,.38);}
+.hn-cta:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(24,168,200,.42);}
 .hn-cta-arrow{
-  width:20px;height:20px;border-radius:50%;background:rgba(255,255,255,.16);
+  width:19px;height:19px;border-radius:50%;background:rgba(255,255,255,.18);
   display:flex;align-items:center;justify-content:center;font-size:12px;
   transition:transform .2s;
 }
 .hn-cta:hover .hn-cta-arrow{transform:translateX(2px);}
+
+.hn-burger{display:none;width:40px;height:40px;flex-shrink:0;border-radius:9px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:background .18s;}
+.hn-burger:hover{background:rgba(255,255,255,.09);}
+.hn-burger span{width:17px;height:2px;background:#E8ECF4;border-radius:2px;transition:transform .22s,opacity .18s;}
+.hn-burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+.hn-burger.open span:nth-child(2){opacity:0;}
+.hn-burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+
+.hn-mobile-panel{display:none;position:fixed;top:72px;left:0;right:0;z-index:499;
+  background:rgba(6,12,25,.98);backdrop-filter:blur(22px);border-bottom:1px solid rgba(255,255,255,.08);
+  flex-direction:column;gap:2px;padding:14px 20px 22px;box-shadow:0 24px 48px -24px rgba(0,0,0,.6);}
+.hn-mobile-panel.show{display:flex;}
+.hn-mlink{color:rgba(226,232,255,.78);text-decoration:none;padding:15px 6px;font-size:15px;font-weight:500;border-bottom:1px solid rgba(255,255,255,.06);}
+.hn-mlink:active{color:#fff;}
+.hn-mcta{margin-top:14px;background:linear-gradient(135deg,#18A8C8 0%,#2B6CB5 100%);color:#fff;border:none;padding:15px;border-radius:10px;font-weight:700;font-size:14.5px;font-family:inherit;cursor:pointer;}
+
+@media (max-width:860px){
+  .hn{padding:0 20px;gap:6px;}
+  .hn-links,.hn-cta{display:none;}
+  .hn-burger{display:flex;}
+  .hn-product{display:none;}
+}
+@media (max-width:480px){
+  .hn-company{font-size:12px;}
+  .hn-brand svg{width:36px;height:22px;}
+}
 
 /* ── HERO ─────────────────────────────────────── */
 .h-hero{
@@ -1235,7 +1263,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 <!-- NAV -->
 <nav class="hn">
   <a class="hn-brand" href="#" onclick="return false;">
-    <svg viewBox="0 0 560 340" width="46" height="28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <svg viewBox="0 0 560 340" width="42" height="26" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
       <g stroke="white" stroke-width="8" stroke-linejoin="miter">
         <polygon points="115,225 5,335 225,335" fill="#4BBF6F"/>
         <polygon points="335,225 225,335 445,335" fill="#4BBF6F"/>
@@ -1244,9 +1272,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
         <polygon points="445,115 555,225 445,335 335,225" fill="#44BEE2"/>
       </g>
     </svg>
-    <span class="hn-company">MY CLOUD GLOBAL</span>
-    <span class="hn-divider"></span>
-    <span class="hn-product">iXBRL Tagger</span>
+    <span class="hn-brand-text">
+      <span class="hn-company">My Cloud Global</span>
+      <span class="hn-product">iXBRL Tagger</span>
+    </span>
   </a>
   <div class="hn-links">
     <a class="hn-link" href="#features">Features</a>
@@ -1258,7 +1287,16 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     Sign In
     <span class="hn-cta-arrow">›</span>
   </button>
+  <button class="hn-burger" id="hnBurger" onclick="toggleMobileNav()" aria-label="Toggle menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+<div class="hn-mobile-panel" id="hnMobilePanel">
+  <a class="hn-mlink" href="#features" onclick="closeMobileNav()">Features</a>
+  <a class="hn-mlink" href="#how-it-works" onclick="closeMobileNav()">How it Works</a>
+  <a class="hn-mlink" href="#taxonomies" onclick="closeMobileNav()">Taxonomies</a>
+  <button class="hn-mcta" onclick="closeMobileNav();openSignOrDash()">Sign In</button>
+</div>
 
 <!-- HERO -->
 <section class="h-hero">
@@ -3807,6 +3845,23 @@ async function openSignOrDash(){
 function openSign(){
   document.getElementById('signOv').classList.remove('hid');
   setTimeout(()=>document.getElementById('siName').focus(),120);
+}
+
+// ═══════════════════════════════════════════════════
+// MOBILE NAV
+// ═══════════════════════════════════════════════════
+function toggleMobileNav(){
+  const panel=document.getElementById('hnMobilePanel');
+  const burger=document.getElementById('hnBurger');
+  const open=panel.classList.toggle('show');
+  burger.classList.toggle('open',open);
+  burger.setAttribute('aria-expanded',open?'true':'false');
+}
+function closeMobileNav(){
+  document.getElementById('hnMobilePanel').classList.remove('show');
+  const burger=document.getElementById('hnBurger');
+  burger.classList.remove('open');
+  burger.setAttribute('aria-expanded','false');
 }
 
 // ═══════════════════════════════════════════════════
