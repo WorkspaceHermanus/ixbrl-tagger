@@ -1168,8 +1168,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     </div>
     <input class="sign-field" id="siName" placeholder="Full name" type="text" autocomplete="name"/>
     <input class="sign-field" id="siEmail" placeholder="Work email address" type="email" autocomplete="email"/>
-    <button class="sign-btn" onclick="handleSignIn()">Continue →</button>
-    <p class="sign-note">Your filing data is stored locally on this device. No password required.<br>Your data never leaves your browser.</p>
+    <input class="sign-field" id="siPassword" placeholder="Password" type="password" autocomplete="current-password"/>
+    <p class="sign-err hid" id="signErr" style="color:#e5484d;font-size:12px;margin:-4px 0 8px;"></p>
+    <button class="sign-btn" id="signBtn" onclick="handleSignIn()">Continue →</button>
+    <p class="sign-note">Your filings are saved securely to your account — pick up any filing from any device.</p>
   </div>
 </div>
 
@@ -1259,7 +1261,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
         <span class="block">reports,</span>
         <span class="block accent">iXBRL-ready.</span>
       </h1>
-      <p class="hero-sub">Tag IFRS, US-GAAP and UK FRS 102 financial statements in minutes — not days. No plugins. No servers. Your data never leaves the browser.</p>
+      <p class="hero-sub">Tag IFRS, US-GAAP and UK FRS 102 financial statements in minutes — not days. No plugins. Your filings are saved securely to your account — pick up any filing from any device.</p>
       <div class="hero-acts">
         <button class="btn-hero-pri" onclick="openSignOrDash()">
           Get Started
@@ -1277,7 +1279,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
         <span class="ht-sep"></span>
         <span class="ht-item">UK FRS 102</span>
         <span class="ht-sep"></span>
-        <span class="ht-item">100% client-side</span>
+        <span class="ht-item">Cloud-synced filings</span>
       </div>
     </div>
     <div class="hero-r">
@@ -1374,7 +1376,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     </div>
     <div class="stat-item">
       <div class="stat-num">100%</div>
-      <div class="stat-lbl">Client-side &amp; Private</div>
+      <div class="stat-lbl">Encrypted &amp; Account-Secured</div>
     </div>
   </div>
 </div>
@@ -1386,7 +1388,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     <span class="mi"><span class="mi-dot"></span>US-GAAP 2024</span>
     <span class="mi"><span class="mi-dot"></span>UK FRS 102</span>
     <span class="mi"><span class="mi-dot"></span>SAP Silver Partner</span>
-    <span class="mi"><span class="mi-dot"></span>Zero data uploads</span>
+    <span class="mi"><span class="mi-dot"></span>Cloud-synced filings</span>
     <span class="mi"><span class="mi-dot"></span>Excel &amp; CSV native</span>
     <span class="mi"><span class="mi-dot"></span>Smart auto-suggest</span>
     <span class="mi"><span class="mi-dot"></span>One-click export</span>
@@ -1396,7 +1398,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     <span class="mi"><span class="mi-dot"></span>US-GAAP 2024</span>
     <span class="mi"><span class="mi-dot"></span>UK FRS 102</span>
     <span class="mi"><span class="mi-dot"></span>SAP Silver Partner</span>
-    <span class="mi"><span class="mi-dot"></span>Zero data uploads</span>
+    <span class="mi"><span class="mi-dot"></span>Cloud-synced filings</span>
     <span class="mi"><span class="mi-dot"></span>Excel &amp; CSV native</span>
     <span class="mi"><span class="mi-dot"></span>Smart auto-suggest</span>
     <span class="mi"><span class="mi-dot"></span>One-click export</span>
@@ -1508,24 +1510,11 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   </div>
 </section>
 
-<!-- RECENT SESSIONS -->
-<div class="section rec-section" id="recSec">
-  <div class="sec-inner">
-    <div class="reveal">
-      <div class="eyebrow">Session History</div>
-      <h2 class="sec-h2">Pick up where<br>you left off.</h2>
-    </div>
-    <div class="rec-grid" id="recList">
-      <div class="rec-empty">No saved sessions yet — start a new session to begin tagging.</div>
-    </div>
-  </div>
-</div>
-
 <!-- CTA -->
 <section class="cta-section">
   <div class="cta-orb"></div>
   <h2>Ready to file?</h2>
-  <p>Free to use. Your data never leaves your browser.</p>
+  <p>Create a free account — your filings are saved securely and ready whenever you are.</p>
   <div class="cta-acts">
     <button class="btn-hero-pri" onclick="openSignOrDash()">
       Create Account
@@ -3779,14 +3768,22 @@ function dlOut(){
 
 // ═══════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════
-// AUTH — USER MANAGEMENT
+// AUTH — USER MANAGEMENT (backed by /api/auth/*, cookie session)
 // ═══════════════════════════════════════════════════
-function getUser(){try{return JSON.parse(localStorage.getItem('mcg_user')||'null');}catch(e){return null;}}
-function setUser(name,email){localStorage.setItem('mcg_user',JSON.stringify({name,email,createdAt:new Date().toISOString()}));}
-function clearUser(){localStorage.removeItem('mcg_user');}
+var _cachedUser=undefined; // undefined = not checked yet this page load, null = checked and signed out
+async function getUser(){
+  if(_cachedUser!==undefined) return _cachedUser;
+  try{
+    const r=await fetch('/api/auth/me',{credentials:'include'});
+    _cachedUser=r.ok?await r.json():null;
+  }catch(e){_cachedUser=null;}
+  return _cachedUser;
+}
+function clearUser(){_cachedUser=null;}
 
-function openSignOrDash(){
-  if(getUser()) gotoDash();
+var _signTabIdx=0;
+async function openSignOrDash(){
+  if(await getUser()) gotoDash();
   else openSign();
 }
 function openSign(){
@@ -3796,20 +3793,48 @@ function openSign(){
 function closeSign(){document.getElementById('signOv').classList.add('hid');}
 function signOvClick(e){if(e.target===document.getElementById('signOv'))closeSign();}
 function switchSignTab(idx){
+  _signTabIdx=idx;
   [0,1].forEach(i=>document.getElementById('stab'+i).classList.toggle('act',i===idx));
+  document.getElementById('siName').style.display=idx===1?'':'none';
   const msgs=[['Welcome back','Sign in to manage your companies and iXBRL filings.'],['Create account','Set up your MCG iXBRL Tagger workspace.']];
   document.getElementById('signH').textContent=msgs[idx][0];
   document.getElementById('signSub').textContent=msgs[idx][1];
+  document.getElementById('signErr').classList.add('hid');
 }
-function handleSignIn(){
-  const name=document.getElementById('siName').value.trim();
-  if(!name){document.getElementById('siName').focus();return;}
+async function handleSignIn(){
   const email=document.getElementById('siEmail').value.trim();
-  setUser(name,email);
-  closeSign();
-  gotoDash();
+  const password=document.getElementById('siPassword').value;
+  const errEl=document.getElementById('signErr');
+  errEl.classList.add('hid');
+  if(!email||!password){toast('Email and password are required','warn');return;}
+
+  const btn=document.getElementById('signBtn');
+  btn.disabled=true;
+  try{
+    let res;
+    if(_signTabIdx===1){
+      const name=document.getElementById('siName').value.trim();
+      if(!name){document.getElementById('siName').focus();btn.disabled=false;return;}
+      res=await fetch('/api/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({name,email,password})});
+    } else {
+      res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({email,password})});
+    }
+    if(!res.ok){
+      const body=await res.json().catch(()=>({}));
+      errEl.textContent=body.error||'Something went wrong';
+      errEl.classList.remove('hid');
+      btn.disabled=false;
+      return;
+    }
+    _cachedUser=await res.json();
+    closeSign();
+    await gotoDash();
+  } finally {
+    btn.disabled=false;
+  }
 }
-function handleLogout(){
+async function handleLogout(){
+  try{await fetch('/api/auth/logout',{method:'POST',credentials:'include'});}catch(e){}
   clearUser();
   hideAllViews();
   document.getElementById('homeView').classList.remove('hid');
@@ -3819,8 +3844,12 @@ function handleLogout(){
 // ═══════════════════════════════════════════════════
 // COMPANIES — MANAGEMENT
 // ═══════════════════════════════════════════════════
-function getCompanies(){try{return JSON.parse(localStorage.getItem('mcg_companies')||'[]');}catch(e){return[];}}
-function saveCompanies(arr){localStorage.setItem('mcg_companies',JSON.stringify(arr));}
+async function getCompanies(){
+  try{
+    const r=await fetch('/api/companies',{credentials:'include'});
+    return r.ok?await r.json():[];
+  }catch(e){return [];}
+}
 
 var _ncFw='ifrs';
 function openNc(){
@@ -3838,30 +3867,27 @@ function setNcFw(fw,idx){
   _ncFw=fw;
   [0,1,2].forEach(i=>document.getElementById('ncfw'+i).classList.toggle('act',i===idx));
 }
-function createCompany(){
+async function createCompany(){
   const name=document.getElementById('ncName').value.trim();
   if(!name){document.getElementById('ncName').focus();return;}
   const id='co_'+Date.now();
-  const cos=getCompanies();
-  cos.unshift({
-    id,name,
-    regNumber:document.getElementById('ncReg').value.trim(),
-    yearEnd:document.getElementById('ncYear').value,
-    framework:_ncFw,
-    status:'draft',
-    tagCount:0,
-    createdAt:new Date().toLocaleDateString(),
-    updatedAt:new Date().toLocaleDateString(),
-    session:null
+  const res=await fetch('/api/companies',{
+    method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
+    body:JSON.stringify({
+      id,name,
+      regNumber:document.getElementById('ncReg').value.trim(),
+      yearEnd:document.getElementById('ncYear').value,
+      framework:_ncFw
+    })
   });
-  saveCompanies(cos);
+  if(!res.ok){toast('Could not create company','warn');return;}
   closeNc();
-  openCompany(id);
+  await openCompany(id);
 }
-function openCompany(id){
-  const cos=getCompanies();
-  const co=cos.find(c=>c.id===id);
-  if(!co) return;
+async function openCompany(id){
+  const res=await fetch('/api/companies/'+encodeURIComponent(id),{credentials:'include'});
+  if(!res.ok) return;
+  const co=await res.json();
   window._activeCompanyId=id;
   hideAllViews();
   document.getElementById('appView').classList.remove('hid');
@@ -3888,21 +3914,20 @@ function openCompany(id){
     if(co.framework){document.getElementById('taxSel').value=co.framework;loadBuiltin(co.framework);}
   }
 }
-function deleteCompanyById(id){
+async function deleteCompanyById(id){
   if(!confirm('Delete this company and all its tagging data?')) return;
-  saveCompanies(getCompanies().filter(c=>c.id!==id));
-  renderDash();
+  await fetch('/api/companies/'+encodeURIComponent(id),{method:'DELETE',credentials:'include'});
+  await renderDash();
 }
-function syncCompanyFromSession(data){
+async function syncCompanyFromSession(data){
   if(!window._activeCompanyId) return;
-  const cos=getCompanies();
-  const idx=cos.findIndex(c=>c.id===window._activeCompanyId);
-  if(idx<0) return;
-  cos[idx].tagCount=data.tagCount||0;
-  cos[idx].status=data.tagCount>0?'in_progress':'draft';
-  cos[idx].updatedAt=new Date().toLocaleDateString();
-  cos[idx].session={entity:data.entity,taxKey:data.taxKey,ps:data.ps,pe:data.pe,ccy:data.ccy,dec:data.dec,tags:data.tags,rows:data.rows||[]};
-  saveCompanies(cos);
+  await fetch('/api/companies/'+encodeURIComponent(window._activeCompanyId),{
+    method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',
+    body:JSON.stringify({
+      entity:data.entity,taxKey:data.taxKey,ps:data.ps,pe:data.pe,ccy:data.ccy,dec:data.dec,
+      tagCount:data.tagCount||0,tags:data.tags,rows:data.rows||[]
+    })
+  });
 }
 
 // ═══════════════════════════════════════════════════
@@ -3911,17 +3936,18 @@ function syncCompanyFromSession(data){
 function hideAllViews(){
   ['homeView','dashView','appView'].forEach(id=>document.getElementById(id).classList.add('hid'));
 }
-function gotoDash(){
+async function gotoDash(){
   hideAllViews();
   document.getElementById('dashView').classList.remove('hid');
-  const u=getUser();
+  const u=await getUser();
   if(u) document.getElementById('dashUserName').textContent=u.name;
-  renderDash();
+  await renderDash();
 }
-function loadDemoCompany(){
+async function loadDemoCompany(){
   // Remove existing demo companies first
-  let cos=getCompanies().filter(c=>!c.name.includes('Demo Company'));
-  saveCompanies(cos);
+  const existing=await getCompanies();
+  await Promise.all(existing.filter(c=>c.name.includes('Demo Company'))
+    .map(c=>fetch('/api/companies/'+encodeURIComponent(c.id),{method:'DELETE',credentials:'include'})));
   const id='co_demo_'+Date.now();
   const demoRows=[
     {cells:[{v:'STATEMENT OF FINANCIAL POSITION',raw:'',isNum:false}],meta:{isSection:true}},
@@ -4020,19 +4046,22 @@ function loadDemoCompany(){
     {cells:[{v:'4.  GOING CONCERN',raw:'',isNum:false}],meta:{isBold:true}},
     {cells:[{v:'The directors have assessed the ability of the company to continue as a going concern and believe that the preparation of the financial statements on a going concern basis is still appropriate. The company has adequate resources to continue operating for the foreseeable future.',raw:'',isNum:false}],meta:{isTextBlock:true}}
   ];
-  const now=new Date().toISOString();
-  const co={id,name:'Demo Company (Pty) Ltd',regNumber:'2021/012345/07',yearEnd:'2024-02-28',framework:'ifrs',status:'draft',tagCount:0,createdAt:now,updatedAt:now,session:{entity:'Demo Company (Pty) Ltd',taxKey:'',ps:'2024-03-01',pe:'2025-02-28',ccy:'ZAR',dec:'-3',tags:[],rows:demoRows}};
-  cos=getCompanies();
-  cos.unshift(co);
-  saveCompanies(cos);
-  renderDash();
+  await fetch('/api/companies',{
+    method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',
+    body:JSON.stringify({id,name:'Demo Company (Pty) Ltd',regNumber:'2021/012345/07',yearEnd:'2024-02-28',framework:'ifrs'})
+  });
+  await fetch('/api/companies/'+encodeURIComponent(id),{
+    method:'PUT',headers:{'Content-Type':'application/json'},credentials:'include',
+    body:JSON.stringify({entity:'Demo Company (Pty) Ltd',taxKey:'',ps:'2024-03-01',pe:'2025-02-28',ccy:'ZAR',dec:'-3',tagCount:0,tags:[],rows:demoRows})
+  });
+  await renderDash();
   // Open it immediately
-  openCompany(id);
+  await openCompany(id);
   toast('Demo company loaded — taxonomy still needed','ok');
 }
 
-function renderDash(){
-  const cos=getCompanies();
+async function renderDash(){
+  const cos=await getCompanies();
   const tbody=document.getElementById('dashTbody');
   const empty=document.getElementById('dashEmpty');
   const total=cos.length;
@@ -4054,12 +4083,17 @@ function renderDash(){
       <td style="font-size:12px">${esc(co.yearEnd||'—')}</td>
       <td><div class="dt-status"><div class="ds-dot ${esc(co.status||'draft')}"></div>${esc(stL[co.status]||'Not started')}</div></td>
       <td>${co.tagCount||0}</td>
-      <td style="font-size:12px">${esc(co.updatedAt||co.createdAt||'—')}</td>
+      <td style="font-size:12px">${esc(fmtDashDate(co.updatedAt||co.createdAt))}</td>
       <td onclick="event.stopPropagation()"><div class="dt-acts">
         <button class="dt-act open" onclick="openCompany('${esc(co.id)}')">Open</button>
         <button class="dt-act del" onclick="deleteCompanyById('${esc(co.id)}')">Delete</button>
       </div></td>
     </tr>`).join('');
+}
+function fmtDashDate(v){
+  if(!v) return '—';
+  const d=new Date(v);
+  return isNaN(d)?String(v):d.toLocaleDateString();
 }
 function gotoApp(mode){
   window._activeCompanyId=null;
@@ -4067,20 +4101,18 @@ function gotoApp(mode){
   document.getElementById('appView').classList.remove('hid');
   if(mode==='sample') loadSample('inc');
 }
-function gotoBack(){
+async function gotoBack(){
   document.getElementById('appView').classList.add('hid');
-  if(getUser()){gotoDash();}
+  if(await getUser()){await gotoDash();}
   else{
     document.getElementById('homeView').classList.remove('hid');
-    renderRecentSessions();
     window.scrollTo(0,0);
   }
 }
-function gotoHome(){
-  if(getUser()){gotoDash();return;}
+async function gotoHome(){
+  if(await getUser()){await gotoDash();return;}
   document.getElementById('appView').classList.add('hid');
   document.getElementById('homeView').classList.remove('hid');
-  renderRecentSessions();
   window.scrollTo(0,0);
 }
 
@@ -4544,92 +4576,26 @@ function renderStatusView(){
   el.innerHTML=h;
 }
 
-function renderRecentSessions(){
-  const list=document.getElementById('recList');
-  if(!list) return;
-  try{
-    const raw=localStorage.getItem('mcg_ixbrl_sessions');
-    const sessions=raw?JSON.parse(raw):[];
-    if(!sessions.length){
-      list.innerHTML='<div class="rec-empty">No saved sessions yet. Start a new session to begin tagging.</div>';
-      return;
-    }
-    list.innerHTML=sessions.map((s,i)=>`
-      <div class="rec-card" onclick="restoreSessionById(${i})">
-        <div class="rec-entity">${esc(s.entity||'Untitled Entity')}</div>
-        <div class="rec-meta">${esc(s.taxName||'')} · ${esc(s.ccy||'')} · ${esc(s.ps||'')} – ${esc(s.pe||'')}</div>
-        ${s.tagCount?`<div class="rec-tags">✓ ${s.tagCount} tags</div>`:''}
-        <div class="rec-meta" style="color:var(--sap-text3);font-size:11px;">Saved ${esc(s.savedAt||'')}</div>
-      </div>
-    `).join('');
-  }catch(e){
-    list.innerHTML='<div class="rec-empty">No saved sessions yet.</div>';
-  }
-}
-
 // ═══════════════════════════════════════════════════
-// SESSION SAVE / RESTORE
+// SESSION SAVE (persists to the signed-in account's company via /api/companies/:id)
 // ═══════════════════════════════════════════════════
-function saveSession(){
+async function saveSession(){
   try{
     const taxKey=document.getElementById('taxSel').value;
-    const taxNames={ifrs:'IFRS 2024',usgaap:'US-GAAP 2024',ukfrs:'UK FRS 102'};
     const data={
-      id: Date.now(),
       entity:document.getElementById('ent').value,
       taxKey,
-      taxName:taxNames[taxKey]||taxKey,
       ps:document.getElementById('ps').value,
       pe:document.getElementById('pe').value,
       ccy:document.getElementById('ccy').value,
       dec:document.getElementById('dec').value,
       tagCount:S.tags.length,
-      savedAt:new Date().toLocaleDateString(),
       tags:S.tags,
       rows:S.rows
     };
-    // persist latest session
-    localStorage.setItem('mcg_ixbrl_session',JSON.stringify(data));
-    // maintain sessions array (up to 5)
-    let sessions=[];
-    try{ sessions=JSON.parse(localStorage.getItem('mcg_ixbrl_sessions')||'[]'); }catch(e){}
-    sessions=sessions.filter(s=>s.entity!==data.entity||s.taxKey!==data.taxKey);
-    sessions.unshift(data);
-    if(sessions.length>5) sessions=sessions.slice(0,5);
-    localStorage.setItem('mcg_ixbrl_sessions',JSON.stringify(sessions));
-    syncCompanyFromSession(data);
+    await syncCompanyFromSession(data);
     toast('Session saved','ok');
   }catch(e){toast('Could not save: '+e.message,'err');}
-}
-
-function restoreSession(){
-  try{
-    const raw=localStorage.getItem('mcg_ixbrl_session');
-    if(!raw) return;
-    const d=JSON.parse(raw);
-    if(d.entity) document.getElementById('ent').value=d.entity;
-    if(d.ps) document.getElementById('ps').value=d.ps;
-    if(d.pe) document.getElementById('pe').value=d.pe;
-    if(d.ccy) document.getElementById('ccy').value=d.ccy;
-    if(d.dec) document.getElementById('dec').value=d.dec;
-  }catch(e){}
-}
-
-function restoreSessionById(idx){
-  try{
-    const sessions=JSON.parse(localStorage.getItem('mcg_ixbrl_sessions')||'[]');
-    const d=sessions[idx];
-    if(!d) return;
-    if(d.entity) document.getElementById('ent').value=d.entity;
-    if(d.ps) document.getElementById('ps').value=d.ps;
-    if(d.pe) document.getElementById('pe').value=d.pe;
-    if(d.ccy) document.getElementById('ccy').value=d.ccy;
-    if(d.dec) document.getElementById('dec').value=d.dec;
-    if(d.tags && d.tags.length){ S.tags=d.tags; renderTags(); updateStatus(); }
-    if(d.taxKey){ document.getElementById('taxSel').value=d.taxKey; loadBuiltin(d.taxKey); }
-    gotoApp();
-    toast('Session restored — '+esc(d.entity),'ok');
-  }catch(e){ toast('Could not restore session','err'); }
 }
 
 // ═══════════════════════════════════════════════════
@@ -4673,13 +4639,10 @@ document.addEventListener('keydown',e=>{
 // INIT
 // ═══════════════════════════════════════════════════
 // Pre-load default taxonomy values in app view (hidden)
-restoreSession();
 document.getElementById('taxSel').value='cipc';
 loadBuiltin('cipc');
 document.getElementById('ps').value='2024-01-01';
 document.getElementById('pe').value='2024-12-31';
-// Render home view recent sessions
-renderRecentSessions();
 
 // ═══════════════════════════════════════════════════
 // HOME PAGE EFFECTS
@@ -4722,13 +4685,15 @@ renderRecentSessions();
 // ═══════════════════════════════════════════════════
 // PAGE LOAD — route to dashboard if signed in
 // ═══════════════════════════════════════════════════
-(function(){
-  if(getUser()){
+(async function(){
+  if(await getUser()){
     document.getElementById('homeView').classList.add('hid');
-    gotoDash();
+    await gotoDash();
   }
+})();
+(function(){
   // sign modal: submit on Enter
-  ['siName','siEmail'].forEach(id=>{
+  ['siName','siEmail','siPassword'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.addEventListener('keydown',e=>{if(e.key==='Enter') handleSignIn();});
   });
