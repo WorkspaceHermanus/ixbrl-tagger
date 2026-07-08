@@ -631,9 +631,10 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 }
 .hn-brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0;margin-right:6px;}
 .hn-logo-badge{
-  width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.08);
+  height:32px;padding:5px 7px;border-radius:8px;background:rgba(255,255,255,.94);
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
 }
+.hn-logo-badge img{height:100%;width:auto;display:block;}
 .hn-company{font-size:13.5px;font-weight:800;color:#F5F3EC;letter-spacing:.2px;}
 .hn-divider{width:1px;height:14px;background:rgba(255,255,255,.18);margin:0 2px;}
 .hn-product{font-size:13.5px;color:rgba(245,243,236,.55);font-weight:500;}
@@ -684,8 +685,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   .hn-company{font-size:12px;}
   .hn-product{display:none;}
   .hn-divider{display:none;}
-  .hn-logo-badge{width:30px;height:30px;border-radius:9px;}
-  .hn-logo-badge svg{width:22px;height:14px;}
+  .hn-logo-badge{height:28px;padding:4px 6px;border-radius:7px;}
   .hn-mobile-panel{top:80px;}
 }
 /* ── HERO ─────────────────────────────────────── */
@@ -1277,15 +1277,7 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
 <nav class="hn">
   <a class="hn-brand" href="#" onclick="return false;">
     <span class="hn-logo-badge">
-      <svg viewBox="0 0 560 340" width="28" height="17" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g stroke="white" stroke-width="8" stroke-linejoin="miter">
-          <polygon points="115,225 5,335 225,335" fill="#4BBF6F"/>
-          <polygon points="335,225 225,335 445,335" fill="#4BBF6F"/>
-          <polygon points="225,115 335,225 225,335 115,225" fill="#1A2D52"/>
-          <polygon points="335,5 445,115 335,225 225,115" fill="#3A90C0"/>
-          <polygon points="445,115 555,225 445,335 335,225" fill="#44BEE2"/>
-        </g>
-      </svg>
+      <img src="assets/mcg-mark.png" alt="My Cloud Global" />
     </span>
     <span class="hn-company">MY CLOUD GLOBAL</span>
     <span class="hn-divider"></span>
