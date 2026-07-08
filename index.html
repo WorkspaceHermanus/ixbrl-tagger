@@ -617,68 +617,76 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
   transition:left .16s ease,top .16s ease;will-change:left,top;
 }
 
-/* ── NAV ──────────────────────────────────────── */
+/* ── NAV — floating glass pill, matching pulze.io/new.studio pattern ── */
 .hn{
-  position:sticky;top:0;z-index:500;
-  background:#F7F4EE;
-  border-bottom:1px solid rgba(20,25,40,.08);
-  display:flex;align-items:center;gap:8px;padding:0 48px;height:84px;
+  position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:500;
+  width:92%;max-width:1160px;
+  background:rgba(247,244,238,.78);
+  backdrop-filter:blur(18px) saturate(160%);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);
+  border:1px solid rgba(20,25,40,.08);
+  border-radius:20px;
+  box-shadow:0 10px 34px rgba(10,14,26,.16);
+  display:flex;align-items:center;gap:8px;padding:0 24px;height:66px;
 }
-.hn-brand{display:flex;align-items:center;gap:13px;text-decoration:none;flex-shrink:0;margin-right:8px;}
+.hn-brand{display:flex;align-items:center;gap:12px;text-decoration:none;flex-shrink:0;margin-right:6px;}
 .hn-logo-badge{
-  width:44px;height:44px;border-radius:13px;background:#151A2B;
+  width:34px;height:34px;border-radius:10px;background:#151A2B;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  box-shadow:0 4px 14px rgba(21,26,43,.25);
 }
-.hn-company{font-size:14px;font-weight:800;color:#151A2B;letter-spacing:.2px;}
-.hn-divider{width:1px;height:16px;background:rgba(20,25,40,.15);margin:0 2px;}
-.hn-product{font-size:14px;color:#8A8578;font-weight:500;}
-.hn-links{display:flex;align-items:center;gap:2px;margin-left:40px;}
-.hn-link{font-size:15px;color:#3A3830;text-decoration:none;padding:10px 16px;font-weight:500;border-radius:8px;transition:background .18s ease;}
-.hn-link:hover{background:rgba(20,25,40,.06);}
+.hn-company{font-size:13.5px;font-weight:800;color:#151A2B;letter-spacing:.2px;}
+.hn-divider{width:1px;height:14px;background:rgba(20,25,40,.15);margin:0 2px;}
+.hn-product{font-size:13.5px;color:#8A8578;font-weight:500;}
+.hn-links{display:flex;align-items:center;gap:24px;margin-left:36px;}
+.hn-link{position:relative;font-size:14.5px;color:#151A2B;text-decoration:none;padding:6px 0;font-weight:500;}
+.hn-link::after{content:"";position:absolute;left:0;right:100%;bottom:0;height:1px;background:#151A2B;transition:right .22s ease;}
+.hn-link:hover::after{right:0;}
 .hn-sp{flex:1;}
 .hn-cta{
-  background:#2FBE7B;
-  color:#0F1A14;border:none;padding:13px 26px;border-radius:999px;
-  font-size:14.5px;font-weight:700;cursor:pointer;font-family:inherit;
-  display:flex;align-items:center;gap:9px;
-  transition:background .2s ease,transform .2s ease,box-shadow .2s ease;
-  box-shadow:0 6px 20px rgba(47,190,123,.35);
+  background:#151A2B;
+  color:#F7F4EE;border:none;padding:11px 22px;border-radius:12px;
+  font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;gap:8px;
+  transition:background .2s ease,transform .2s ease;
 }
-.hn-cta:hover{background:#38D48C;transform:translateY(-1px);box-shadow:0 8px 26px rgba(47,190,123,.45);}
+.hn-cta:hover{background:#2A3350;transform:translateY(-1px);}
 .hn-cta-arrow{
-  width:20px;height:20px;border-radius:50%;background:rgba(15,26,20,.14);
-  display:flex;align-items:center;justify-content:center;font-size:12px;
+  width:18px;height:18px;border-radius:50%;background:rgba(247,244,238,.16);
+  display:flex;align-items:center;justify-content:center;font-size:11px;
   transition:transform .2s;
 }
 .hn-cta:hover .hn-cta-arrow{transform:translateX(2px);}
 
-.hn-burger{display:none;width:42px;height:42px;flex-shrink:0;border-radius:11px;border:1px solid rgba(20,25,40,.12);background:rgba(20,25,40,.04);flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:background .18s;}
+.hn-burger{display:none;width:38px;height:38px;flex-shrink:0;border-radius:10px;border:1px solid rgba(20,25,40,.12);background:rgba(20,25,40,.04);flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:background .18s;}
 .hn-burger:hover{background:rgba(20,25,40,.08);}
-.hn-burger span{width:18px;height:2px;background:#151A2B;border-radius:2px;transition:transform .22s,opacity .18s;}
+.hn-burger span{width:16px;height:2px;background:#151A2B;border-radius:2px;transition:transform .22s,opacity .18s;}
 .hn-burger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
 .hn-burger.open span:nth-child(2){opacity:0;}
 .hn-burger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
 
-.hn-mobile-panel{display:none;position:fixed;top:84px;left:0;right:0;z-index:499;
-  background:#F7F4EE;border-bottom:1px solid rgba(20,25,40,.08);
-  flex-direction:column;gap:2px;padding:12px 24px 20px;}
+.hn-mobile-panel{display:none;position:fixed;top:94px;left:4%;right:4%;z-index:499;
+  background:rgba(247,244,238,.95);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border:1px solid rgba(20,25,40,.08);border-radius:18px;
+  box-shadow:0 10px 34px rgba(10,14,26,.18);
+  flex-direction:column;gap:2px;padding:10px 20px 18px;}
 .hn-mobile-panel.show{display:flex;}
-.hn-mlink{color:#3A3830;text-decoration:none;padding:16px 4px;font-size:16px;font-weight:500;border-bottom:1px solid rgba(20,25,40,.07);}
-.hn-mlink:active{color:#151A2B;}
-.hn-mcta{margin-top:14px;background:#2FBE7B;color:#0F1A14;border:none;padding:16px;border-radius:999px;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;}
+.hn-mlink{color:#151A2B;text-decoration:none;padding:14px 4px;font-size:16px;font-weight:500;border-bottom:1px solid rgba(20,25,40,.07);}
+.hn-mlink:active{color:#000;}
+.hn-mcta{margin-top:14px;background:#151A2B;color:#F7F4EE;border:none;padding:15px;border-radius:12px;font-weight:600;font-size:15px;font-family:inherit;cursor:pointer;}
 
 @media (max-width:860px){
-  .hn{padding:0 20px;gap:6px;}
+  .hn{top:12px;width:94%;padding:0 16px;height:60px;border-radius:16px;gap:6px;}
   .hn-links,.hn-cta{display:none;}
   .hn-burger{display:flex;}
 }
 @media (max-width:480px){
-  .hn-company{font-size:12.5px;}
+  .hn{top:10px;}
+  .hn-company{font-size:12px;}
   .hn-product{display:none;}
   .hn-divider{display:none;}
-  .hn-logo-badge{width:38px;height:38px;border-radius:11px;}
-  .hn-logo-badge svg{width:24px;height:15px;}
+  .hn-logo-badge{width:30px;height:30px;border-radius:9px;}
+  .hn-logo-badge svg{width:22px;height:14px;}
+  .hn-mobile-panel{top:80px;}
 }
 /* ── HERO ─────────────────────────────────────── */
 .h-hero{
