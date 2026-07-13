@@ -4,6 +4,13 @@ const { hashPassword, createSession, setSessionCookie } = require('../../lib/aut
 module.exports = async (req, res) => {
   if (req.method !== 'POST') { res.status(405).json({ error: 'Method not allowed' }); return; }
 
+  // Off by default while the product is private/admin-only. Set SIGNUPS_ENABLED=true
+  // in Vercel env vars to re-open self-service signup.
+  if (process.env.SIGNUPS_ENABLED !== 'true') {
+    res.status(403).json({ error: 'Signups are currently disabled. Contact the site owner for access.' });
+    return;
+  }
+
   const { name, email, password } = req.body || {};
   if (!name || !email || !password) {
     res.status(400).json({ error: 'name, email and password are required' });

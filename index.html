@@ -1221,11 +1221,6 @@ td.sel-cell{outline:2px solid var(--sap-brand)!important;outline-offset:-2px;}
     </div>
     <h2 class="sign-h" id="signH">Welcome back</h2>
     <p class="sign-sub" id="signSub">Sign in to manage your companies and iXBRL filings.</p>
-    <div class="sign-tabs">
-      <button class="sign-tab act" id="stab0" onclick="switchSignTab(0)">Sign In</button>
-      <button class="sign-tab" id="stab1" onclick="switchSignTab(1)">New Account</button>
-    </div>
-    <input class="sign-field" id="siName" placeholder="Full name" type="text" autocomplete="name" style="display:none"/>
     <input class="sign-field" id="siEmail" placeholder="Work email address" type="email" autocomplete="email"/>
     <input class="sign-field" id="siPassword" placeholder="Password" type="password" autocomplete="current-password"/>
     <p class="sign-err hid" id="signErr" style="color:#e5484d;font-size:12px;margin:-4px 0 8px;"></p>
@@ -3843,14 +3838,13 @@ async function getUser(){
 }
 function clearUser(){_cachedUser=null;}
 
-var _signTabIdx=0;
 async function openSignOrDash(){
   if(await getUser()) gotoDash();
   else openSign();
 }
 function openSign(){
   document.getElementById('signOv').classList.remove('hid');
-  setTimeout(()=>document.getElementById('siName').focus(),120);
+  setTimeout(()=>document.getElementById('siEmail').focus(),120);
 }
 
 // ═══════════════════════════════════════════════════
@@ -3887,15 +3881,6 @@ function closeDemo(){
 function demoOvClick(e){if(e.target===document.getElementById('demoOv'))closeDemo();}
 function closeSign(){document.getElementById('signOv').classList.add('hid');}
 function signOvClick(e){if(e.target===document.getElementById('signOv'))closeSign();}
-function switchSignTab(idx){
-  _signTabIdx=idx;
-  [0,1].forEach(i=>document.getElementById('stab'+i).classList.toggle('act',i===idx));
-  document.getElementById('siName').style.display=idx===1?'':'none';
-  const msgs=[['Welcome back','Sign in to manage your companies and iXBRL filings.'],['Create account','Set up your MCG iXBRL Tagger workspace.']];
-  document.getElementById('signH').textContent=msgs[idx][0];
-  document.getElementById('signSub').textContent=msgs[idx][1];
-  document.getElementById('signErr').classList.add('hid');
-}
 async function handleSignIn(){
   const email=document.getElementById('siEmail').value.trim();
   const password=document.getElementById('siPassword').value;
@@ -3906,14 +3891,7 @@ async function handleSignIn(){
   const btn=document.getElementById('signBtn');
   btn.disabled=true;
   try{
-    let res;
-    if(_signTabIdx===1){
-      const name=document.getElementById('siName').value.trim();
-      if(!name){document.getElementById('siName').focus();btn.disabled=false;return;}
-      res=await fetch('/api/auth/signup',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({name,email,password})});
-    } else {
-      res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({email,password})});
-    }
+    const res=await fetch('/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify({email,password})});
     if(!res.ok){
       const body=await res.json().catch(()=>({}));
       errEl.textContent=body.error||'Something went wrong';
